@@ -580,14 +580,27 @@ async function loadPhotos(){
       <button class="btn btn-gold btn-sm" onclick="savePhotoEdit(${p.id})">${t("save_changes")}</button>
       <button class="btn btn-ghost btn-sm" onclick="cancelPhotoEdit()">${t("cancel")}</button>
     </div>`;
+    const i = data.indexOf(p);
     return `
     <div class="row">
       <img src="${pub(esc(p.path))}" alt="">
       <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${p.album==="duo"?t("together"):esc(p.album)}</span></div>
+      <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="movePhoto(${p.id},-1)">▲</button>
+      <button class="btn btn-ghost btn-sm" ${i===data.length-1?"disabled":""} onclick="movePhoto(${p.id},1)">▼</button>
       <button class="btn btn-ghost btn-sm" onclick="editPhoto(${p.id})">${t("edit")}</button>
       <button class="btn btn-danger btn-sm" onclick="delPhoto(${p.id},'${esc(p.path)}')">${t("del")}</button>
     </div>`;
   }).join("");
+}
+async function movePhoto(id,dir){
+  const arr = [...(window._photos||[])];
+  const i = arr.findIndex(p=>p.id===id), j = i+dir;
+  if(i<0||j<0||j>=arr.length) return;
+  [arr[i],arr[j]] = [arr[j],arr[i]];
+  for(let k=0;k<arr.length;k++){
+    if(arr[k].position!==k) await sb.from("bushi_photos").update({position:k}).eq("id",arr[k].id);
+  }
+  loadPhotos();
 }
 let _phEdit = null;
 function editPhoto(id){ _phEdit = id; loadPhotos(); }
@@ -660,12 +673,24 @@ async function loadQuotes(){
   if(error){ $("quotesList").textContent = t("err")+error.message; return; }
   window._quotes = data;
   if(!data.length){ $("quotesList").innerHTML = `<p class="muted">${t("no_quotes")}</p>`; return; }
-  $("quotesList").innerHTML = data.map(q=>`
+  $("quotesList").innerHTML = data.map((q,i)=>`
     <div class="row">
       <div class="grow"><b>“${esc(q.text)}”</b><span>${esc(q.author)}${q.role?" · "+esc(q.role):""}</span></div>
+      <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="moveQuote(${q.id},-1)">▲</button>
+      <button class="btn btn-ghost btn-sm" ${i===data.length-1?"disabled":""} onclick="moveQuote(${q.id},1)">▼</button>
       <button class="btn btn-ghost btn-sm" onclick="editQuote(${q.id})">${t("edit")}</button>
       <button class="btn btn-danger btn-sm" onclick="delQuote(${q.id})">${t("del")}</button>
     </div>`).join("");
+}
+async function moveQuote(id,dir){
+  const arr = [...(window._quotes||[])];
+  const i = arr.findIndex(q=>q.id===id), j = i+dir;
+  if(i<0||j<0||j>=arr.length) return;
+  [arr[i],arr[j]] = [arr[j],arr[i]];
+  for(let k=0;k<arr.length;k++){
+    if(arr[k].position!==k) await sb.from("bushi_quotes").update({position:k}).eq("id",arr[k].id);
+  }
+  loadQuotes();
 }
 function editQuote(id){
   const q = (window._quotes||[]).find(x=>x.id===id); if(!q) return;

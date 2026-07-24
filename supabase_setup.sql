@@ -49,7 +49,7 @@ insert into bushi_settings (key, value) values
   ('instagram_followers','109000')
 on conflict (key) do nothing;
 
--- ---------- Sicurezza (RLS): tutti leggono, solo Nikolas loggato scrive ----------
+-- ---------- Sicurezza (RLS): tutti leggono, scrive SOLO l'account di Nikolas ----------
 alter table bushi_shows enable row level security;
 alter table bushi_videos enable row level security;
 alter table bushi_photos enable row level security;
@@ -60,16 +60,16 @@ create policy "public read videos"   on bushi_videos   for select using (true);
 create policy "public read photos"   on bushi_photos   for select using (true);
 create policy "public read settings" on bushi_settings for select using (true);
 
-create policy "auth write shows"    on bushi_shows    for all to authenticated using (true) with check (true);
-create policy "auth write videos"   on bushi_videos   for all to authenticated using (true) with check (true);
-create policy "auth write photos"   on bushi_photos   for all to authenticated using (true) with check (true);
-create policy "auth write settings" on bushi_settings for all to authenticated using (true) with check (true);
+create policy "admin write shows"    on bushi_shows    for all to authenticated using ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com') with check ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
+create policy "admin write videos"   on bushi_videos   for all to authenticated using ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com') with check ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
+create policy "admin write photos"   on bushi_photos   for all to authenticated using ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com') with check ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
+create policy "admin write settings" on bushi_settings for all to authenticated using ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com') with check ((auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
 
 -- ---------- Storage: bucket pubblico per le foto ----------
 insert into storage.buckets (id, name, public) values ('foto','foto', true)
 on conflict (id) do nothing;
 
 create policy "public read foto"  on storage.objects for select using (bucket_id = 'foto');
-create policy "auth insert foto"  on storage.objects for insert to authenticated with check (bucket_id = 'foto');
-create policy "auth update foto"  on storage.objects for update to authenticated using (bucket_id = 'foto');
-create policy "auth delete foto"  on storage.objects for delete to authenticated using (bucket_id = 'foto');
+create policy "admin insert foto" on storage.objects for insert to authenticated with check (bucket_id = 'foto' and (auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
+create policy "admin update foto" on storage.objects for update to authenticated using (bucket_id = 'foto' and (auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');
+create policy "admin delete foto" on storage.objects for delete to authenticated using (bucket_id = 'foto' and (auth.jwt()->>'email') = 'nikolasbushi.com@gmail.com');

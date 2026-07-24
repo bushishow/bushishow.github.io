@@ -164,6 +164,16 @@
       <p class="muted" style="margin-top:8px">Scrivi il numero pieno (es 2600000): il sito lo mostra come 2.6M.</p>
     </div>
     <button class="btn btn-gold" onclick="saveSettings()">Salva impostazioni</button>
+
+    <div class="card" style="margin-top:18px">
+      <div class="sec-title"><h2>Sicurezza: cambia password</h2></div>
+      <label>Vecchia password</label><input type="password" id="pwOld" autocomplete="current-password">
+      <div class="grid2">
+        <div><label>Nuova password (minimo 8 caratteri)</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+        <div><label>Conferma nuova password</label><input type="password" id="pwConf" autocomplete="new-password"></div>
+      </div>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="changePassword()">Cambia password</button>
+    </div>
   </div>
 </div>
 
@@ -338,6 +348,22 @@ async function saveSettings(){
     if(error){ toast("Errore: "+error.message, true); return; }
   }
   toast("Impostazioni salvate");
+}
+
+/* ---------- cambia password ---------- */
+async function changePassword(){
+  const oldP = $("pwOld").value, newP = $("pwNew").value, conf = $("pwConf").value;
+  if(!oldP){ toast("Inserisci la vecchia password", true); return; }
+  if(newP.length < 8){ toast("La nuova password deve avere almeno 8 caratteri", true); return; }
+  if(newP !== conf){ toast("Le due nuove password non coincidono", true); return; }
+  if(newP === oldP){ toast("La nuova password è uguale alla vecchia", true); return; }
+  const { data:{ user } } = await sb.auth.getUser();
+  const { error:e1 } = await sb.auth.signInWithPassword({ email:user.email, password:oldP });
+  if(e1){ toast("Vecchia password sbagliata", true); return; }
+  const { error:e2 } = await sb.auth.updateUser({ password:newP });
+  if(e2){ toast("Errore: "+e2.message, true); return; }
+  ["pwOld","pwNew","pwConf"].forEach(i=>$(i).value="");
+  toast("Password cambiata! Usala dal prossimo accesso.");
 }
 
 boot();

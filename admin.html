@@ -84,8 +84,16 @@
     <input type="email" id="logEmail" autocomplete="username">
     <label>Password</label>
     <input type="password" id="logPass" autocomplete="current-password">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAD8znvqhc852-qVG" data-theme="dark" style="margin-top:16px"></div>
     <button class="btn btn-gold" id="logBtn" style="width:100%;justify-content:center;margin-top:18px" data-t="sign_in">Sign in</button>
     <p class="muted" id="logErr" style="margin-top:10px;color:#e57365" hidden></p>
+    <p style="margin-top:14px;text-align:center"><a href="#" id="forgotLink" data-t="forgot_pw" style="color:var(--gold);font-size:.85rem;text-decoration:none">Forgot password?</a></p>
+  </div>
+  <div class="card" id="resetBox" style="text-align:left" hidden>
+    <h2 data-t="new_pw_title" style="font-size:1rem;margin-bottom:4px;font-family:'Inter',sans-serif;color:var(--text)">Set a new password</h2>
+    <label data-t="new_pw">New password (minimum 8 characters)</label><input type="password" id="rsNew" autocomplete="new-password">
+    <label data-t="confirm_pw">Confirm new password</label><input type="password" id="rsConf" autocomplete="new-password">
+    <button class="btn btn-gold" id="rsBtn" style="width:100%;justify-content:center;margin-top:18px" data-t="save_changes">Save changes</button>
   </div>
 </div>
 
@@ -273,6 +281,7 @@
 <div id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 const SB_URL = "https://yftmbqmodfesprhqqnbw.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik";
@@ -323,6 +332,9 @@ const ADM = {
     backup:"Backup", backup_btn:"Download backup",
     backup_hint:"Downloads a file with all shows, videos, quotes, texts and settings. Photos stay safely in the cloud.",
     edit:"Edit", save_changes:"Save changes", cancel:"Cancel", updated:"Updated",
+    forgot_pw:"Forgot password?", reset_sent:"Check your email: we sent you a link to set a new password.",
+    enter_email_first:"Type your email above first", new_pw_title:"Set a new password",
+    captcha_req:"Please complete the \"I am human\" verification first.",
     err:"Error: ", locale:"en-US",
   },
   it:{
@@ -368,6 +380,9 @@ const ADM = {
     backup:"Backup", backup_btn:"Scarica backup",
     backup_hint:"Scarica un file con tutti gli spettacoli, video, citazioni, testi e impostazioni. Le foto restano al sicuro nel cloud.",
     edit:"Modifica", save_changes:"Salva modifiche", cancel:"Annulla", updated:"Aggiornato",
+    forgot_pw:"Password dimenticata?", reset_sent:"Controlla la posta: ti abbiamo inviato un link per impostare una nuova password.",
+    enter_email_first:"Scrivi prima la tua email qui sopra", new_pw_title:"Imposta una nuova password",
+    captcha_req:"Completa prima la verifica \"Sono umano\".",
     err:"Errore: ", locale:"it-IT",
   },
 };
@@ -395,12 +410,51 @@ async function boot(){
 }
 $("logBtn").addEventListener("click", async ()=>{
   $("logErr").hidden=true;
-  const { error } = await sb.auth.signInWithPassword({ email:$("logEmail").value.trim(), password:$("logPass").value });
-  if(error){ $("logErr").textContent=t("login_err"); $("logErr").hidden=false; return; }
+  const captchaToken = window.turnstile ? turnstile.getResponse() : undefined;
+  const { error } = await sb.auth.signInWithPassword({
+    email:$("logEmail").value.trim(), password:$("logPass").value,
+    options:{ captchaToken }
+  });
+  if(error){
+    $("logErr").textContent = /captcha/i.test(error.message) ? t("captcha_req") : t("login_err");
+    $("logErr").hidden=false;
+    if(window.turnstile) turnstile.reset();
+    return;
+  }
   boot();
 });
 $("logPass").addEventListener("keydown", e=>{ if(e.key==="Enter") $("logBtn").click(); });
 $("logoutBtn").addEventListener("click", async ()=>{ await sb.auth.signOut(); boot(); });
+
+/* ---------- recupero password via email ---------- */
+$("forgotLink").addEventListener("click", async e=>{
+  e.preventDefault();
+  const em = $("logEmail").value.trim();
+  if(!em){ toast(t("enter_email_first"), true); return; }
+  const captchaToken = window.turnstile ? turnstile.getResponse() : undefined;
+  const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo:"https://www.bushishow.com/admin.html", captchaToken });
+  if(error){ toast(t("err")+error.message, true); return; }
+  toast(t("reset_sent"));
+});
+sb.auth.onAuthStateChange((event)=>{
+  if(event === "PASSWORD_RECOVERY"){
+    $("loginBox").hidden = false; $("app").hidden = true;
+    document.querySelector("#loginBox .card").hidden = true;
+    $("resetBox").hidden = false;
+  }
+});
+$("rsBtn").addEventListener("click", async ()=>{
+  const n = $("rsNew").value, c = $("rsConf").value;
+  if(n.length < 8){ toast(t("pw_min"), true); return; }
+  if(n !== c){ toast(t("pw_mismatch"), true); return; }
+  const { error } = await sb.auth.updateUser({ password:n });
+  if(error){ toast(t("err")+error.message, true); return; }
+  $("rsNew").value = $("rsConf").value = "";
+  document.querySelector("#loginBox .card").hidden = false;
+  $("resetBox").hidden = true;
+  toast(t("pw_changed"));
+  boot();
+});
 
 /* ---------- tabs ---------- */
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{

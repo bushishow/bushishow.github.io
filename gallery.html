@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bushi Show · Gallery</title>
+<meta name="description" content="Photo albums from The Bushi Show: Nikolas & Dashnor Bushi live on stage and on TV.">
+<link rel="icon" type="image/png" href="img/favicon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08080d;--bg2:#0e0e16;--card:#13131d;--gold:#d4af37;--gold-light:#f0d97a;--text:#f5f2ea;--muted:#a7a294}
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none !important}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif}
+  nav{
+    position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 5vw;background:rgba(8,8,13,.85);backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(212,175,55,.15);
+  }
+  nav .logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.15rem;letter-spacing:.06em;color:var(--gold);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:10px}
+  .lang-select{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.35);color:var(--gold-light);padding:5px 10px;border-radius:20px;cursor:pointer;font-size:.8rem;font-weight:600;font-family:'Inter',sans-serif;outline:none}
+  .lang-select option{background:#13131d;color:var(--text)}
+  .wrap{max-width:1100px;margin:0 auto;padding:60px 5vw 90px}
+  .kicker{color:var(--gold);letter-spacing:.3em;text-transform:uppercase;font-size:.78rem;font-weight:700;margin-bottom:12px}
+  h1{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:800;margin-bottom:16px}
+  .sub{color:var(--muted);max-width:620px;margin-bottom:40px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;padding:12px 26px;border-radius:50px;
+    font-weight:700;font-size:.9rem;text-decoration:none;letter-spacing:.04em;transition:.25s;cursor:pointer;
+    border:1.5px solid rgba(245,242,234,.35);color:var(--text);background:transparent;font-family:'Inter',sans-serif;
+  }
+  .btn:hover{border-color:var(--gold);color:var(--gold)}
+  /* copertine album */
+  .albums{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+  .album-card{
+    position:relative;border-radius:18px;overflow:hidden;cursor:pointer;
+    border:1px solid rgba(255,255,255,.08);background:var(--card);transition:.25s;
+  }
+  .album-card:hover{transform:translateY(-6px);border-color:rgba(212,175,55,.5);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+  .album-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:.35s}
+  .album-card:hover img{transform:scale(1.05)}
+  .album-card .info{
+    position:absolute;inset:auto 0 0 0;padding:34px 18px 14px;
+    background:linear-gradient(transparent, rgba(5,5,8,.92));
+  }
+  .album-card .info b{font-family:'Playfair Display',serif;font-size:1.15rem;color:#fff;display:block}
+  .album-card .info span{color:var(--gold-light);font-size:.8rem;letter-spacing:.08em}
+  /* vista album */
+  .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .photos figure{border-radius:14px;overflow:hidden;background:var(--card);border:1px solid rgba(255,255,255,.07);cursor:pointer}
+  .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:.35s}
+  .photos figure:hover img{transform:scale(1.05)}
+  .photos figcaption{padding:10px 14px;font-size:.82rem;color:var(--muted)}
+  .empty{color:var(--muted);border:1px dashed rgba(212,175,55,.35);border-radius:14px;padding:26px}
+  /* lightbox */
+  .lightbox{position:fixed;inset:0;z-index:300;background:rgba(5,5,8,.95);display:flex;align-items:center;justify-content:center;gap:10px;padding:20px}
+  .lightbox figure{max-width:88vw;text-align:center}
+  .lightbox img{max-width:88vw;max-height:80vh;border-radius:12px;box-shadow:0 20px 70px rgba(0,0,0,.7)}
+  .lightbox figcaption{margin-top:12px;color:var(--muted);font-size:.9rem}
+  .lb-btn{background:transparent;border:1px solid rgba(212,175,55,.5);color:var(--gold-light);width:44px;height:44px;border-radius:50%;font-size:1.5rem;cursor:pointer;flex-shrink:0;display:grid;place-items:center;transition:.2s;line-height:1}
+  .lb-btn:hover{background:var(--gold);color:#141005}
+  .lb-x{position:absolute;top:18px;right:18px}
+  footer.site{padding:30px 5vw;text-align:center;color:var(--muted);font-size:.82rem;border-top:1px solid rgba(212,175,55,.12)}
+  footer.site a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html"><img src="img/icon.png" alt="" style="height:32px;width:auto">THE&nbsp;BUSHI&nbsp;SHOW</a>
+  <select class="lang-select" id="langSel" aria-label="Language">
+    <option value="en">EN</option><option value="it">IT</option><option value="al">AL</option>
+    <option value="de">DE</option><option value="fr">FR</option><option value="es">ES</option><option value="ru">RU</option>
+  </select>
+</nav>
+
+<div class="wrap">
+  <div class="kicker" id="kicker">Events & Gallery</div>
+  <h1 id="title">Photo albums</h1>
+  <p class="sub" id="sub">Every show is a story: browse the albums, event by event.</p>
+
+  <div id="albumsView">
+    <div class="albums" id="albumsGrid"></div>
+    <p class="empty" id="emptyMsg" hidden>Photos coming soon. Follow us on social!</p>
+  </div>
+
+  <div id="albumView" hidden>
+    <button class="btn" id="backBtn" style="margin-bottom:26px">← All albums</button>
+    <h2 id="albumTitle" style="font-size:1.6rem;margin-bottom:22px"></h2>
+    <div class="photos" id="photosGrid"></div>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox" hidden>
+  <button class="lb-btn lb-x" aria-label="Close">×</button>
+  <button class="lb-btn lb-prev" aria-label="Previous">‹</button>
+  <figure><img id="lbImg" src="" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button class="lb-btn lb-next" aria-label="Next">›</button>
+</div>
+
+<footer class="site">
+  <a href="index.html">← www.bushishow.com</a>
+</footer>
+
+<script>
+const SB_URL = "https://yftmbqmodfesprhqqnbw.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik";
+
+const L = {
+  en:{kicker:"Events & Gallery",title:"Photo albums",sub:"Every show is a story: browse the albums, event by event.",back:"← All albums",empty:"Photos coming soon. Follow us on social!",photos:"photos",together:"Together"},
+  it:{kicker:"Eventi e Galleria",title:"Album fotografici",sub:"Ogni spettacolo è una storia: sfoglia gli album, evento per evento.",back:"← Tutti gli album",empty:"Foto in arrivo. Seguici sui social!",photos:"foto",together:"Insieme"},
+  al:{kicker:"Evente & Galeria",title:"Albumet e fotove",sub:"Çdo shfaqje është një histori: shfletoni albumet, event pas eventi.",back:"← Të gjithë albumet",empty:"Foto së shpejti. Ndiqni në rrjetet sociale!",photos:"foto",together:"Së bashku"},
+  de:{kicker:"Events & Galerie",title:"Fotoalben",sub:"Jede Show ist eine Geschichte: Blättern Sie durch die Alben, Event für Event.",back:"← Alle Alben",empty:"Fotos folgen in Kürze. Folgen Sie uns auf Social Media!",photos:"Fotos",together:"Zusammen"},
+  fr:{kicker:"Événements & Galerie",title:"Albums photos",sub:"Chaque spectacle est une histoire : parcourez les albums, événement par événement.",back:"← Tous les albums",empty:"Photos à venir. Suivez-nous sur les réseaux !",photos:"photos",together:"Ensemble"},
+  es:{kicker:"Eventos y Galería",title:"Álbumes de fotos",sub:"Cada show es una historia: recorre los álbumes, evento por evento.",back:"← Todos los álbumes",empty:"Fotos muy pronto. ¡Síguenos en redes!",photos:"fotos",together:"Juntos"},
+  ru:{kicker:"События и галерея",title:"Фотоальбомы",sub:"Каждое шоу — это история: листайте альбомы, событие за событием.",back:"← Все альбомы",empty:"Фотографии скоро появятся. Подписывайтесь на соцсети!",photos:"фото",together:"Вместе"},
+};
+let lang = "en", PHOTOS = [], curAlbum = null, lbList = [], lbIdx = 0;
+const $ = id => document.getElementById(id);
+const pub = p => SB_URL+"/storage/v1/object/public/foto/"+p;
+const esc = s => (s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const albumLabel = a => a==="duo" ? L[lang].together : a==="nikolas" ? "Nikolas" : a==="dashnor" ? "Dashnor" : a;
+
+function applyLang(l){
+  lang = L[l] ? l : "en";
+  document.documentElement.lang = lang==="al" ? "sq" : lang;
+  $("langSel").value = lang;
+  const T = L[lang];
+  $("kicker").textContent = T.kicker; $("title").textContent = T.title;
+  $("sub").textContent = T.sub; $("backBtn").textContent = T.back; $("emptyMsg").textContent = T.empty;
+  render();
+}
+$("langSel").addEventListener("change", e=>applyLang(e.target.value));
+
+function render(){
+  const T = L[lang];
+  if(curAlbum === null){
+    $("albumsView").hidden = false; $("albumView").hidden = true;
+    const albums = [...new Set(PHOTOS.map(p=>p.album||"duo"))];
+    $("emptyMsg").hidden = albums.length > 0;
+    $("albumsGrid").innerHTML = albums.map(a=>{
+      const ph = PHOTOS.filter(p=>(p.album||"duo")===a);
+      return `
+      <div class="album-card" data-a="${esc(a)}">
+        <img loading="lazy" src="${pub(esc(ph[0].path))}" alt="${esc(albumLabel(a))}">
+        <div class="info"><b>${esc(albumLabel(a))}</b><span>${ph.length} ${T.photos}</span></div>
+      </div>`;
+    }).join("");
+    document.querySelectorAll(".album-card").forEach(c=>c.addEventListener("click",()=>{ curAlbum=c.dataset.a; render(); scrollTo({top:0,behavior:"smooth"}); }));
+  }else{
+    $("albumsView").hidden = true; $("albumView").hidden = false;
+    $("albumTitle").textContent = albumLabel(curAlbum);
+    lbList = PHOTOS.filter(p=>(p.album||"duo")===curAlbum);
+    $("photosGrid").innerHTML = lbList.map((p,i)=>`
+      <figure data-i="${i}"><img loading="lazy" src="${pub(esc(p.path))}" alt="${esc(p.caption)||"The Bushi Show"}">${p.caption?`<figcaption>${esc(p.caption)}</figcaption>`:""}</figure>`).join("");
+    document.querySelectorAll("#photosGrid figure").forEach(f=>f.addEventListener("click",()=>openLb(+f.dataset.i)));
+  }
+}
+$("backBtn").addEventListener("click",()=>{ curAlbum=null; render(); });
+
+/* lightbox */
+const lb = $("lightbox");
+function openLb(i){ lbIdx=i; updateLb(); lb.hidden=false; document.body.style.overflow="hidden"; }
+function closeLb(){ lb.hidden=true; document.body.style.overflow=""; }
+function updateLb(){ const p=lbList[lbIdx]; $("lbImg").src=pub(p.path); $("lbCap").textContent=p.caption||""; }
+function stepLb(d){ lbIdx=(lbIdx+d+lbList.length)%lbList.length; updateLb(); }
+lb.querySelector(".lb-x").addEventListener("click",closeLb);
+lb.querySelector(".lb-prev").addEventListener("click",()=>stepLb(-1));
+lb.querySelector(".lb-next").addEventListener("click",()=>stepLb(1));
+lb.addEventListener("click",e=>{ if(e.target===lb) closeLb(); });
+document.addEventListener("keydown",e=>{
+  if(lb.hidden) return;
+  if(e.key==="Escape") closeLb();
+  if(e.key==="ArrowLeft") stepLb(-1);
+  if(e.key==="ArrowRight") stepLb(1);
+});
+
+/* dati + lingua iniziale */
+(async function(){
+  try{
+    const r = await fetch(SB_URL+"/rest/v1/bushi_photos?select=path,caption,album&order=position&order=id", { headers:{ apikey:SB_KEY, Authorization:"Bearer "+SB_KEY } });
+    if(r.ok) PHOTOS = await r.json();
+  }catch(e){}
+  const code = (navigator.language||"en").slice(0,2).toLowerCase();
+  const MAP = {it:"it",sq:"al",de:"de",fr:"fr",es:"es",ru:"ru"};
+  applyLang(MAP[code]||"en");
+})();
+</script>
+</body>
+</html>

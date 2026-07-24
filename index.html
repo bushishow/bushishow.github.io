@@ -328,6 +328,7 @@
   <div class="links">
     <a data-nav href="#videos" data-i18n="nav_videos">Videos</a>
     <a data-nav href="#shows" data-i18n="nav_shows">Shows</a>
+    <a data-nav href="gallery.html" data-i18n="nav_gallery">Gallery</a>
     <a data-nav href="#tv" data-i18n="nav_tv">TV & Awards</a>
     <a data-nav href="#about" data-i18n="nav_about">Nikolas</a>
     <a data-nav href="#dashnor" data-i18n="nav_dashnor">Dashnor</a>
@@ -478,8 +479,10 @@
   <div class="section-inner">
     <div class="kicker" data-i18n="gal_k">Gallery</div>
     <h2 data-i18n="gal_h">On stage</h2>
-    <div class="alb-tabs" id="albTabs"></div>
-    <div class="gallery-grid" id="galleryGrid" style="margin-top:26px"></div>
+    <div class="gallery-grid" id="galleryGrid" style="margin-top:30px"></div>
+    <div style="text-align:center;margin-top:32px">
+      <a class="btn btn-gold" href="gallery.html"><span data-i18n="gal_all">See all albums</span></a>
+    </div>
   </div>
 </section>
 
@@ -633,6 +636,7 @@ const I18N = {
     alb_all:"All",alb_duo:"Together",
     dash_vid:"Watch Dashnor's magic",
     k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_err:"Something went wrong, please try again.",
+    nav_gallery:"Gallery",gal_all:"See all albums",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -673,6 +677,7 @@ const I18N = {
     alb_all:"Tutte",alb_duo:"Insieme",
     dash_vid:"Guarda la magia di Dashnor",
     k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_err:"Qualcosa è andato storto, riprova.",
+    nav_gallery:"Galleria",gal_all:"Vedi tutti gli album",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -713,6 +718,7 @@ const I18N = {
     alb_all:"Të gjitha",alb_duo:"Së bashku",
     dash_vid:"Shiko magjinë e Dashnorit",
     k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_err:"Diçka shkoi keq, provoni përsëri.",
+    nav_gallery:"Galeria",gal_all:"Shiko të gjithë albumet",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -753,6 +759,7 @@ const I18N = {
     alb_all:"Alle",alb_duo:"Zusammen",
     dash_vid:"Dashnors Magie erleben",
     k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
+    nav_gallery:"Galerie",gal_all:"Alle Alben ansehen",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -793,6 +800,7 @@ const I18N = {
     alb_all:"Toutes",alb_duo:"Ensemble",
     dash_vid:"La magie de Dashnor en vidéo",
     k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_err:"Une erreur s'est produite, veuillez réessayer.",
+    nav_gallery:"Galerie",gal_all:"Voir tous les albums",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -833,6 +841,7 @@ const I18N = {
     alb_all:"Todas",alb_duo:"Juntos",
     dash_vid:"Mira la magia de Dashnor",
     k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_err:"Algo salió mal, inténtalo de nuevo.",
+    nav_gallery:"Galería",gal_all:"Ver todos los álbumes",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -873,6 +882,7 @@ const I18N = {
     alb_all:"Все",alb_duo:"Вместе",
     dash_vid:"Смотрите магию Дашнора",
     k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
+    nav_gallery:"Галерея",gal_all:"Все альбомы",
   },
 };
 
@@ -935,21 +945,13 @@ function renderShows(){
   cd.hidden = false;
 }
 
-let albFilter = "all", lbList = [], lbIdx = 0;
+let lbList = [], lbIdx = 0;
 
 function renderGallery(){
   if(!CONFIG.photos.length) return;
   document.getElementById("gallery").hidden = false;
-  const T = I18N[lang];
-  const albums = [...new Set(CONFIG.photos.map(p=>p.album).filter(Boolean))];
-  const tabs = document.getElementById("albTabs");
-  if(albums.length>1){
-    const label = a => a==="duo" ? T.alb_duo : a==="nikolas" ? "Nikolas" : a==="dashnor" ? "Dashnor" : a;
-    tabs.innerHTML = [`<button data-a="all" class="${albFilter==="all"?"active":""}">${T.alb_all}</button>`]
-      .concat(albums.map(a=>`<button data-a="${a}" class="${albFilter===a?"active":""}">${label(a)}</button>`)).join("");
-    tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{albFilter=b.dataset.a; renderGallery();}));
-  }else tabs.innerHTML="";
-  lbList = CONFIG.photos.filter(p=>albFilter==="all"||p.album===albFilter);
+  /* anteprima leggera: le prime 8 foto; tutti gli album sono su gallery.html */
+  lbList = CONFIG.photos.slice(0, 8);
   document.getElementById("galleryGrid").innerHTML = lbList.map((p,i)=>`
     <figure data-i="${i}"><img loading="lazy" src="${p.src}" alt="${p.caption||"The Bushi Show"}">${p.caption?`<figcaption>${p.caption}</figcaption>`:""}</figure>`).join("");
   document.querySelectorAll("#galleryGrid figure").forEach(f=>f.addEventListener("click",()=>openLb(+f.dataset.i)));

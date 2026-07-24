@@ -183,11 +183,12 @@
       <div class="sec-title"><h2 data-t="upload_photos">Upload photos</h2></div>
       <div class="grid2">
         <div><label data-t="album">Album</label>
-          <select id="phAlbum">
+          <select id="phAlbum" onchange="$('phAlbumNew').hidden = this.value!=='__new'">
             <option value="nikolas">Nikolas</option>
             <option value="dashnor">Dashnor</option>
             <option value="duo" selected data-t="together">Together</option>
           </select>
+          <input id="phAlbumNew" placeholder="Albania's Got Talent 2026" style="margin-top:8px" hidden>
         </div>
         <div><label data-t="caption_opt">Caption (optional)</label><input id="phCap" placeholder="Nikolas & Chris on stage"></div>
       </div>
@@ -805,7 +806,8 @@ function rebuildAlbumOptions(){
     + customAlbums().map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("")
     + `<option value="__new">${t("new_album")}</option>`;
   sel.value = [...sel.options].some(o=>o.value===cur) ? cur : "duo";
-  $("phAlbumNew").hidden = sel.value!=="__new";
+  const nf = $("phAlbumNew");
+  if(nf) nf.hidden = sel.value!=="__new";
 }
 let _phEdit = null;
 function editPhoto(id){ _phEdit = id; loadPhotos(); }

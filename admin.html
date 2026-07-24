@@ -590,11 +590,16 @@ $("rsBtn").addEventListener("click", async ()=>{
   boot();
 });
 
-/* ---------- tabs ---------- */
-document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x===b));
-  ["shows","videos","photos","texts","reviews","stats","settings"].forEach(tb=>$("tab-"+tb).hidden = tb!==b.dataset.tab);
-}));
+/* ---------- tabs (ricorda quella attiva anche dopo il refresh) ---------- */
+const TABS = ["shows","videos","photos","texts","reviews","stats","settings"];
+function setTab(name){
+  if(!TABS.includes(name)) name = "shows";
+  localStorage.setItem("adm_tab", name);
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active", x.dataset.tab===name));
+  TABS.forEach(tb=>$("tab-"+tb).hidden = tb!==name);
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+setTab(localStorage.getItem("adm_tab")||"shows");
 
 /* ---------- loadAll (SOLO dopo login) ---------- */
 function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSpecials(); loadSettings(); loadTexts(); loadQuotes(); loadReviews(); loadStats(); }

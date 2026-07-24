@@ -185,8 +185,16 @@
   }
   blockquote footer{margin-top:14px;font-family:'Inter',sans-serif;font-style:normal;font-size:.9rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
 
+  /* hero: foto di sfondo opzionale (dal pannello) */
+  .hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 30%;opacity:.22;z-index:0}
+
   /* bio */
   .bio-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+  .bio-wrap.has-photo{grid-template-columns:.62fr 1fr .85fr;gap:36px}
+  .bio-portrait{
+    width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:18px;
+    border:1px solid rgba(212,175,55,.35);box-shadow:0 16px 44px rgba(0,0,0,.5);
+  }
   .bio-text p{margin-bottom:16px;color:#d9d5ca}
   .bio-highlights{display:grid;gap:14px}
   .hl{
@@ -347,6 +355,7 @@
 </nav>
 
 <header id="top">
+  <div class="hero-bg" id="heroBg" hidden></div>
   <canvas id="magic" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
   <img class="hero-logo" src="img/logo-emblem.png" alt="The Bushi Show">
   <div class="badge-row">
@@ -423,6 +432,7 @@
     <div class="kicker" data-i18n="k_about">The Ventriloquist</div>
     <h2 data-i18n="h_about">Nikolas: three languages, one extraordinary voice.</h2>
     <div class="bio-wrap" style="margin-top:30px">
+      <img class="bio-portrait reveal" id="portraitNik" alt="Nikolas Bushi" hidden>
       <div class="bio-text">
         <p data-i18n="bio1">Born in Ferrara, Italy, to Albanian parents and raised in New York, Nikolas Bushi grew up between three languages: English, Italian and Albanian. And he learned to make all of them come out of a puppet.</p>
         <p data-i18n="bio2">He started magic at age 4, inspired by his father, the magician Dashnor Bushi. Then he discovered ventriloquism and, with his puppet sidekick Chris, built an audience of millions across TikTok, YouTube and Instagram.</p>
@@ -444,6 +454,7 @@
     <div class="kicker" data-i18n="k_dash">The Magician</div>
     <h2 data-i18n="h_dash">Dashnor Bushi: where the magic began</h2>
     <div class="bio-wrap" style="margin-top:30px">
+      <img class="bio-portrait reveal" id="portraitDash" alt="Dashnor Bushi" hidden>
       <div class="bio-text">
         <p data-i18n="dash1">Dashnor Bushi is a New York magician whose show blends stunning sleight-of-hand, mentalism and comedy. A sought-after performer for corporate and private events throughout New York City, and a member of the Society of American Magicians.</p>
         <p data-i18n="dash2">He is also the reason all of this exists: it was his magic, practised at home as a passion, that inspired 4-year-old Nikolas to pick up his first trick.</p>
@@ -1131,6 +1142,22 @@ async function sbGet(path){
       const wa = document.getElementById("waBtn");
       wa.href = "https://wa.me/"+S.whatsapp.replace(/[^0-9]/g,"");
       wa.hidden = false;
+    }
+    const FOTO = p => SB_URL+"/storage/v1/object/public/foto/"+p;
+    if(S.portrait_nikolas){
+      const el = document.getElementById("portraitNik");
+      el.src = FOTO(S.portrait_nikolas); el.hidden = false; el.classList.add("visible");
+      el.closest(".bio-wrap").classList.add("has-photo");
+    }
+    if(S.portrait_dashnor){
+      const el = document.getElementById("portraitDash");
+      el.src = FOTO(S.portrait_dashnor); el.hidden = false; el.classList.add("visible");
+      el.closest(".bio-wrap").classList.add("has-photo");
+    }
+    if(S.hero_bg){
+      const hb = document.getElementById("heroBg");
+      hb.style.backgroundImage = "url('"+FOTO(S.hero_bg)+"')";
+      hb.hidden = false;
     }
     const counts = [S.tiktok_followers, S.youtube_subs, S.instagram_followers];
     const socialNames = ["TikTok","YouTube","Instagram"];

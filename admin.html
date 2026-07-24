@@ -197,6 +197,11 @@
       <button class="btn btn-gold" style="margin-top:16px" onclick="uploadPhotos()" data-t="upload">Upload</button>
       <p class="muted" style="margin-top:10px" data-t="photo_hint">Photos are resized and optimized automatically before upload.</p>
     </div>
+    <div class="card">
+      <div class="sec-title"><h2 data-t="special_h">Special spots</h2></div>
+      <p class="muted" style="margin-bottom:14px" data-t="special_hint">One photo per spot: uploading a new one replaces the old one on the website.</p>
+      <div id="specialList" class="muted">...</div>
+    </div>
     <div class="card"><div id="photosList" class="muted">...</div></div>
   </div>
 
@@ -370,6 +375,9 @@ const ADM = {
     tagline_t:"Opening line (under the title)", bio_n:"Nikolas bio", bio_d:"Dashnor bio",
     save_texts:"Save texts", texts_saved:"Texts saved",
     who:"Section on the website", new_album:"+ New album (event)…", album_name_req:"Type the new album name",
+    special_h:"Special spots", special_hint:"One photo per spot: uploading a new one replaces the old one on the website.",
+    sp_nik:"Nikolas portrait (next to his bio)", sp_dash:"Dashnor portrait (next to his bio)", sp_hero:"Title background (hero)",
+    sp_upload:"Upload / replace", sp_remove:"Remove", sp_none:"empty", sp_saved:"Saved! It's live on the website.",
     tab_reviews:"Reviews", rev_pending:"To approve", rev_published:"Published", rev_add_h:"Add a review yourself",
     stars_l:"Stars", approve:"Approve", approved_ok:"Published on the website!",
     no_pending:"Nothing to approve.", no_reviews:"No reviews yet.",
@@ -429,6 +437,9 @@ const ADM = {
     tagline_t:"Frase d'apertura (sotto il titolo)", bio_n:"Bio di Nikolas", bio_d:"Bio di Dashnor",
     save_texts:"Salva testi", texts_saved:"Testi salvati",
     who:"Sezione sul sito", new_album:"+ Nuovo album (evento)…", album_name_req:"Scrivi il nome del nuovo album",
+    special_h:"Posti speciali", special_hint:"Una foto per posto: caricandone una nuova sostituisci quella attuale sul sito.",
+    sp_nik:"Ritratto Nikolas (accanto alla sua bio)", sp_dash:"Ritratto Dashnor (accanto alla sua bio)", sp_hero:"Sfondo del titolo (hero)",
+    sp_upload:"Carica / sostituisci", sp_remove:"Rimuovi", sp_none:"vuoto", sp_saved:"Fatto! Già online sul sito.",
     tab_reviews:"Recensioni", rev_pending:"Da approvare", rev_published:"Pubblicate", rev_add_h:"Aggiungi tu una recensione",
     stars_l:"Stelle", approve:"Approva", approved_ok:"Pubblicata sul sito!",
     no_pending:"Niente da approvare.", no_reviews:"Nessuna recensione ancora.",
@@ -586,7 +597,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",
 }));
 
 /* ---------- loadAll (SOLO dopo login) ---------- */
-function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSettings(); loadTexts(); loadQuotes(); loadReviews(); loadStats(); }
+function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSpecials(); loadSettings(); loadTexts(); loadQuotes(); loadReviews(); loadStats(); }
 
 /* ---------- shows ---------- */
 async function loadShows(){
@@ -824,6 +835,54 @@ async function delPhoto(id, path){
   await sb.storage.from("foto").remove([path]);
   await sb.from("bushi_photos").delete().eq("id",id);
   toast(t("deleted")); loadPhotos();
+}
+
+/* ---------- posti speciali (ritratti + sfondo) ---------- */
+const SPECIALS = [
+  { key:"portrait_nikolas", tkey:"sp_nik",  maxW:1200 },
+  { key:"portrait_dashnor", tkey:"sp_dash", maxW:1200 },
+  { key:"hero_bg",          tkey:"sp_hero", maxW:1920 },
+];
+async function loadSpecials(){
+  const { data, error } = await sb.from("bushi_settings").select("*").in("key", SPECIALS.map(x=>x.key));
+  if(error){ $("specialList").textContent = t("err")+error.message; return; }
+  window._specials = Object.fromEntries((data||[]).map(r=>[r.key, r.value]));
+  const pub = p => `${SB_URL}/storage/v1/object/public/foto/${p}`;
+  $("specialList").innerHTML = SPECIALS.map(sp=>{
+    const cur = window._specials[sp.key];
+    return `
+    <div class="row">
+      ${cur ? `<img src="${pub(esc(cur))}" alt="">` : `<div style="width:74px;height:56px;border:1px dashed rgba(212,175,55,.4);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:.65rem;flex-shrink:0">${t("sp_none")}</div>`}
+      <div class="grow"><b>${t(sp.tkey)}</b></div>
+      <input type="file" id="spf_${sp.key}" accept="image/*" hidden>
+      <button class="btn btn-gold btn-sm" onclick="$('spf_${sp.key}').click()">${t("sp_upload")}</button>
+      ${cur ? `<button class="btn btn-danger btn-sm" onclick="removeSpecial('${sp.key}')">${t("sp_remove")}</button>` : ""}
+    </div>`;
+  }).join("");
+  SPECIALS.forEach(sp=>{
+    $("spf_"+sp.key).addEventListener("change", ()=>uploadSpecial(sp));
+  });
+}
+async function uploadSpecial(sp){
+  const f = $("spf_"+sp.key).files[0];
+  if(!f) return;
+  toast(t("uploading"));
+  const blob = await resizeImg(f, sp.maxW);
+  const path = "special-"+sp.key+"-"+Date.now()+".jpg";
+  const { error:e1 } = await sb.storage.from("foto").upload(path, blob, { contentType:"image/jpeg" });
+  if(e1){ toast(t("upload_err")+e1.message, true); return; }
+  const old = window._specials[sp.key];
+  const { error:e2 } = await sb.from("bushi_settings").upsert({ key:sp.key, value:path });
+  if(e2){ toast(t("err")+e2.message, true); return; }
+  if(old) await sb.storage.from("foto").remove([old]);
+  toast(t("sp_saved")); loadSpecials();
+}
+async function removeSpecial(key){
+  if(!confirm(t("confirm_del_photo"))) return;
+  const old = window._specials[key];
+  await sb.from("bushi_settings").upsert({ key, value:"" });
+  if(old) await sb.storage.from("foto").remove([old]);
+  toast(t("deleted")); loadSpecials();
 }
 
 /* ---------- settings ---------- */

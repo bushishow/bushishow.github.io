@@ -1,0 +1,11 @@
+COME AGGIUNGERE LE FOTO ALLA GALLERIA
+======================================
+1. Copia qui le foto (jpg o png, meglio se sotto 1 MB l'una)
+2. Apri index.html e cerca "photos:"
+3. Aggiungi una riga per ogni foto, per esempio:
+     { src:"foto/nikolas-chris.jpg", caption:"Nikolas & Chris" },
+     { src:"foto/dashnor-magia.jpg", caption:"Dashnor sul palco" },
+4. Salva: la sezione "Galleria" appare da sola sul sito
+
+Per il video di sfondo del titolo: metti una clip mp4 muta (10-20 secondi)
+nella cartella video/ e scrivi il nome in heroVideo, es: heroVideo:"video/palco.mp4"

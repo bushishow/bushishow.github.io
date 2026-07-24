@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
   .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px;flex-wrap:wrap}
   .top h1{font-size:1.5rem}
   button,.btn{font-family:'Inter',sans-serif;cursor:pointer}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:40px;font-weight:700;font-size:.9rem;border:none;transition:.2s}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:40px;font-weight:700;font-size:.9rem;border:none;transition:.2s;text-decoration:none}
   .btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#141005}
   .btn-ghost{background:transparent;border:1.5px solid rgba(245,242,234,.3);color:var(--text)}
   .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
@@ -30,14 +30,14 @@
   input:focus,textarea:focus,select:focus{border-color:var(--gold)}
   label{font-size:.8rem;color:var(--muted);display:block;margin:12px 0 5px;letter-spacing:.04em}
   .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;margin-bottom:18px}
-  /* login */
-  .login{max-width:380px;margin:14vh auto 0;text-align:center}
+  .login{max-width:380px;margin:12vh auto 0;text-align:center}
   .login .mono{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold-light);margin:0 auto 18px}
-  /* tabs */
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
   .tabs button{background:transparent;border:1px solid rgba(212,175,55,.4);color:var(--muted);padding:9px 20px;border-radius:30px;font-weight:600;font-size:.88rem;transition:.2s}
   .tabs button.active,.tabs button:hover{background:var(--gold);color:#141005;border-color:var(--gold)}
-  /* list rows */
+  .lang-switch{display:inline-flex;gap:4px}
+  .lang-switch button{background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--muted);padding:4px 11px;border-radius:20px;font-size:.75rem;font-weight:700;transition:.2s}
+  .lang-switch button.active,.lang-switch button:hover{background:var(--gold);color:#141005;border-color:var(--gold)}
   .row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07);flex-wrap:wrap}
   .row:last-child{border-bottom:none}
   .row .grow{flex:1;min-width:180px}
@@ -51,6 +51,21 @@
   #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--gold);color:var(--text);padding:12px 26px;border-radius:40px;font-size:.9rem;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.5)}
   .sec-title{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px}
   .sec-title h2{font-size:1.05rem}
+  .prev-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .prev-grid img{width:110px;height:82px;object-fit:cover;border-radius:8px;border:1px solid rgba(212,175,55,.4)}
+  /* mobile */
+  @media(max-width:600px){
+    .wrap{padding:16px 4vw 60px}
+    .top{flex-direction:column;align-items:flex-start;gap:10px}
+    .tabs{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+    .tabs button{white-space:nowrap;flex-shrink:0}
+    .row{align-items:flex-start}
+    .row img{width:64px;height:48px}
+    .row .btn-sm{padding:8px 12px}
+    .login{margin:7vh auto 0;padding:0 5vw}
+    input[type=file]{font-size:.85rem}
+    #toast{width:calc(100% - 32px);text-align:center}
+  }
 </style>
 </head>
 <body>
@@ -59,13 +74,17 @@
 <div class="login" id="loginBox">
   <div class="mono">B</div>
   <h1 style="margin-bottom:6px">The Bushi Show</h1>
-  <p class="muted" style="margin-bottom:22px">Pannello di amministrazione</p>
+  <p class="muted" style="margin-bottom:14px" data-t="login_sub">Administration panel</p>
+  <div class="lang-switch" style="margin-bottom:18px">
+    <button data-lang="en" class="active">EN</button>
+    <button data-lang="it">IT</button>
+  </div>
   <div class="card" style="text-align:left">
     <label>Email</label>
     <input type="email" id="logEmail" autocomplete="username">
     <label>Password</label>
     <input type="password" id="logPass" autocomplete="current-password">
-    <button class="btn btn-gold" id="logBtn" style="width:100%;justify-content:center;margin-top:18px">Entra</button>
+    <button class="btn btn-gold" id="logBtn" style="width:100%;justify-content:center;margin-top:18px" data-t="sign_in">Sign in</button>
     <p class="muted" id="logErr" style="margin-top:10px;color:#e57365" hidden></p>
   </div>
 </div>
@@ -74,105 +93,111 @@
 <div class="wrap" id="app" hidden>
   <div class="top">
     <h1>Admin · The Bushi Show</h1>
-    <div style="display:flex;gap:8px">
-      <a class="btn btn-ghost btn-sm" href="index.html" target="_blank">Vedi il sito</a>
-      <button class="btn btn-ghost btn-sm" id="logoutBtn">Esci</button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="lang-switch">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="it">IT</button>
+      </span>
+      <a class="btn btn-ghost btn-sm" href="index.html" target="_blank" data-t="view_site">View site</a>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" data-t="logout">Log out</button>
     </div>
   </div>
 
   <div class="tabs">
-    <button data-tab="shows" class="active">Spettacoli</button>
-    <button data-tab="videos">Video</button>
-    <button data-tab="photos">Foto</button>
-    <button data-tab="settings">Impostazioni</button>
+    <button data-tab="shows" class="active" data-t="tab_shows">Shows</button>
+    <button data-tab="videos" data-t="tab_videos">Videos</button>
+    <button data-tab="photos" data-t="tab_photos">Photos</button>
+    <button data-tab="settings" data-t="tab_settings">Settings</button>
   </div>
 
-  <!-- SPETTACOLI -->
+  <!-- SHOWS -->
   <div id="tab-shows">
     <div class="card">
-      <div class="sec-title"><h2>Nuovo spettacolo</h2></div>
+      <div class="sec-title"><h2 data-t="new_show">New show</h2></div>
       <div class="grid2">
-        <div><label>Data</label><input type="date" id="shDate"></div>
-        <div><label>Titolo</label><input id="shTitle" placeholder="Nikolas & Chris the Puppet King"></div>
-        <div><label>Locale / Teatro</label><input id="shVenue" placeholder="New York Comedy Club"></div>
-        <div><label>Città</label><input id="shCity" placeholder="Stamford, CT"></div>
+        <div><label data-t="date">Date</label><input type="date" id="shDate"></div>
+        <div><label data-t="title_l">Title</label><input id="shTitle" placeholder="Nikolas & Chris the Puppet King"></div>
+        <div><label data-t="venue">Venue / Theatre</label><input id="shVenue" placeholder="New York Comedy Club"></div>
+        <div><label data-t="city">City</label><input id="shCity" placeholder="Stamford, CT"></div>
       </div>
-      <label>Link biglietti (facoltativo)</label><input id="shUrl" placeholder="https://...">
-      <button class="btn btn-gold" style="margin-top:16px" onclick="addShow()">Aggiungi spettacolo</button>
+      <label data-t="tickets_link">Tickets link (optional)</label><input id="shUrl" placeholder="https://...">
+      <button class="btn btn-gold" style="margin-top:16px" onclick="addShow()" data-t="add_show">Add show</button>
     </div>
     <div class="card">
-      <div class="sec-title"><h2>Prossimi</h2></div>
-      <div id="showsFuture" class="muted">Caricamento...</div>
+      <div class="sec-title"><h2 data-t="upcoming">Upcoming</h2></div>
+      <div id="showsFuture" class="muted">...</div>
     </div>
     <div class="card">
-      <div class="sec-title"><h2>Passati</h2></div>
-      <div id="showsPast" class="muted">Caricamento...</div>
+      <div class="sec-title"><h2 data-t="past">Past</h2></div>
+      <div id="showsPast" class="muted">...</div>
     </div>
   </div>
 
-  <!-- VIDEO -->
+  <!-- VIDEOS -->
   <div id="tab-videos" hidden>
     <div class="card">
-      <div class="sec-title"><h2>Nuovo video</h2></div>
-      <label>Link YouTube</label><input id="vdUrl" placeholder="https://www.youtube.com/watch?v=... oppure https://youtu.be/...">
+      <div class="sec-title"><h2 data-t="new_video">New video</h2></div>
+      <label data-t="yt_link">YouTube link</label><input id="vdUrl" placeholder="https://www.youtube.com/watch?v=...">
+      <div id="vdPrev" hidden style="margin-top:12px"><img style="width:220px;max-width:100%;border-radius:10px;border:1px solid rgba(212,175,55,.4);display:block" alt="Preview"></div>
       <div class="grid2">
-        <div><label>Titolo</label><input id="vdTitle" placeholder="Rai 1 · Dalla strada al palco"></div>
-        <div><label>Sottotitolo (facoltativo)</label><input id="vdSub" placeholder="L'esibizione completa"></div>
+        <div><label data-t="title_l">Title</label><input id="vdTitle" placeholder="Rai 1 · Dalla strada al palco"></div>
+        <div><label data-t="subtitle_opt">Subtitle (optional)</label><input id="vdSub" placeholder="The full performance"></div>
       </div>
-      <button class="btn btn-gold" style="margin-top:16px" onclick="addVideo()">Aggiungi video</button>
-      <p class="muted" style="margin-top:10px">I video si mostrano sul sito in questo ordine: usa le frecce per riordinare, l'occhio per nascondere.</p>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="addVideo()" data-t="add_video">Add video</button>
+      <p class="muted" style="margin-top:10px" data-t="video_hint">Videos appear on the website in this order: use the arrows to reorder, Hide to take one off the site.</p>
     </div>
-    <div class="card"><div id="videosList" class="muted">Caricamento...</div></div>
+    <div class="card"><div id="videosList" class="muted">...</div></div>
   </div>
 
-  <!-- FOTO -->
+  <!-- PHOTOS -->
   <div id="tab-photos" hidden>
     <div class="card">
-      <div class="sec-title"><h2>Carica foto</h2></div>
+      <div class="sec-title"><h2 data-t="upload_photos">Upload photos</h2></div>
       <div class="grid2">
-        <div><label>Album</label>
+        <div><label data-t="album">Album</label>
           <select id="phAlbum">
             <option value="nikolas">Nikolas</option>
             <option value="dashnor">Dashnor</option>
-            <option value="duo" selected>Insieme</option>
+            <option value="duo" selected data-t="together">Together</option>
           </select>
         </div>
-        <div><label>Didascalia (facoltativa)</label><input id="phCap" placeholder="Nikolas & Chris sul palco"></div>
+        <div><label data-t="caption_opt">Caption (optional)</label><input id="phCap" placeholder="Nikolas & Chris on stage"></div>
       </div>
-      <label>File (puoi selezionarne più di uno)</label>
+      <label data-t="files_multi">Files (you can select more than one)</label>
       <input type="file" id="phFile" accept="image/*" multiple>
-      <button class="btn btn-gold" style="margin-top:16px" onclick="uploadPhotos()">Carica</button>
-      <p class="muted" style="margin-top:10px">Le foto vengono ridimensionate e ottimizzate da sole prima del caricamento.</p>
+      <div id="phPrev" class="prev-grid"></div>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="uploadPhotos()" data-t="upload">Upload</button>
+      <p class="muted" style="margin-top:10px" data-t="photo_hint">Photos are resized and optimized automatically before upload.</p>
     </div>
-    <div class="card"><div id="photosList" class="muted">Caricamento...</div></div>
+    <div class="card"><div id="photosList" class="muted">...</div></div>
   </div>
 
-  <!-- IMPOSTAZIONI -->
+  <!-- SETTINGS -->
   <div id="tab-settings" hidden>
     <div class="card">
-      <div class="sec-title"><h2>Contatti</h2></div>
-      <label>Email booking (riceve il modulo del sito)</label><input id="stEmail" placeholder="booking@...">
-      <label>WhatsApp booking (con prefisso, es +1347...)</label><input id="stWa" placeholder="+1...">
+      <div class="sec-title"><h2 data-t="contacts">Contacts</h2></div>
+      <label data-t="booking_email_l">Booking email (receives the website form)</label><input id="stEmail" placeholder="booking@...">
+      <label data-t="whatsapp_l">Booking WhatsApp (with country code, e.g. +1347...)</label><input id="stWa" placeholder="+1...">
     </div>
     <div class="card">
-      <div class="sec-title"><h2>Follower (mostrati sul sito)</h2></div>
+      <div class="sec-title"><h2 data-t="followers">Followers (shown on the website)</h2></div>
       <div class="grid2">
         <div><label>TikTok</label><input id="stTk" type="number" placeholder="2600000"></div>
         <div><label>YouTube</label><input id="stYt" type="number" placeholder="786000"></div>
         <div><label>Instagram</label><input id="stIg" type="number" placeholder="109000"></div>
       </div>
-      <p class="muted" style="margin-top:8px">Scrivi il numero pieno (es 2600000): il sito lo mostra come 2.6M.</p>
+      <p class="muted" style="margin-top:8px" data-t="followers_hint">Type the full number (e.g. 2600000): the website displays it as 2.6M.</p>
     </div>
-    <button class="btn btn-gold" onclick="saveSettings()">Salva impostazioni</button>
+    <button class="btn btn-gold" onclick="saveSettings()" data-t="save_settings">Save settings</button>
 
     <div class="card" style="margin-top:18px">
-      <div class="sec-title"><h2>Sicurezza: cambia password</h2></div>
-      <label>Vecchia password</label><input type="password" id="pwOld" autocomplete="current-password">
+      <div class="sec-title"><h2 data-t="security">Security: change password</h2></div>
+      <label data-t="current_pw">Current password</label><input type="password" id="pwOld" autocomplete="current-password">
       <div class="grid2">
-        <div><label>Nuova password (minimo 8 caratteri)</label><input type="password" id="pwNew" autocomplete="new-password"></div>
-        <div><label>Conferma nuova password</label><input type="password" id="pwConf" autocomplete="new-password"></div>
+        <div><label data-t="new_pw">New password (minimum 8 characters)</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+        <div><label data-t="confirm_pw">Confirm new password</label><input type="password" id="pwConf" autocomplete="new-password"></div>
       </div>
-      <button class="btn btn-gold" style="margin-top:16px" onclick="changePassword()">Cambia password</button>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="changePassword()" data-t="change_pw">Change password</button>
     </div>
   </div>
 </div>
@@ -185,8 +210,89 @@ const SB_URL = "https://yftmbqmodfesprhqqnbw.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik";
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
+/* ---------- lingue admin (EN/IT) ---------- */
+const ADM = {
+  en:{
+    login_sub:"Administration panel", sign_in:"Sign in",
+    login_err:"Sign-in failed: check your email and password.",
+    view_site:"View site", logout:"Log out",
+    tab_shows:"Shows", tab_videos:"Videos", tab_photos:"Photos", tab_settings:"Settings",
+    new_show:"New show", date:"Date", title_l:"Title", venue:"Venue / Theatre", city:"City",
+    tickets_link:"Tickets link (optional)", add_show:"Add show", upcoming:"Upcoming", past:"Past",
+    loading:"Loading...", no_upcoming:"No upcoming shows.", no_past:"No past shows.",
+    tickets:"tickets", del:"Delete", need_date_title:"Date and title are required",
+    show_added:"Show added", confirm_del_show:"Delete this show?", deleted:"Deleted",
+    new_video:"New video", yt_link:"YouTube link", subtitle_opt:"Subtitle (optional)", add_video:"Add video",
+    video_hint:"Videos appear on the website in this order: use the arrows to reorder, Hide to take one off the site.",
+    no_videos:"No videos yet: the website shows the built-in ones. Add one here to take control.",
+    hide:"Hide", show_v:"Show", invalid_yt:"Invalid YouTube link", need_title:"Add a title",
+    video_added:"Video added", confirm_del_video:"Remove this video from the website? (It stays on YouTube)",
+    upload_photos:"Upload photos", album:"Album", together:"Together", caption_opt:"Caption (optional)",
+    files_multi:"Files (you can select more than one)", upload:"Upload",
+    photo_hint:"Photos are resized and optimized automatically before upload.",
+    no_photos:"No photos yet.", no_caption:"(no caption)", choose_file:"Choose at least one file",
+    uploading:"Uploading...", upload_err:"Upload error: ", photos_uploaded:"Photos uploaded!",
+    confirm_del_photo:"Delete this photo?",
+    contacts:"Contacts", booking_email_l:"Booking email (receives the website form)",
+    whatsapp_l:"Booking WhatsApp (with country code, e.g. +1347...)",
+    followers:"Followers (shown on the website)",
+    followers_hint:"Type the full number (e.g. 2600000): the website displays it as 2.6M.",
+    save_settings:"Save settings", settings_saved:"Settings saved",
+    security:"Security: change password", current_pw:"Current password",
+    new_pw:"New password (minimum 8 characters)", confirm_pw:"Confirm new password", change_pw:"Change password",
+    enter_current:"Enter your current password", pw_min:"The new password must be at least 8 characters",
+    pw_mismatch:"The new passwords do not match", pw_same:"The new password is the same as the old one",
+    pw_wrong:"Wrong current password", pw_changed:"Password changed! Use it from your next sign-in.",
+    err:"Error: ", locale:"en-US",
+  },
+  it:{
+    login_sub:"Pannello di amministrazione", sign_in:"Entra",
+    login_err:"Accesso non riuscito: controlla email e password.",
+    view_site:"Vedi il sito", logout:"Esci",
+    tab_shows:"Spettacoli", tab_videos:"Video", tab_photos:"Foto", tab_settings:"Impostazioni",
+    new_show:"Nuovo spettacolo", date:"Data", title_l:"Titolo", venue:"Locale / Teatro", city:"Città",
+    tickets_link:"Link biglietti (facoltativo)", add_show:"Aggiungi spettacolo", upcoming:"Prossimi", past:"Passati",
+    loading:"Caricamento...", no_upcoming:"Nessuno spettacolo in programma.", no_past:"Nessuno spettacolo passato.",
+    tickets:"biglietti", del:"Elimina", need_date_title:"Servono almeno data e titolo",
+    show_added:"Spettacolo aggiunto", confirm_del_show:"Eliminare questo spettacolo?", deleted:"Eliminato",
+    new_video:"Nuovo video", yt_link:"Link YouTube", subtitle_opt:"Sottotitolo (facoltativo)", add_video:"Aggiungi video",
+    video_hint:"I video appaiono sul sito in questo ordine: usa le frecce per riordinare, Nascondi per toglierne uno dal sito.",
+    no_videos:"Nessun video: il sito mostra quelli di partenza. Aggiungine uno qui per prendere il controllo.",
+    hide:"Nascondi", show_v:"Mostra", invalid_yt:"Link YouTube non valido", need_title:"Metti un titolo",
+    video_added:"Video aggiunto", confirm_del_video:"Togliere questo video dal sito? (Resta su YouTube)",
+    upload_photos:"Carica foto", album:"Album", together:"Insieme", caption_opt:"Didascalia (facoltativa)",
+    files_multi:"File (puoi selezionarne più di uno)", upload:"Carica",
+    photo_hint:"Le foto vengono ridimensionate e ottimizzate da sole prima del caricamento.",
+    no_photos:"Nessuna foto ancora.", no_caption:"(senza didascalia)", choose_file:"Scegli almeno un file",
+    uploading:"Caricamento in corso...", upload_err:"Errore caricamento: ", photos_uploaded:"Foto caricate!",
+    confirm_del_photo:"Eliminare questa foto?",
+    contacts:"Contatti", booking_email_l:"Email booking (riceve il modulo del sito)",
+    whatsapp_l:"WhatsApp booking (con prefisso, es +1347...)",
+    followers:"Follower (mostrati sul sito)",
+    followers_hint:"Scrivi il numero pieno (es 2600000): il sito lo mostra come 2.6M.",
+    save_settings:"Salva impostazioni", settings_saved:"Impostazioni salvate",
+    security:"Sicurezza: cambia password", current_pw:"Vecchia password",
+    new_pw:"Nuova password (minimo 8 caratteri)", confirm_pw:"Conferma nuova password", change_pw:"Cambia password",
+    enter_current:"Inserisci la vecchia password", pw_min:"La nuova password deve avere almeno 8 caratteri",
+    pw_mismatch:"Le due nuove password non coincidono", pw_same:"La nuova password è uguale alla vecchia",
+    pw_wrong:"Vecchia password sbagliata", pw_changed:"Password cambiata! Usala dal prossimo accesso.",
+    err:"Errore: ", locale:"it-IT",
+  },
+};
+let AL = localStorage.getItem("adm_lang") || "en";
+const t = k => ADM[AL][k] || ADM.en[k] || k;
+function applyAdmLang(l){
+  AL = ADM[l] ? l : "en";
+  localStorage.setItem("adm_lang", AL);
+  document.documentElement.lang = AL;
+  document.querySelectorAll("[data-t]").forEach(el=>{ el.textContent = t(el.dataset.t); });
+  document.querySelectorAll(".lang-switch button").forEach(b=>b.classList.toggle("active", b.dataset.lang===AL));
+  if(!document.getElementById("app").hidden) loadAll();
+}
+document.querySelectorAll(".lang-switch button").forEach(b=>b.addEventListener("click",()=>applyAdmLang(b.dataset.lang)));
+
 const $ = id => document.getElementById(id);
-function toast(msg, err){ const t=$("toast"); t.textContent=msg; t.style.borderColor=err?"var(--err)":"var(--gold)"; t.hidden=false; setTimeout(()=>t.hidden=true, 3200); }
+function toast(msg, err){ const el=$("toast"); el.textContent=msg; el.style.borderColor=err?"var(--err)":"var(--gold)"; el.hidden=false; setTimeout(()=>el.hidden=true, 3200); }
 const esc = s => (s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- auth ---------- */
@@ -198,7 +304,7 @@ async function boot(){
 $("logBtn").addEventListener("click", async ()=>{
   $("logErr").hidden=true;
   const { error } = await sb.auth.signInWithPassword({ email:$("logEmail").value.trim(), password:$("logPass").value });
-  if(error){ $("logErr").textContent="Accesso non riuscito: controlla email e password."; $("logErr").hidden=false; return; }
+  if(error){ $("logErr").textContent=t("login_err"); $("logErr").hidden=false; return; }
   boot();
 });
 $("logPass").addEventListener("keydown", e=>{ if(e.key==="Enter") $("logBtn").click(); });
@@ -207,72 +313,93 @@ $("logoutBtn").addEventListener("click", async ()=>{ await sb.auth.signOut(); bo
 /* ---------- tabs ---------- */
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x===b));
-  ["shows","videos","photos","settings"].forEach(t=>$("tab-"+t).hidden = t!==b.dataset.tab);
+  ["shows","videos","photos","settings"].forEach(tb=>$("tab-"+tb).hidden = tb!==b.dataset.tab);
 }));
 
 /* ---------- loadAll (SOLO dopo login) ---------- */
 function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSettings(); }
 
-/* ---------- spettacoli ---------- */
+/* ---------- shows ---------- */
 async function loadShows(){
+  $("showsFuture").textContent = t("loading");
   const { data, error } = await sb.from("bushi_shows").select("*").order("date",{ascending:true});
-  if(error){ $("showsFuture").textContent="Errore: "+error.message; return; }
+  if(error){ $("showsFuture").textContent=t("err")+error.message; return; }
   const today = new Date().toISOString().slice(0,10);
-  const fmt = d => new Date(d+"T00:00:00").toLocaleDateString("it-IT",{day:"numeric",month:"short",year:"numeric"});
+  const fmt = d => new Date(d+"T00:00:00").toLocaleDateString(t("locale"),{day:"numeric",month:"short",year:"numeric"});
   const rowHtml = s => `
     <div class="row">
       <span class="pill">${fmt(s.date)}</span>
-      <div class="grow"><b>${esc(s.title)}</b><span>${esc(s.venue)}${s.venue&&s.city?" · ":""}${esc(s.city)}${s.url?` · <a style="color:var(--gold)" href="${esc(s.url)}" target="_blank">biglietti</a>`:""}</span></div>
-      <button class="btn btn-danger btn-sm" onclick="delShow(${s.id})">Elimina</button>
+      <div class="grow"><b>${esc(s.title)}</b><span>${esc(s.venue)}${s.venue&&s.city?" · ":""}${esc(s.city)}${s.url?` · <a style="color:var(--gold)" href="${esc(s.url)}" target="_blank">${t("tickets")}</a>`:""}</span></div>
+      <button class="btn btn-danger btn-sm" onclick="delShow(${s.id})">${t("del")}</button>
     </div>`;
   const fut = data.filter(s=>s.date>=today), past = data.filter(s=>s.date<today).reverse();
-  $("showsFuture").innerHTML = fut.length ? fut.map(rowHtml).join("") : '<p class="muted">Nessuno spettacolo in programma.</p>';
-  $("showsPast").innerHTML  = past.length ? past.map(rowHtml).join("") : '<p class="muted">Nessuno spettacolo passato.</p>';
+  $("showsFuture").innerHTML = fut.length ? fut.map(rowHtml).join("") : `<p class="muted">${t("no_upcoming")}</p>`;
+  $("showsPast").innerHTML  = past.length ? past.map(rowHtml).join("") : `<p class="muted">${t("no_past")}</p>`;
 }
 async function addShow(){
   const rec = { date:$("shDate").value, title:$("shTitle").value.trim(), venue:$("shVenue").value.trim(), city:$("shCity").value.trim(), url:$("shUrl").value.trim() };
-  if(!rec.date || !rec.title){ toast("Servono almeno data e titolo", true); return; }
+  if(!rec.date || !rec.title){ toast(t("need_date_title"), true); return; }
   const { error } = await sb.from("bushi_shows").insert(rec);
-  if(error){ toast("Errore: "+error.message, true); return; }
+  if(error){ toast(t("err")+error.message, true); return; }
   ["shDate","shTitle","shVenue","shCity","shUrl"].forEach(i=>$(i).value="");
-  toast("Spettacolo aggiunto"); loadShows();
+  toast(t("show_added")); loadShows();
 }
 async function delShow(id){
-  if(!confirm("Eliminare questo spettacolo?")) return;
+  if(!confirm(t("confirm_del_show"))) return;
   const { error } = await sb.from("bushi_shows").delete().eq("id",id);
-  if(error){ toast("Errore: "+error.message, true); return; }
-  toast("Eliminato"); loadShows();
+  if(error){ toast(t("err")+error.message, true); return; }
+  toast(t("deleted")); loadShows();
 }
 
-/* ---------- video ---------- */
+/* ---------- videos ---------- */
 function ytId(u){
   const m = (u||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/) || (u||"").match(/^([\w-]{11})$/);
   return m ? m[1] : null;
 }
 async function loadVideos(){
+  $("videosList").textContent = t("loading");
   const { data, error } = await sb.from("bushi_videos").select("*").order("position").order("id");
-  if(error){ $("videosList").textContent="Errore: "+error.message; return; }
-  if(!data.length){ $("videosList").innerHTML='<p class="muted">Nessun video: il sito mostra quelli di partenza. Aggiungine uno qui per prendere il controllo.</p>'; return; }
+  if(error){ $("videosList").textContent=t("err")+error.message; return; }
+  if(!data.length){ $("videosList").innerHTML=`<p class="muted">${t("no_videos")}</p>`; return; }
   $("videosList").innerHTML = data.map((v,i)=>`
     <div class="row" style="${v.visible?"":"opacity:.45"}">
       <img src="https://i.ytimg.com/vi/${esc(v.yt)}/mqdefault.jpg" alt="">
       <div class="grow"><b>${esc(v.title)}</b><span>${esc(v.subtitle)}</span></div>
       <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="moveVideo(${v.id},-1)">▲</button>
       <button class="btn btn-ghost btn-sm" ${i===data.length-1?"disabled":""} onclick="moveVideo(${v.id},1)">▼</button>
-      <button class="btn btn-ghost btn-sm" onclick="toggleVideo(${v.id},${!v.visible})">${v.visible?"Nascondi":"Mostra"}</button>
-      <button class="btn btn-danger btn-sm" onclick="delVideo(${v.id})">Elimina</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleVideo(${v.id},${!v.visible})">${v.visible?t("hide"):t("show_v")}</button>
+      <button class="btn btn-danger btn-sm" onclick="delVideo(${v.id})">${t("del")}</button>
     </div>`).join("");
   window._videos = data;
 }
+/* anteprima video mentre incolli il link */
+$("vdUrl").addEventListener("input", ()=>{
+  const id = ytId($("vdUrl").value.trim());
+  const box = $("vdPrev");
+  if(id){ box.querySelector("img").src = "https://i.ytimg.com/vi/"+id+"/mqdefault.jpg"; box.hidden = false; }
+  else box.hidden = true;
+});
+/* anteprima foto selezionate prima del caricamento */
+$("phFile").addEventListener("change", ()=>{
+  const box = $("phPrev");
+  box.innerHTML = "";
+  [...$("phFile").files].forEach(f=>{
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(f);
+    box.appendChild(img);
+  });
+});
+
 async function addVideo(){
   const id = ytId($("vdUrl").value.trim());
-  if(!id){ toast("Link YouTube non valido", true); return; }
-  if(!$("vdTitle").value.trim()){ toast("Metti un titolo", true); return; }
+  if(!id){ toast(t("invalid_yt"), true); return; }
+  if(!$("vdTitle").value.trim()){ toast(t("need_title"), true); return; }
   const pos = (window._videos?.length||0);
   const { error } = await sb.from("bushi_videos").insert({ yt:id, title:$("vdTitle").value.trim(), subtitle:$("vdSub").value.trim(), position:pos });
-  if(error){ toast("Errore: "+error.message, true); return; }
+  if(error){ toast(t("err")+error.message, true); return; }
   ["vdUrl","vdTitle","vdSub"].forEach(i=>$(i).value="");
-  toast("Video aggiunto"); loadVideos();
+  $("vdPrev").hidden = true;
+  toast(t("video_added")); loadVideos();
 }
 async function moveVideo(id,dir){
   const vs = window._videos; const i = vs.findIndex(v=>v.id===id); const j = i+dir;
@@ -283,11 +410,11 @@ async function moveVideo(id,dir){
 }
 async function toggleVideo(id,vis){ await sb.from("bushi_videos").update({visible:vis}).eq("id",id); loadVideos(); }
 async function delVideo(id){
-  if(!confirm("Eliminare questo video dal sito? (Il video resta su YouTube)")) return;
-  await sb.from("bushi_videos").delete().eq("id",id); toast("Eliminato"); loadVideos();
+  if(!confirm(t("confirm_del_video"))) return;
+  await sb.from("bushi_videos").delete().eq("id",id); toast(t("deleted")); loadVideos();
 }
 
-/* ---------- foto ---------- */
+/* ---------- photos ---------- */
 function resizeImg(file, maxW){
   return new Promise(res=>{
     const img = new Image();
@@ -302,40 +429,41 @@ function resizeImg(file, maxW){
   });
 }
 async function loadPhotos(){
+  $("photosList").textContent = t("loading");
   const { data, error } = await sb.from("bushi_photos").select("*").order("position").order("id");
-  if(error){ $("photosList").textContent="Errore: "+error.message; return; }
-  if(!data.length){ $("photosList").innerHTML='<p class="muted">Nessuna foto ancora.</p>'; return; }
+  if(error){ $("photosList").textContent=t("err")+error.message; return; }
+  if(!data.length){ $("photosList").innerHTML=`<p class="muted">${t("no_photos")}</p>`; return; }
   const pub = p => `${SB_URL}/storage/v1/object/public/foto/${p}`;
   $("photosList").innerHTML = data.map(p=>`
     <div class="row">
       <img src="${pub(esc(p.path))}" alt="">
-      <div class="grow"><b>${esc(p.caption)||"(senza didascalia)"}</b><span class="pill">${esc(p.album)}</span></div>
-      <button class="btn btn-danger btn-sm" onclick="delPhoto(${p.id},'${esc(p.path)}')">Elimina</button>
+      <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${p.album==="duo"?t("together"):esc(p.album)}</span></div>
+      <button class="btn btn-danger btn-sm" onclick="delPhoto(${p.id},'${esc(p.path)}')">${t("del")}</button>
     </div>`).join("");
 }
 async function uploadPhotos(){
   const files = $("phFile").files;
-  if(!files.length){ toast("Scegli almeno un file", true); return; }
-  toast("Caricamento in corso...");
+  if(!files.length){ toast(t("choose_file"), true); return; }
+  toast(t("uploading"));
   for(const f of files){
     const blob = await resizeImg(f, 1600);
     const path = Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
     const { error:e1 } = await sb.storage.from("foto").upload(path, blob, { contentType:"image/jpeg" });
-    if(e1){ toast("Errore upload: "+e1.message, true); return; }
+    if(e1){ toast(t("upload_err")+e1.message, true); return; }
     const { error:e2 } = await sb.from("bushi_photos").insert({ path, caption:$("phCap").value.trim(), album:$("phAlbum").value });
-    if(e2){ toast("Errore: "+e2.message, true); return; }
+    if(e2){ toast(t("err")+e2.message, true); return; }
   }
-  $("phFile").value=""; $("phCap").value="";
-  toast("Foto caricate!"); loadPhotos();
+  $("phFile").value=""; $("phCap").value=""; $("phPrev").innerHTML="";
+  toast(t("photos_uploaded")); loadPhotos();
 }
 async function delPhoto(id, path){
-  if(!confirm("Eliminare questa foto?")) return;
+  if(!confirm(t("confirm_del_photo"))) return;
   await sb.storage.from("foto").remove([path]);
   await sb.from("bushi_photos").delete().eq("id",id);
-  toast("Eliminata"); loadPhotos();
+  toast(t("deleted")); loadPhotos();
 }
 
-/* ---------- impostazioni ---------- */
+/* ---------- settings ---------- */
 const SET_MAP = { booking_email:"stEmail", whatsapp:"stWa", tiktok_followers:"stTk", youtube_subs:"stYt", instagram_followers:"stIg" };
 async function loadSettings(){
   const { data, error } = await sb.from("bushi_settings").select("*");
@@ -345,27 +473,28 @@ async function loadSettings(){
 async function saveSettings(){
   for(const [key, elId] of Object.entries(SET_MAP)){
     const { error } = await sb.from("bushi_settings").upsert({ key, value:$(elId).value.trim() });
-    if(error){ toast("Errore: "+error.message, true); return; }
+    if(error){ toast(t("err")+error.message, true); return; }
   }
-  toast("Impostazioni salvate");
+  toast(t("settings_saved"));
 }
 
-/* ---------- cambia password ---------- */
+/* ---------- change password ---------- */
 async function changePassword(){
   const oldP = $("pwOld").value, newP = $("pwNew").value, conf = $("pwConf").value;
-  if(!oldP){ toast("Inserisci la vecchia password", true); return; }
-  if(newP.length < 8){ toast("La nuova password deve avere almeno 8 caratteri", true); return; }
-  if(newP !== conf){ toast("Le due nuove password non coincidono", true); return; }
-  if(newP === oldP){ toast("La nuova password è uguale alla vecchia", true); return; }
+  if(!oldP){ toast(t("enter_current"), true); return; }
+  if(newP.length < 8){ toast(t("pw_min"), true); return; }
+  if(newP !== conf){ toast(t("pw_mismatch"), true); return; }
+  if(newP === oldP){ toast(t("pw_same"), true); return; }
   const { data:{ user } } = await sb.auth.getUser();
   const { error:e1 } = await sb.auth.signInWithPassword({ email:user.email, password:oldP });
-  if(e1){ toast("Vecchia password sbagliata", true); return; }
+  if(e1){ toast(t("pw_wrong"), true); return; }
   const { error:e2 } = await sb.auth.updateUser({ password:newP });
-  if(e2){ toast("Errore: "+e2.message, true); return; }
+  if(e2){ toast(t("err")+e2.message, true); return; }
   ["pwOld","pwNew","pwConf"].forEach(i=>$(i).value="");
-  toast("Password cambiata! Usala dal prossimo accesso.");
+  toast(t("pw_changed"));
 }
 
+applyAdmLang(AL);
 boot();
 </script>
 </body>

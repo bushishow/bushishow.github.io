@@ -107,6 +107,8 @@
     <button data-tab="shows" class="active" data-t="tab_shows">Shows</button>
     <button data-tab="videos" data-t="tab_videos">Videos</button>
     <button data-tab="photos" data-t="tab_photos">Photos</button>
+    <button data-tab="texts" data-t="tab_texts">Site texts</button>
+    <button data-tab="stats" data-t="tab_stats">Visits</button>
     <button data-tab="settings" data-t="tab_settings">Settings</button>
   </div>
 
@@ -121,7 +123,10 @@
         <div><label data-t="city">City</label><input id="shCity" placeholder="Stamford, CT"></div>
       </div>
       <label data-t="tickets_link">Tickets link (optional)</label><input id="shUrl" placeholder="https://...">
-      <button class="btn btn-gold" style="margin-top:16px" onclick="addShow()" data-t="add_show">Add show</button>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-gold" onclick="addShow()" id="shBtn" data-t="add_show">Add show</button>
+        <button class="btn btn-ghost" onclick="cancelShowEdit()" id="shCancel" hidden data-t="cancel">Cancel</button>
+      </div>
     </div>
     <div class="card">
       <div class="sec-title"><h2 data-t="upcoming">Upcoming</h2></div>
@@ -143,7 +148,10 @@
         <div><label data-t="title_l">Title</label><input id="vdTitle" placeholder="Rai 1 · Dalla strada al palco"></div>
         <div><label data-t="subtitle_opt">Subtitle (optional)</label><input id="vdSub" placeholder="The full performance"></div>
       </div>
-      <button class="btn btn-gold" style="margin-top:16px" onclick="addVideo()" data-t="add_video">Add video</button>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-gold" onclick="addVideo()" id="vdBtn" data-t="add_video">Add video</button>
+        <button class="btn btn-ghost" onclick="cancelVideoEdit()" id="vdCancel" hidden data-t="cancel">Cancel</button>
+      </div>
       <p class="muted" style="margin-top:10px" data-t="video_hint">Videos appear on the website in this order: use the arrows to reorder, Hide to take one off the site.</p>
     </div>
     <div class="card"><div id="videosList" class="muted">...</div></div>
@@ -172,6 +180,60 @@
     <div class="card"><div id="photosList" class="muted">...</div></div>
   </div>
 
+  <!-- SITE TEXTS -->
+  <div id="tab-texts" hidden>
+    <p class="muted" style="margin-bottom:14px" data-t="texts_hint">Leave a field empty to keep the built-in text. Separate paragraphs with an empty line.</p>
+    <div class="card">
+      <div class="sec-title"><h2 data-t="tagline_t">Opening line (under the title)</h2></div>
+      <label>English</label><input id="txTagEn">
+      <label>Italiano</label><input id="txTagIt">
+      <label>Shqip</label><input id="txTagAl">
+    </div>
+    <div class="card">
+      <div class="sec-title"><h2 data-t="bio_n">Nikolas bio</h2></div>
+      <label>English</label><textarea id="txBnEn" rows="5"></textarea>
+      <label>Italiano</label><textarea id="txBnIt" rows="5"></textarea>
+      <label>Shqip</label><textarea id="txBnAl" rows="5"></textarea>
+    </div>
+    <div class="card">
+      <div class="sec-title"><h2 data-t="bio_d">Dashnor bio</h2></div>
+      <label>English</label><textarea id="txBdEn" rows="5"></textarea>
+      <label>Italiano</label><textarea id="txBdIt" rows="5"></textarea>
+      <label>Shqip</label><textarea id="txBdAl" rows="5"></textarea>
+    </div>
+    <button class="btn btn-gold" onclick="saveTexts()" data-t="save_texts">Save texts</button>
+
+    <div class="card" style="margin-top:18px">
+      <div class="sec-title"><h2 data-t="quotes">Quotes</h2></div>
+      <label data-t="quote_text">Quote</label><textarea id="qText" rows="2" placeholder="You are destined to shine."></textarea>
+      <div class="grid2">
+        <div><label data-t="author">Author</label><input id="qAuthor" placeholder="Terry Fator"></div>
+        <div><label data-t="role_l">Role (e.g. Las Vegas legend)</label><input id="qRole" placeholder="America's Got Talent winner"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-gold" onclick="addQuote()" id="qBtn" data-t="add_quote">Add quote</button>
+        <button class="btn btn-ghost" onclick="cancelQuote()" id="qCancel" hidden data-t="cancel">Cancel</button>
+      </div>
+      <div id="quotesList" class="muted" style="margin-top:14px">...</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div id="tab-stats" hidden>
+    <div class="card">
+      <div class="grid2">
+        <div style="text-align:center;padding:10px"><div id="stToday" style="font-size:2.2rem;font-weight:800;color:var(--gold-light)">–</div><div class="muted" data-t="today">Today</div></div>
+        <div style="text-align:center;padding:10px"><div id="stTotal" style="font-size:2.2rem;font-weight:800;color:var(--gold-light)">–</div><div class="muted" data-t="total">Total</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-title"><h2 data-t="last14">Last 14 days</h2></div>
+      <div id="statBars" style="display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:10px"></div>
+      <div id="statLbls" style="display:flex;gap:6px;margin-top:6px"></div>
+      <p class="muted" style="margin-top:14px" data-t="visits_hint">Real visitors only: automated bots are filtered out and each visitor counts once per visit.</p>
+    </div>
+  </div>
+
   <!-- SETTINGS -->
   <div id="tab-settings" hidden>
     <div class="card">
@@ -198,6 +260,12 @@
         <div><label data-t="confirm_pw">Confirm new password</label><input type="password" id="pwConf" autocomplete="new-password"></div>
       </div>
       <button class="btn btn-gold" style="margin-top:16px" onclick="changePassword()" data-t="change_pw">Change password</button>
+    </div>
+
+    <div class="card">
+      <div class="sec-title"><h2 data-t="backup">Backup</h2></div>
+      <p class="muted" style="margin-bottom:14px" data-t="backup_hint">Downloads a file with all shows, videos, quotes, texts and settings. Photos stay safely in the cloud.</p>
+      <button class="btn btn-ghost" onclick="downloadBackup()" data-t="backup_btn">Download backup</button>
     </div>
   </div>
 </div>
@@ -243,6 +311,18 @@ const ADM = {
     enter_current:"Enter your current password", pw_min:"The new password must be at least 8 characters",
     pw_mismatch:"The new passwords do not match", pw_same:"The new password is the same as the old one",
     pw_wrong:"Wrong current password", pw_changed:"Password changed! Use it from your next sign-in.",
+    tab_texts:"Site texts", tab_stats:"Visits",
+    texts_hint:"Leave a field empty to keep the built-in text. Separate paragraphs with an empty line.",
+    tagline_t:"Opening line (under the title)", bio_n:"Nikolas bio", bio_d:"Dashnor bio",
+    save_texts:"Save texts", texts_saved:"Texts saved",
+    quotes:"Quotes", quote_text:"Quote", author:"Author", role_l:"Role (e.g. Las Vegas legend)",
+    add_quote:"Add quote", no_quotes:"No quotes yet: the website shows the built-in Terry Fator quote.",
+    confirm_del_quote:"Delete this quote?", quote_added:"Quote added",
+    today:"Today", total:"Total", last14:"Last 14 days",
+    visits_hint:"Real visitors only: automated bots are filtered out and each visitor counts once per visit.",
+    backup:"Backup", backup_btn:"Download backup",
+    backup_hint:"Downloads a file with all shows, videos, quotes, texts and settings. Photos stay safely in the cloud.",
+    edit:"Edit", save_changes:"Save changes", cancel:"Cancel", updated:"Updated",
     err:"Error: ", locale:"en-US",
   },
   it:{
@@ -276,6 +356,18 @@ const ADM = {
     enter_current:"Inserisci la vecchia password", pw_min:"La nuova password deve avere almeno 8 caratteri",
     pw_mismatch:"Le due nuove password non coincidono", pw_same:"La nuova password è uguale alla vecchia",
     pw_wrong:"Vecchia password sbagliata", pw_changed:"Password cambiata! Usala dal prossimo accesso.",
+    tab_texts:"Testi del sito", tab_stats:"Visite",
+    texts_hint:"Lascia vuoto un campo per tenere il testo di partenza. Separa i paragrafi con una riga vuota.",
+    tagline_t:"Frase d'apertura (sotto il titolo)", bio_n:"Bio di Nikolas", bio_d:"Bio di Dashnor",
+    save_texts:"Salva testi", texts_saved:"Testi salvati",
+    quotes:"Citazioni", quote_text:"Citazione", author:"Autore", role_l:"Ruolo (es. leggenda di Las Vegas)",
+    add_quote:"Aggiungi citazione", no_quotes:"Nessuna citazione: il sito mostra quella di Terry Fator.",
+    confirm_del_quote:"Eliminare questa citazione?", quote_added:"Citazione aggiunta",
+    today:"Oggi", total:"Totale", last14:"Ultimi 14 giorni",
+    visits_hint:"Solo visitatori reali: i bot vengono filtrati e ogni visitatore conta una volta per visita.",
+    backup:"Backup", backup_btn:"Scarica backup",
+    backup_hint:"Scarica un file con tutti gli spettacoli, video, citazioni, testi e impostazioni. Le foto restano al sicuro nel cloud.",
+    edit:"Modifica", save_changes:"Salva modifiche", cancel:"Annulla", updated:"Aggiornato",
     err:"Errore: ", locale:"it-IT",
   },
 };
@@ -313,11 +405,11 @@ $("logoutBtn").addEventListener("click", async ()=>{ await sb.auth.signOut(); bo
 /* ---------- tabs ---------- */
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x===b));
-  ["shows","videos","photos","settings"].forEach(tb=>$("tab-"+tb).hidden = tb!==b.dataset.tab);
+  ["shows","videos","photos","texts","stats","settings"].forEach(tb=>$("tab-"+tb).hidden = tb!==b.dataset.tab);
 }));
 
 /* ---------- loadAll (SOLO dopo login) ---------- */
-function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSettings(); }
+function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSettings(); loadTexts(); loadQuotes(); loadStats(); }
 
 /* ---------- shows ---------- */
 async function loadShows(){
@@ -330,19 +422,38 @@ async function loadShows(){
     <div class="row">
       <span class="pill">${fmt(s.date)}</span>
       <div class="grow"><b>${esc(s.title)}</b><span>${esc(s.venue)}${s.venue&&s.city?" · ":""}${esc(s.city)}${s.url?` · <a style="color:var(--gold)" href="${esc(s.url)}" target="_blank">${t("tickets")}</a>`:""}</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="editShow(${s.id})">${t("edit")}</button>
       <button class="btn btn-danger btn-sm" onclick="delShow(${s.id})">${t("del")}</button>
     </div>`;
   const fut = data.filter(s=>s.date>=today), past = data.filter(s=>s.date<today).reverse();
   $("showsFuture").innerHTML = fut.length ? fut.map(rowHtml).join("") : `<p class="muted">${t("no_upcoming")}</p>`;
   $("showsPast").innerHTML  = past.length ? past.map(rowHtml).join("") : `<p class="muted">${t("no_past")}</p>`;
+  window._shows = data;
+}
+let _editShow = null;
+function editShow(id){
+  const s = (window._shows||[]).find(x=>x.id===id); if(!s) return;
+  _editShow = id;
+  $("shDate").value=s.date; $("shTitle").value=s.title; $("shVenue").value=s.venue; $("shCity").value=s.city; $("shUrl").value=s.url;
+  const b=$("shBtn"); b.dataset.t="save_changes"; b.textContent=t("save_changes");
+  $("shCancel").hidden=false;
+  $("shDate").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function cancelShowEdit(){
+  _editShow = null;
+  ["shDate","shTitle","shVenue","shCity","shUrl"].forEach(i=>$(i).value="");
+  const b=$("shBtn"); b.dataset.t="add_show"; b.textContent=t("add_show");
+  $("shCancel").hidden=true;
 }
 async function addShow(){
   const rec = { date:$("shDate").value, title:$("shTitle").value.trim(), venue:$("shVenue").value.trim(), city:$("shCity").value.trim(), url:$("shUrl").value.trim() };
   if(!rec.date || !rec.title){ toast(t("need_date_title"), true); return; }
-  const { error } = await sb.from("bushi_shows").insert(rec);
+  const { error } = _editShow
+    ? await sb.from("bushi_shows").update(rec).eq("id",_editShow)
+    : await sb.from("bushi_shows").insert(rec);
   if(error){ toast(t("err")+error.message, true); return; }
-  ["shDate","shTitle","shVenue","shCity","shUrl"].forEach(i=>$(i).value="");
-  toast(t("show_added")); loadShows();
+  toast(_editShow ? t("updated") : t("show_added"));
+  cancelShowEdit(); loadShows();
 }
 async function delShow(id){
   if(!confirm(t("confirm_del_show"))) return;
@@ -368,6 +479,7 @@ async function loadVideos(){
       <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="moveVideo(${v.id},-1)">▲</button>
       <button class="btn btn-ghost btn-sm" ${i===data.length-1?"disabled":""} onclick="moveVideo(${v.id},1)">▼</button>
       <button class="btn btn-ghost btn-sm" onclick="toggleVideo(${v.id},${!v.visible})">${v.visible?t("hide"):t("show_v")}</button>
+      <button class="btn btn-ghost btn-sm" onclick="editVideo(${v.id})">${t("edit")}</button>
       <button class="btn btn-danger btn-sm" onclick="delVideo(${v.id})">${t("del")}</button>
     </div>`).join("");
   window._videos = data;
@@ -390,16 +502,34 @@ $("phFile").addEventListener("change", ()=>{
   });
 });
 
+let _editVideo = null;
+function editVideo(id){
+  const v = (window._videos||[]).find(x=>x.id===id); if(!v) return;
+  _editVideo = id;
+  $("vdUrl").value = "https://youtu.be/"+v.yt; $("vdTitle").value=v.title; $("vdSub").value=v.subtitle||"";
+  $("vdUrl").dispatchEvent(new Event("input"));
+  const b=$("vdBtn"); b.dataset.t="save_changes"; b.textContent=t("save_changes");
+  $("vdCancel").hidden=false;
+  $("vdUrl").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function cancelVideoEdit(){
+  _editVideo = null;
+  ["vdUrl","vdTitle","vdSub"].forEach(i=>$(i).value="");
+  $("vdPrev").hidden = true;
+  const b=$("vdBtn"); b.dataset.t="add_video"; b.textContent=t("add_video");
+  $("vdCancel").hidden=true;
+}
 async function addVideo(){
   const id = ytId($("vdUrl").value.trim());
   if(!id){ toast(t("invalid_yt"), true); return; }
   if(!$("vdTitle").value.trim()){ toast(t("need_title"), true); return; }
-  const pos = (window._videos?.length||0);
-  const { error } = await sb.from("bushi_videos").insert({ yt:id, title:$("vdTitle").value.trim(), subtitle:$("vdSub").value.trim(), position:pos });
+  const rec = { yt:id, title:$("vdTitle").value.trim(), subtitle:$("vdSub").value.trim() };
+  let error;
+  if(_editVideo){ ({ error } = await sb.from("bushi_videos").update(rec).eq("id",_editVideo)); }
+  else { rec.position = (window._videos?.length||0); ({ error } = await sb.from("bushi_videos").insert(rec)); }
   if(error){ toast(t("err")+error.message, true); return; }
-  ["vdUrl","vdTitle","vdSub"].forEach(i=>$(i).value="");
-  $("vdPrev").hidden = true;
-  toast(t("video_added")); loadVideos();
+  toast(_editVideo ? t("updated") : t("video_added"));
+  cancelVideoEdit(); loadVideos();
 }
 async function moveVideo(id,dir){
   const vs = window._videos; const i = vs.findIndex(v=>v.id===id); const j = i+dir;
@@ -434,12 +564,38 @@ async function loadPhotos(){
   if(error){ $("photosList").textContent=t("err")+error.message; return; }
   if(!data.length){ $("photosList").innerHTML=`<p class="muted">${t("no_photos")}</p>`; return; }
   const pub = p => `${SB_URL}/storage/v1/object/public/foto/${p}`;
-  $("photosList").innerHTML = data.map(p=>`
+  window._photos = data;
+  $("photosList").innerHTML = data.map(p=>{
+    if(p.id === _phEdit) return `
+    <div class="row">
+      <img src="${pub(esc(p.path))}" alt="">
+      <div class="grow" style="display:grid;gap:8px">
+        <input id="phEditCap" value="${esc(p.caption)}" placeholder="${t("caption_opt")}">
+        <select id="phEditAlb">
+          <option value="nikolas" ${p.album==="nikolas"?"selected":""}>Nikolas</option>
+          <option value="dashnor" ${p.album==="dashnor"?"selected":""}>Dashnor</option>
+          <option value="duo" ${p.album==="duo"?"selected":""}>${t("together")}</option>
+        </select>
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="savePhotoEdit(${p.id})">${t("save_changes")}</button>
+      <button class="btn btn-ghost btn-sm" onclick="cancelPhotoEdit()">${t("cancel")}</button>
+    </div>`;
+    return `
     <div class="row">
       <img src="${pub(esc(p.path))}" alt="">
       <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${p.album==="duo"?t("together"):esc(p.album)}</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="editPhoto(${p.id})">${t("edit")}</button>
       <button class="btn btn-danger btn-sm" onclick="delPhoto(${p.id},'${esc(p.path)}')">${t("del")}</button>
-    </div>`).join("");
+    </div>`;
+  }).join("");
+}
+let _phEdit = null;
+function editPhoto(id){ _phEdit = id; loadPhotos(); }
+function cancelPhotoEdit(){ _phEdit = null; loadPhotos(); }
+async function savePhotoEdit(id){
+  const { error } = await sb.from("bushi_photos").update({ caption:$("phEditCap").value.trim(), album:$("phEditAlb").value }).eq("id",id);
+  if(error){ toast(t("err")+error.message, true); return; }
+  _phEdit = null; toast(t("updated")); loadPhotos();
 }
 async function uploadPhotos(){
   const files = $("phFile").files;
@@ -476,6 +632,101 @@ async function saveSettings(){
     if(error){ toast(t("err")+error.message, true); return; }
   }
   toast(t("settings_saved"));
+}
+
+/* ---------- site texts ---------- */
+const TXT_MAP = {
+  txt_tagline_en:"txTagEn", txt_tagline_it:"txTagIt", txt_tagline_al:"txTagAl",
+  txt_bio_nikolas_en:"txBnEn", txt_bio_nikolas_it:"txBnIt", txt_bio_nikolas_al:"txBnAl",
+  txt_bio_dashnor_en:"txBdEn", txt_bio_dashnor_it:"txBdIt", txt_bio_dashnor_al:"txBdAl",
+};
+async function loadTexts(){
+  const { data, error } = await sb.from("bushi_settings").select("*").like("key","txt_%");
+  if(error) return;
+  data.forEach(r=>{ const el = TXT_MAP[r.key] && $(TXT_MAP[r.key]); if(el) el.value = r.value; });
+}
+async function saveTexts(){
+  for(const [key, elId] of Object.entries(TXT_MAP)){
+    const { error } = await sb.from("bushi_settings").upsert({ key, value:$(elId).value.trim() });
+    if(error){ toast(t("err")+error.message, true); return; }
+  }
+  toast(t("texts_saved"));
+}
+
+/* ---------- quotes ---------- */
+let _editQuote = null;
+async function loadQuotes(){
+  const { data, error } = await sb.from("bushi_quotes").select("*").order("position").order("id");
+  if(error){ $("quotesList").textContent = t("err")+error.message; return; }
+  window._quotes = data;
+  if(!data.length){ $("quotesList").innerHTML = `<p class="muted">${t("no_quotes")}</p>`; return; }
+  $("quotesList").innerHTML = data.map(q=>`
+    <div class="row">
+      <div class="grow"><b>“${esc(q.text)}”</b><span>${esc(q.author)}${q.role?" · "+esc(q.role):""}</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="editQuote(${q.id})">${t("edit")}</button>
+      <button class="btn btn-danger btn-sm" onclick="delQuote(${q.id})">${t("del")}</button>
+    </div>`).join("");
+}
+function editQuote(id){
+  const q = (window._quotes||[]).find(x=>x.id===id); if(!q) return;
+  _editQuote = id;
+  $("qText").value=q.text; $("qAuthor").value=q.author; $("qRole").value=q.role||"";
+  const b=$("qBtn"); b.dataset.t="save_changes"; b.textContent=t("save_changes");
+  $("qCancel").hidden=false;
+  $("qText").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function cancelQuote(){
+  _editQuote = null;
+  ["qText","qAuthor","qRole"].forEach(i=>$(i).value="");
+  const b=$("qBtn"); b.dataset.t="add_quote"; b.textContent=t("add_quote");
+  $("qCancel").hidden=true;
+}
+async function addQuote(){
+  const rec = { text:$("qText").value.trim(), author:$("qAuthor").value.trim(), role:$("qRole").value.trim() };
+  if(!rec.text || !rec.author){ toast(t("err")+t("quote_text")+" + "+t("author"), true); return; }
+  const { error } = _editQuote
+    ? await sb.from("bushi_quotes").update(rec).eq("id",_editQuote)
+    : await sb.from("bushi_quotes").insert(rec);
+  if(error){ toast(t("err")+error.message, true); return; }
+  toast(_editQuote ? t("updated") : t("quote_added"));
+  cancelQuote(); loadQuotes();
+}
+async function delQuote(id){
+  if(!confirm(t("confirm_del_quote"))) return;
+  await sb.from("bushi_quotes").delete().eq("id",id);
+  toast(t("deleted")); loadQuotes();
+}
+
+/* ---------- visits stats ---------- */
+async function loadStats(){
+  const { data, error } = await sb.from("bushi_visits").select("*").order("day",{ascending:true});
+  if(error) return;
+  const todayStr = new Date().toISOString().slice(0,10);
+  const byDay = Object.fromEntries(data.map(r=>[r.day, r.count]));
+  $("stToday").textContent = byDay[todayStr] || 0;
+  $("stTotal").textContent = data.reduce((a,r)=>a+r.count,0);
+  const days = [];
+  for(let i=13;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    days.push({ lbl:d.getDate(), n:byDay[d.toISOString().slice(0,10)]||0 });
+  }
+  const max = Math.max(1, ...days.map(d=>d.n));
+  $("statBars").innerHTML = days.map(d=>`<div title="${d.n}" style="flex:1;background:linear-gradient(180deg,var(--gold-light),var(--gold));border-radius:4px 4px 0 0;height:${Math.max(3,Math.round(d.n/max*100))}%"></div>`).join("");
+  $("statLbls").innerHTML = days.map(d=>`<div style="flex:1;text-align:center;font-size:.65rem;color:var(--muted)">${d.lbl}</div>`).join("");
+}
+
+/* ---------- backup ---------- */
+async function downloadBackup(){
+  const out = { exported_at:new Date().toISOString() };
+  for(const tb of ["bushi_shows","bushi_videos","bushi_photos","bushi_quotes","bushi_settings","bushi_visits"]){
+    const { data } = await sb.from(tb).select("*");
+    out[tb] = data || [];
+  }
+  const blob = new Blob([JSON.stringify(out,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "bushishow-backup-"+new Date().toISOString().slice(0,10)+".json";
+  a.click();
 }
 
 /* ---------- change password ---------- */

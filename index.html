@@ -373,9 +373,9 @@
         <p data-i18n="tv_imdb">Known for "The Dummy Detective". Trilingual actor, singer and performer. Full profile on IMDb.</p>
       </div>
     </div>
-    <blockquote class="reveal">
-      “Congratulations Nikolas Bushi on your Albania's Got Talent win. You are destined to&nbsp;shine.”
-      <footer>Terry Fator, <span data-i18n="quote_tf">Las Vegas legend & America's Got Talent winner</span></footer>
+    <blockquote class="reveal" id="quoteBox" style="transition:opacity .5s ease">
+      <span id="quoteText">“Congratulations Nikolas Bushi on your Albania's Got Talent win. You are destined to&nbsp;shine.”</span>
+      <footer id="quoteFoot">Terry Fator, <span data-i18n="quote_tf">Las Vegas legend & America's Got Talent winner</span></footer>
     </blockquote>
   </div>
 </section>
@@ -792,7 +792,7 @@ const I18N = {
 };
 
 /* ---------- render ---------- */
-let lang = "en";
+let lang = "en", TXT = {};
 
 function renderVideos(){
   document.getElementById("videoGrid").innerHTML = CONFIG.videos.map(v=>`
@@ -892,6 +892,14 @@ function applyLang(l){
     const t = I18N[l][el.dataset.i18n];
     if(t) el.textContent = t;
   });
+  /* testi personalizzati dal pannello admin (se presenti) */
+  const pickTxt = o => o && (o[l] || o.en || o.it || o.al);
+  const escT = s => s.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const tgl = pickTxt(TXT.tagline);
+  if(tgl) document.querySelector('[data-i18n="tagline"]').textContent = tgl;
+  const setBio = (sel, txt) => { if(txt) document.querySelector(sel).innerHTML = txt.split(/\n\s*\n/).map(p=>"<p>"+escT(p)+"</p>").join(""); };
+  setBio("#about .bio-text", pickTxt(TXT.bio_nikolas));
+  setBio("#dashnor .bio-text", pickTxt(TXT.bio_dashnor));
   const T = I18N[l];
   document.getElementById("fName").placeholder = T.f_name;
   document.getElementById("fEmail").placeholder = T.f_email;
@@ -948,13 +956,28 @@ async function sbGet(path){
 }
 (async function loadRemote(){
   try{
-    const [settings, videos, shows, photos] = await Promise.all([
+    const [settings, videos, shows, photos, quotes] = await Promise.all([
       sbGet("bushi_settings?select=*"),
       sbGet("bushi_videos?select=*&visible=eq.true&order=position&order=id"),
       sbGet("bushi_shows?select=*&order=date"),
       sbGet("bushi_photos?select=*&order=position&order=id"),
+      sbGet("bushi_quotes?select=*&order=position&order=id"),
     ]);
+    if(quotes.length){
+      const qt = document.getElementById("quoteText"), qf = document.getElementById("quoteFoot"), qb = document.getElementById("quoteBox");
+      let qi = 0;
+      const showQ = ()=>{ const q = quotes[qi]; qt.textContent = "“"+q.text+"”"; qf.textContent = q.author+(q.role? ", "+q.role : ""); };
+      showQ();
+      if(quotes.length>1) setInterval(()=>{
+        qb.style.opacity = 0;
+        setTimeout(()=>{ qi = (qi+1)%quotes.length; showQ(); qb.style.opacity = 1; }, 500);
+      }, 7000);
+    }
     const S = Object.fromEntries(settings.map(r=>[r.key, r.value]));
+    Object.entries(S).forEach(([k,v])=>{
+      const m = k.match(/^txt_(tagline|bio_nikolas|bio_dashnor)_(en|it|al)$/);
+      if(m && v){ (TXT[m[1]] = TXT[m[1]] || {})[m[2]] = v; }
+    });
     if(S.booking_email){
       CONFIG.bookingEmail = S.booking_email;
       document.getElementById("bookForm").action = "https://formsubmit.co/"+S.booking_email;
@@ -981,6 +1004,22 @@ async function sbGet(path){
     applyLang(lang);
   }catch(e){ /* database vuoto o non raggiungibile: il sito usa i contenuti di riserva */ }
 })();
+
+/* conteggio visite REALI: esclusi bot/browser automatici, 1 conteggio per visita,
+   confermato solo dopo 4 secondi di permanenza sulla pagina */
+try{
+  if(!navigator.webdriver
+     && !/bot|crawl|spider|headless|lighthouse|preview|slurp|fetch/i.test(navigator.userAgent)
+     && !sessionStorage.getItem("bvis")){
+    setTimeout(()=>{
+      fetch(SB_URL+"/rest/v1/rpc/bushi_hit", {
+        method:"POST",
+        headers:{ apikey:SB_KEY, Authorization:"Bearer "+SB_KEY, "Content-Type":"application/json" },
+        body:"{}"
+      }).then(()=>sessionStorage.setItem("bvis","1")).catch(()=>{});
+    }, 4000);
+  }
+}catch(e){}
 
 /* ---------- sfondo magico: polvere d'oro fluttuante ---------- */
 (function(){

@@ -61,6 +61,21 @@
     font-family:'Inter',sans-serif;outline:none;margin-left:8px;
   }
   .lang-select option{background:#13131d;color:var(--text)}
+  .burger{
+    display:none;background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold-light);
+    width:40px;height:34px;border-radius:10px;cursor:pointer;font-size:1.05rem;line-height:1;
+  }
+  .mobile-menu{
+    position:fixed;top:60px;left:0;right:0;z-index:99;
+    background:rgba(8,8,13,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(212,175,55,.3);display:grid;padding:6px 0 14px;
+  }
+  .mobile-menu a{
+    padding:13px 7vw;color:var(--text);text-decoration:none;font-weight:600;
+    letter-spacing:.04em;border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .mobile-menu a:last-child{border-bottom:none}
+  .mobile-menu a:hover{color:var(--gold)}
 
   /* ---------- HERO ---------- */
   header{
@@ -327,6 +342,13 @@
     .bio-wrap,.bio-wrap.has-photo{grid-template-columns:1fr;gap:28px}
     .bio-portrait{max-width:320px;margin:0 auto;width:100%}
     nav .links a[data-nav]{display:none}
+    .burger{display:grid;place-items:center}
+    nav{padding:12px 4vw}
+    nav .logo{font-size:.78rem;gap:7px;letter-spacing:.03em}
+    nav .logo img{height:26px !important}
+    nav .links{gap:8px;flex-wrap:nowrap}
+    .lang-select{padding:4px 7px;font-size:.75rem}
+    .mobile-menu{top:52px}
   }
 </style>
 </head>
@@ -343,6 +365,7 @@
     <a data-nav href="#dashnor" data-i18n="nav_dashnor">Dashnor</a>
     <a data-nav href="#social" data-i18n="nav_social">Social</a>
     <a data-nav href="#booking" data-i18n="nav_booking">Booking</a>
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
     <select class="lang-select" id="langSel" aria-label="Language">
       <option value="en">EN</option>
       <option value="it">IT</option>
@@ -354,6 +377,16 @@
     </select>
   </div>
 </nav>
+<div id="mobileMenu" class="mobile-menu" hidden>
+  <a href="#videos" data-i18n="nav_videos">Videos</a>
+  <a href="#shows" data-i18n="nav_shows">Shows</a>
+  <a href="gallery.html" data-i18n="nav_gallery">Gallery</a>
+  <a href="#tv" data-i18n="nav_tv">TV & Awards</a>
+  <a href="#about" data-i18n="nav_about">Nikolas</a>
+  <a href="#dashnor" data-i18n="nav_dashnor">Dashnor</a>
+  <a href="#social" data-i18n="nav_social">Social</a>
+  <a href="#booking" data-i18n="nav_booking">Booking</a>
+</div>
 
 <header id="top">
   <div class="hero-bg" id="heroBg" hidden></div>
@@ -1037,6 +1070,11 @@ function applyLang(l){
   renderVideos(); renderSocials(); renderShows(); renderGallery();
 }
 document.getElementById("langSel").addEventListener("change",e=>applyLang(e.target.value));
+
+/* menu mobile */
+const mMenu = document.getElementById("mobileMenu");
+document.getElementById("burger").addEventListener("click", ()=>{ mMenu.hidden = !mMenu.hidden; });
+mMenu.querySelectorAll("a").forEach(a=>a.addEventListener("click", ()=>{ mMenu.hidden = true; }));
 
 /* recensioni dei clienti */
 let REVIEWS = [];

@@ -89,6 +89,11 @@
     <p class="muted" id="logErr" style="margin-top:10px;color:#e57365" hidden></p>
     <p style="margin-top:14px;text-align:center"><a href="#" id="forgotLink" data-t="forgot_pw" style="color:var(--gold);font-size:.85rem;text-decoration:none">Forgot password?</a></p>
   </div>
+  <div class="card" id="lockBox" hidden>
+    <p class="muted" style="margin-bottom:16px" data-t="bio_locked_sub">Panel locked</p>
+    <button class="btn btn-gold" id="unlockBtn" style="width:100%;justify-content:center">Unlock with Face ID / Touch ID</button>
+    <p style="margin-top:14px"><a href="#" id="lockPwLink" data-t="bio_use_pw" style="color:var(--gold);font-size:.85rem;text-decoration:none">Use password instead</a></p>
+  </div>
   <div class="card" id="resetBox" style="text-align:left" hidden>
     <h2 data-t="new_pw_title" style="font-size:1rem;margin-bottom:4px;font-family:'Inter',sans-serif;color:var(--text)">Set a new password</h2>
     <label data-t="new_pw">New password (minimum 8 characters)</label><input type="password" id="rsNew" autocomplete="new-password">
@@ -271,6 +276,12 @@
     </div>
 
     <div class="card">
+      <div class="sec-title"><h2 data-t="bio_title">Face ID / Touch ID</h2></div>
+      <p class="muted" style="margin-bottom:14px" data-t="bio_hint">Unlock the panel on this device with your face or fingerprint instead of typing the password. You can turn it off any time.</p>
+      <button class="btn btn-gold" id="bioBtn" onclick="toggleBio()">Enable on this device</button>
+    </div>
+
+    <div class="card">
       <div class="sec-title"><h2 data-t="backup">Backup</h2></div>
       <p class="muted" style="margin-bottom:14px" data-t="backup_hint">Downloads a file with all shows, videos, quotes, texts and settings. Photos stay safely in the cloud.</p>
       <button class="btn btn-ghost" onclick="downloadBackup()" data-t="backup_btn">Download backup</button>
@@ -335,6 +346,12 @@ const ADM = {
     forgot_pw:"Forgot password?", reset_sent:"Check your email: we sent you a link to set a new password.",
     enter_email_first:"Type your email above first", new_pw_title:"Set a new password",
     captcha_req:"Please complete the \"I am human\" verification first.",
+    bio_title:"Face ID / Touch ID",
+    bio_hint:"Unlock the panel on this device with your face or fingerprint instead of typing the password. You can turn it off any time.",
+    bio_enable:"Enable on this device", bio_disable:"Disable on this device",
+    bio_enabled:"Enabled! From now on, unlock with Face ID / Touch ID.", bio_disabled:"Disabled.",
+    bio_fail:"Verification cancelled or failed.",
+    bio_locked_sub:"Panel locked", bio_unlock:"Unlock with Face ID / Touch ID", bio_use_pw:"Use password instead",
     err:"Error: ", locale:"en-US",
   },
   it:{
@@ -383,6 +400,12 @@ const ADM = {
     forgot_pw:"Password dimenticata?", reset_sent:"Controlla la posta: ti abbiamo inviato un link per impostare una nuova password.",
     enter_email_first:"Scrivi prima la tua email qui sopra", new_pw_title:"Imposta una nuova password",
     captcha_req:"Completa prima la verifica \"Sono umano\".",
+    bio_title:"Face ID / Touch ID",
+    bio_hint:"Sblocca il pannello su questo dispositivo con il viso o l'impronta invece di scrivere la password. Puoi disattivarlo quando vuoi.",
+    bio_enable:"Attiva su questo dispositivo", bio_disable:"Disattiva su questo dispositivo",
+    bio_enabled:"Attivato! Da ora sblocchi con Face ID / Touch ID.", bio_disabled:"Disattivato.",
+    bio_fail:"Verifica annullata o non riuscita.",
+    bio_locked_sub:"Pannello bloccato", bio_unlock:"Sblocca con Face ID / Touch ID", bio_use_pw:"Usa la password",
     err:"Errore: ", locale:"it-IT",
   },
 };
@@ -394,6 +417,7 @@ function applyAdmLang(l){
   document.documentElement.lang = AL;
   document.querySelectorAll("[data-t]").forEach(el=>{ el.textContent = t(el.dataset.t); });
   document.querySelectorAll(".lang-switch button").forEach(b=>b.classList.toggle("active", b.dataset.lang===AL));
+  updateBioBtn();
   if(!document.getElementById("app").hidden) loadAll();
 }
 document.querySelectorAll(".lang-switch button").forEach(b=>b.addEventListener("click",()=>applyAdmLang(b.dataset.lang)));
@@ -402,11 +426,66 @@ const $ = id => document.getElementById(id);
 function toast(msg, err){ const el=$("toast"); el.textContent=msg; el.style.borderColor=err?"var(--err)":"var(--gold)"; el.hidden=false; setTimeout(()=>el.hidden=true, 3200); }
 const esc = s => (s||"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
+/* ---------- Face ID / Touch ID (blocco locale del pannello) ---------- */
+const BIO_KEY = "bushi_bio_cred";
+const bioEnabled = () => !!localStorage.getItem(BIO_KEY);
+function updateBioBtn(){
+  const b = $("bioBtn");
+  if(b) b.textContent = bioEnabled() ? t("bio_disable") : t("bio_enable");
+}
+async function toggleBio(){
+  if(bioEnabled()){
+    localStorage.removeItem(BIO_KEY);
+    toast(t("bio_disabled")); updateBioBtn(); return;
+  }
+  try{
+    const cred = await navigator.credentials.create({ publicKey:{
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rp:{ name:"The Bushi Show Admin" },
+      user:{ id: crypto.getRandomValues(new Uint8Array(16)), name:"admin", displayName:"The Bushi Show" },
+      pubKeyCredParams:[ {type:"public-key",alg:-7}, {type:"public-key",alg:-257} ],
+      authenticatorSelection:{ authenticatorAttachment:"platform", userVerification:"required" },
+      timeout:60000,
+    }});
+    localStorage.setItem(BIO_KEY, btoa(String.fromCharCode(...new Uint8Array(cred.rawId))));
+    toast(t("bio_enabled"));
+  }catch(e){ toast(t("bio_fail"), true); }
+  updateBioBtn();
+}
+async function bioUnlock(){
+  try{
+    const raw = Uint8Array.from(atob(localStorage.getItem(BIO_KEY)), c=>c.charCodeAt(0));
+    await navigator.credentials.get({ publicKey:{
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials:[ { type:"public-key", id:raw, transports:["internal"] } ],
+      userVerification:"required", timeout:60000,
+    }});
+    $("loginBox").hidden = true; $("app").hidden = false; loadAll();
+  }catch(e){ toast(t("bio_fail"), true); }
+}
+document.addEventListener("DOMContentLoaded", ()=>{});
+$("unlockBtn").addEventListener("click", bioUnlock);
+$("lockPwLink").addEventListener("click", async e=>{
+  e.preventDefault();
+  localStorage.removeItem(BIO_KEY);
+  await sb.auth.signOut();
+  boot();
+});
+
 /* ---------- auth ---------- */
 async function boot(){
   const { data:{ session } } = await sb.auth.getSession();
-  if(session){ $("loginBox").hidden=true; $("app").hidden=false; loadAll(); }
-  else { $("loginBox").hidden=false; $("app").hidden=true; }
+  const loginCard = document.querySelector("#loginBox .card");
+  if(session && bioEnabled()){
+    $("loginBox").hidden=false; $("app").hidden=true;
+    loginCard.hidden = true; $("lockBox").hidden = false;
+    $("unlockBtn").textContent = t("bio_unlock");
+  }
+  else if(session){ $("loginBox").hidden=true; $("app").hidden=false; loadAll(); }
+  else {
+    $("loginBox").hidden=false; $("app").hidden=true;
+    loginCard.hidden = false; $("lockBox").hidden = true;
+  }
 }
 $("logBtn").addEventListener("click", async ()=>{
   $("logErr").hidden=true;

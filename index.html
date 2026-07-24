@@ -931,6 +931,50 @@ const code = (navigator.language||"en").slice(0,2).toLowerCase();
 const MAP = {it:"it",sq:"al",de:"de",fr:"fr",es:"es",ru:"ru"};
 applyLang(MAP[code]||"en");
 
+/* ---------- contenuti dal database (pannello admin) ---------- */
+const SB_URL = "https://yftmbqmodfesprhqqnbw.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik";
+async function sbGet(path){
+  const r = await fetch(SB_URL+"/rest/v1/"+path, { headers:{ apikey:SB_KEY, Authorization:"Bearer "+SB_KEY } });
+  if(!r.ok) throw new Error(path);
+  return r.json();
+}
+(async function loadRemote(){
+  try{
+    const [settings, videos, shows, photos] = await Promise.all([
+      sbGet("bushi_settings?select=*"),
+      sbGet("bushi_videos?select=*&visible=eq.true&order=position&order=id"),
+      sbGet("bushi_shows?select=*&order=date"),
+      sbGet("bushi_photos?select=*&order=position&order=id"),
+    ]);
+    const S = Object.fromEntries(settings.map(r=>[r.key, r.value]));
+    if(S.booking_email){
+      CONFIG.bookingEmail = S.booking_email;
+      document.getElementById("bookForm").action = "https://formsubmit.co/"+S.booking_email;
+      document.getElementById("bookingBtn").href = "mailto:"+S.booking_email+"?subject=Booking%20request%20The%20Bushi%20Show";
+    }
+    if(S.whatsapp){
+      const wa = document.getElementById("waBtn");
+      wa.href = "https://wa.me/"+S.whatsapp.replace(/[^0-9]/g,"");
+      wa.hidden = false;
+    }
+    const counts = [S.tiktok_followers, S.youtube_subs, S.instagram_followers];
+    const socialNames = ["TikTok","YouTube","Instagram"];
+    document.querySelectorAll("[data-count]").forEach((el,i)=>{
+      const v = parseInt(counts[i]);
+      if(!isNaN(v) && v>0){
+        el.dataset.count = v; el.textContent = fmt(v);
+        const s = CONFIG.socials.find(x=>x.name===socialNames[i]);
+        if(s) s.sub = fmt(v)+(socialNames[i]==="YouTube"?" subscribers":" followers");
+      }
+    });
+    if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, sub:{ en:v.subtitle||"" } }));
+    if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url }));
+    if(photos.length) CONFIG.photos = photos.map(p=>({ src:SB_URL+"/storage/v1/object/public/foto/"+p.path, caption:p.caption, album:p.album }));
+    applyLang(lang);
+  }catch(e){ /* database vuoto o non raggiungibile: il sito usa i contenuti di riserva */ }
+})();
+
 /* ---------- sfondo magico: polvere d'oro fluttuante ---------- */
 (function(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;

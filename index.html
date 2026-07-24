@@ -1073,8 +1073,13 @@ document.getElementById("langSel").addEventListener("change",e=>applyLang(e.targ
 
 /* menu mobile */
 const mMenu = document.getElementById("mobileMenu");
-document.getElementById("burger").addEventListener("click", ()=>{ mMenu.hidden = !mMenu.hidden; });
+const mBurger = document.getElementById("burger");
+mBurger.addEventListener("click", e=>{ e.stopPropagation(); mMenu.hidden = !mMenu.hidden; });
 mMenu.querySelectorAll("a").forEach(a=>a.addEventListener("click", ()=>{ mMenu.hidden = true; }));
+/* chiudi toccando fuori dal menu */
+document.addEventListener("click", e=>{
+  if(!mMenu.hidden && !mMenu.contains(e.target) && e.target !== mBurger) mMenu.hidden = true;
+});
 
 /* recensioni dei clienti */
 let REVIEWS = [];

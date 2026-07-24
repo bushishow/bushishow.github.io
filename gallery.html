@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Bushi Show · Gallery</title>
-<meta name="description" content="Photo albums from The Bushi Show: Nikolas & Dashnor Bushi live on stage and on TV.">
+<title>Nikolas & Dashnor Bushi · Gallery</title>
+<meta name="description" content="Photo albums: Nikolas & Dashnor Bushi live on stage and on TV.">
 <link rel="icon" type="image/png" href="img/favicon-v2.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
     padding:14px 5vw;background:rgba(8,8,13,.85);backdrop-filter:blur(14px);
     border-bottom:1px solid rgba(212,175,55,.15);
   }
-  nav .logo{font-family:'Playfair Display',serif;font-weight:900;font-size:1.15rem;letter-spacing:.06em;color:var(--gold);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:10px}
+  nav .logo{font-family:'Playfair Display',serif;font-weight:900;font-size:.98rem;letter-spacing:.06em;color:var(--gold);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:10px}
   .lang-select{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.35);color:var(--gold-light);padding:5px 10px;border-radius:20px;cursor:pointer;font-size:.8rem;font-weight:600;font-family:'Inter',sans-serif;outline:none}
   .lang-select option{background:#13131d;color:var(--text)}
   .wrap{max-width:1100px;margin:0 auto;padding:60px 5vw 90px}
@@ -70,7 +70,7 @@
 <body>
 
 <nav>
-  <a class="logo" href="index.html"><img src="img/icon.png" alt="" style="height:32px;width:auto">THE&nbsp;BUSHI&nbsp;SHOW</a>
+  <a class="logo" href="index.html"><img src="img/icon.png" alt="" style="height:32px;width:auto">NIKOLAS&nbsp;&amp;&nbsp;DASHNOR&nbsp;BUSHI</a>
   <select class="lang-select" id="langSel" aria-label="Language">
     <option value="en">EN</option><option value="it">IT</option><option value="al">AL</option>
     <option value="de">DE</option><option value="fr">FR</option><option value="es">ES</option><option value="ru">RU</option>
@@ -155,7 +155,7 @@ function render(){
     $("albumTitle").textContent = albumLabel(curAlbum);
     lbList = PHOTOS.filter(p=>(p.album||"duo")===curAlbum);
     $("photosGrid").innerHTML = lbList.map((p,i)=>`
-      <figure data-i="${i}"><img loading="lazy" src="${pub(esc(p.path))}" alt="${esc(p.caption)||"The Bushi Show"}">${p.caption?`<figcaption>${esc(p.caption)}</figcaption>`:""}</figure>`).join("");
+      <figure data-i="${i}"><img loading="lazy" src="${pub(esc(p.path))}" alt="${esc(p.caption)||"Nikolas & Dashnor Bushi"}">${p.caption?`<figcaption>${esc(p.caption)}</figcaption>`:""}</figure>`).join("");
     document.querySelectorAll("#photosGrid figure").forEach(f=>f.addEventListener("click",()=>openLb(+f.dataset.i)));
   }
 }

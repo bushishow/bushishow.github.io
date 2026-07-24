@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Bushi Show · Admin</title>
+<title>Nikolas & Dashnor Bushi · Admin</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="img/favicon-v2.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -74,7 +74,7 @@
 <!-- LOGIN -->
 <div class="login" id="loginBox">
   <img src="img/icon.png" alt="" style="width:72px;height:72px;margin-bottom:14px">
-  <h1 style="margin-bottom:6px">The Bushi Show</h1>
+  <h1 style="margin-bottom:6px">Nikolas & Dashnor Bushi</h1>
   <p class="muted" style="margin-bottom:14px" data-t="login_sub">Administration panel</p>
   <div class="lang-switch" style="margin-bottom:18px">
     <button data-lang="en" class="active">EN</button>
@@ -106,7 +106,7 @@
 <!-- APP -->
 <div class="wrap" id="app" hidden>
   <div class="top">
-    <h1>Admin · The Bushi Show</h1>
+    <h1>Admin · Nikolas & Dashnor</h1>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <span class="lang-switch">
         <button data-lang="en" class="active">EN</button>
@@ -498,8 +498,8 @@ async function toggleBio(){
   try{
     const cred = await navigator.credentials.create({ publicKey:{
       challenge: crypto.getRandomValues(new Uint8Array(32)),
-      rp:{ name:"The Bushi Show Admin" },
-      user:{ id: crypto.getRandomValues(new Uint8Array(16)), name:"admin", displayName:"The Bushi Show" },
+      rp:{ name:"Nikolas & Dashnor Bushi Admin" },
+      user:{ id: crypto.getRandomValues(new Uint8Array(16)), name:"admin", displayName:"Nikolas & Dashnor Bushi" },
       pubKeyCredParams:[ {type:"public-key",alg:-7}, {type:"public-key",alg:-257} ],
       authenticatorSelection:{ authenticatorAttachment:"platform", userVerification:"required" },
       timeout:60000,

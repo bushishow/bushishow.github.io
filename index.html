@@ -262,14 +262,42 @@
   .lb-btn:hover{background:var(--gold);color:#141005}
   .lb-x{position:absolute;top:18px;right:18px}
 
+  /* recensioni: carosello orizzontale */
+  .rev-wrap{position:relative}
+  .rev-grid{
+    display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;
+    padding:4px 4px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  .rev-grid::-webkit-scrollbar{display:none}
+  .rev-card{
+    background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:16px;
+    padding:22px 24px;transition:border-color .25s;display:flex;flex-direction:column;gap:10px;
+    flex:0 0 min(320px, 82vw);scroll-snap-align:start;
+  }
+  .rev-card:hover{border-color:rgba(212,175,55,.4)}
+  .rev-nav{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:5;
+    background:rgba(8,8,13,.8);border:1px solid rgba(212,175,55,.5);color:var(--gold-light);
+    width:40px;height:40px;border-radius:50%;font-size:1.3rem;cursor:pointer;
+    display:grid;place-items:center;transition:.2s;line-height:1;
+  }
+  .rev-nav:hover{background:var(--gold);color:#141005}
+  .rev-prev{left:-14px}
+  .rev-next{right:-14px}
+  @media(max-width:820px){.rev-nav{display:none}}
+  .rev-card .stars{color:var(--gold);letter-spacing:3px;font-size:1.05rem}
+  .rev-card p{color:#d9d5ca;font-size:.93rem;flex:1}
+  .rev-card footer{color:var(--muted);font-size:.83rem}
+  .rev-card footer b{color:var(--gold-light)}
+
   /* form booking */
   .book-form{display:grid;gap:12px;max-width:520px;margin:0 auto 26px;text-align:left}
-  .book-form input,.book-form textarea{
+  .book-form input,.book-form textarea,.book-form select{
     background:var(--card);border:1px solid rgba(255,255,255,.12);border-radius:12px;
     padding:13px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:.95rem;outline:none;
     transition:border-color .2s;resize:vertical;
   }
-  .book-form input:focus,.book-form textarea:focus{border-color:var(--gold)}
+  .book-form input:focus,.book-form textarea:focus,.book-form select:focus{border-color:var(--gold)}
   .book-form button{justify-self:center;margin-top:4px}
   .alt-contacts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
@@ -470,6 +498,36 @@
   </div>
 </section>
 
+<section id="reviews" style="background:var(--bg2)">
+  <div class="section-inner">
+    <div class="kicker" data-i18n="k_rev">Reviews</div>
+    <h2 data-i18n="h_rev">What clients say</h2>
+    <div class="rev-wrap" style="margin-top:34px">
+      <button class="rev-nav rev-prev" id="revPrev" type="button" aria-label="Previous" hidden>‹</button>
+      <div class="rev-grid" id="revGrid"></div>
+      <button class="rev-nav rev-next" id="revNext" type="button" aria-label="Next" hidden>›</button>
+    </div>
+    <div style="text-align:center;margin-top:34px">
+      <button class="btn btn-ghost" id="revOpenBtn" type="button"><span data-i18n="rev_leave">Leave a review</span></button>
+    </div>
+    <form id="revForm" class="book-form" style="margin-top:26px" hidden>
+      <input type="text" id="rvName" required maxlength="80" placeholder="Your name">
+      <input type="email" id="rvEmail" required placeholder="Your email">
+      <select id="rvStars">
+        <option value="5" selected>★★★★★</option>
+        <option value="4">★★★★</option>
+        <option value="3">★★★</option>
+        <option value="2">★★</option>
+        <option value="1">★</option>
+      </select>
+      <textarea id="rvText" rows="4" required minlength="10" maxlength="1000" placeholder="Tell us about the show you attended"></textarea>
+      <input type="text" id="rvHp" style="display:none" tabindex="-1" autocomplete="off">
+      <button class="btn btn-gold" type="submit"><span data-i18n="rev_send">Submit review</span></button>
+    </form>
+    <p id="revMsg" style="text-align:center;margin-top:18px;color:var(--gold-light)" hidden></p>
+  </div>
+</section>
+
 <section id="booking">
   <div class="booking-box">
     <div class="kicker" data-i18n="k_booking">Live Shows & Events</div>
@@ -574,6 +632,7 @@ const I18N = {
     nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",press_kit:"Press kit",
     alb_all:"All",alb_duo:"Together",
     dash_vid:"Watch Dashnor's magic",
+    k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_err:"Something went wrong, please try again.",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -613,6 +672,7 @@ const I18N = {
     nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",press_kit:"Press kit",
     alb_all:"Tutte",alb_duo:"Insieme",
     dash_vid:"Guarda la magia di Dashnor",
+    k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_err:"Qualcosa è andato storto, riprova.",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -652,6 +712,7 @@ const I18N = {
     nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",press_kit:"Press kit",
     alb_all:"Të gjitha",alb_duo:"Së bashku",
     dash_vid:"Shiko magjinë e Dashnorit",
+    k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_err:"Diçka shkoi keq, provoni përsëri.",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -691,6 +752,7 @@ const I18N = {
     nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",press_kit:"Pressemappe",
     alb_all:"Alle",alb_duo:"Zusammen",
     dash_vid:"Dashnors Magie erleben",
+    k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -730,6 +792,7 @@ const I18N = {
     nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",press_kit:"Dossier de presse",
     alb_all:"Toutes",alb_duo:"Ensemble",
     dash_vid:"La magie de Dashnor en vidéo",
+    k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_err:"Une erreur s'est produite, veuillez réessayer.",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -769,6 +832,7 @@ const I18N = {
     nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",press_kit:"Kit de prensa",
     alb_all:"Todas",alb_duo:"Juntos",
     dash_vid:"Mira la magia de Dashnor",
+    k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_err:"Algo salió mal, inténtalo de nuevo.",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -808,6 +872,7 @@ const I18N = {
     nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",press_kit:"Пресс-кит",
     alb_all:"Все",alb_duo:"Вместе",
     dash_vid:"Смотрите магию Дашнора",
+    k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
   },
 };
 
@@ -931,10 +996,59 @@ function applyLang(l){
   document.getElementById("fName").placeholder = T.f_name;
   document.getElementById("fEmail").placeholder = T.f_email;
   document.getElementById("fMsg").placeholder = T.f_msg;
+  document.getElementById("rvName").placeholder = T.f_name;
+  document.getElementById("rvEmail").placeholder = T.f_email;
+  document.getElementById("rvText").placeholder = T.rev_ph;
   document.getElementById("langSel").value = l;
   renderVideos(); renderSocials(); renderShows(); renderGallery();
 }
 document.getElementById("langSel").addEventListener("change",e=>applyLang(e.target.value));
+
+/* recensioni dei clienti */
+let REVIEWS = [];
+function renderReviews(){
+  document.getElementById("revGrid").innerHTML = REVIEWS.map(r=>`
+    <div class="rev-card reveal visible">
+      <div class="stars">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</div>
+      <p>“${r.text.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}”</p>
+      <footer><b>${r.author.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</b>${r.role?" · "+r.role.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])):""}</footer>
+    </div>`).join("");
+  const many = REVIEWS.length > 3;
+  document.getElementById("revPrev").hidden = !many;
+  document.getElementById("revNext").hidden = !many;
+}
+const revScroll = d => document.getElementById("revGrid").scrollBy({ left: d*340, behavior:"smooth" });
+document.getElementById("revPrev").addEventListener("click", ()=>revScroll(-1));
+document.getElementById("revNext").addEventListener("click", ()=>revScroll(1));
+document.getElementById("revOpenBtn").addEventListener("click", ()=>{
+  const f = document.getElementById("revForm");
+  f.hidden = !f.hidden;
+  if(!f.hidden) f.scrollIntoView({behavior:"smooth",block:"center"});
+});
+document.getElementById("revForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const T = I18N[lang], msg = document.getElementById("revMsg");
+  if(document.getElementById("rvHp").value) return;
+  try{
+    const r = await fetch(SB_URL+"/rest/v1/rpc/bushi_submit_review", {
+      method:"POST",
+      headers:{ apikey:SB_KEY, Authorization:"Bearer "+SB_KEY, "Content-Type":"application/json" },
+      body: JSON.stringify({
+        p_text: document.getElementById("rvText").value,
+        p_author: document.getElementById("rvName").value,
+        p_role: "",
+        p_email: document.getElementById("rvEmail").value,
+        p_stars: parseInt(document.getElementById("rvStars").value),
+      })
+    });
+    if(!r.ok) throw new Error();
+    document.getElementById("revForm").reset();
+    document.getElementById("revForm").hidden = true;
+    msg.textContent = T.rev_thanks; msg.style.color = "var(--gold-light)"; msg.hidden = false;
+  }catch(err){
+    msg.textContent = T.rev_err; msg.style.color = "#e57365"; msg.hidden = false;
+  }
+});
 
 /* booking: modulo, email, whatsapp */
 document.getElementById("bookForm").action = "https://formsubmit.co/"+CONFIG.bookingEmail;
@@ -983,12 +1097,13 @@ async function sbGet(path){
 }
 (async function loadRemote(){
   try{
-    const [settings, videos, shows, photos, quotes] = await Promise.all([
+    const [settings, videos, shows, photos, quotes, reviews] = await Promise.all([
       sbGet("bushi_settings?select=*"),
       sbGet("bushi_videos?select=*&visible=eq.true&order=position&order=id"),
       sbGet("bushi_shows?select=*&order=date"),
       sbGet("bushi_photos?select=*&order=position&order=id"),
       sbGet("bushi_quotes?select=*&order=position&order=id"),
+      sbGet("bushi_reviews?select=text,author,role,stars&approved=eq.true&order=position&order=id").catch(()=>[]),
     ]);
     if(quotes.length){
       const qt = document.getElementById("quoteText"), qf = document.getElementById("quoteFoot"), qb = document.getElementById("quoteBox");
@@ -1028,6 +1143,8 @@ async function sbGet(path){
     if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, person:v.person||"nikolas", sub:{ en:v.subtitle||"" } }));
     if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url }));
     if(photos.length) CONFIG.photos = photos.map(p=>({ src:SB_URL+"/storage/v1/object/public/foto/"+p.path, caption:p.caption, album:p.album }));
+    REVIEWS = reviews || [];
+    renderReviews();
     applyLang(lang);
   }catch(e){ /* database vuoto o non raggiungibile: il sito usa i contenuti di riserva */ }
 })();

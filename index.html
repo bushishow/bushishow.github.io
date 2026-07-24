@@ -427,6 +427,10 @@
         <div class="hl reveal"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3"/></svg><div><b data-i18n="dh4t">Albania's Got Talent finalist</b><span data-i18n="dh4s">Golden Buzzer and a place in the final beside Nikolas</span></div></div>
       </div>
     </div>
+    <div id="dashVideos" hidden style="margin-top:56px">
+      <h2 style="font-size:clamp(1.4rem,3vw,2rem)" data-i18n="dash_vid">Watch Dashnor's magic</h2>
+      <div class="video-grid" id="dashVideoGrid" style="margin-top:26px"></div>
+    </div>
   </div>
 </section>
 
@@ -569,6 +573,7 @@ const I18N = {
     cta_email:"Get in touch",foot:"Ventriloquism · Comedy · Magic · New York",
     nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",press_kit:"Press kit",
     alb_all:"All",alb_duo:"Together",
+    dash_vid:"Watch Dashnor's magic",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -607,6 +612,7 @@ const I18N = {
     cta_email:"Contattaci",foot:"Ventriloquia · Comicità · Magia · New York",
     nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",press_kit:"Press kit",
     alb_all:"Tutte",alb_duo:"Insieme",
+    dash_vid:"Guarda la magia di Dashnor",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -645,6 +651,7 @@ const I18N = {
     cta_email:"Na kontakto",foot:"Ventrilokizëm · Humor · Magji · New York",
     nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",press_kit:"Press kit",
     alb_all:"Të gjitha",alb_duo:"Së bashku",
+    dash_vid:"Shiko magjinë e Dashnorit",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -683,6 +690,7 @@ const I18N = {
     cta_email:"Kontakt aufnehmen",foot:"Bauchreden · Comedy · Magie · New York",
     nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",press_kit:"Pressemappe",
     alb_all:"Alle",alb_duo:"Zusammen",
+    dash_vid:"Dashnors Magie erleben",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -721,6 +729,7 @@ const I18N = {
     cta_email:"Nous contacter",foot:"Ventriloquie · Comédie · Magie · New York",
     nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",press_kit:"Dossier de presse",
     alb_all:"Toutes",alb_duo:"Ensemble",
+    dash_vid:"La magie de Dashnor en vidéo",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -759,6 +768,7 @@ const I18N = {
     cta_email:"Contáctanos",foot:"Ventriloquia · Comedia · Magia · Nueva York",
     nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",press_kit:"Kit de prensa",
     alb_all:"Todas",alb_duo:"Juntos",
+    dash_vid:"Mira la magia de Dashnor",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -797,18 +807,26 @@ const I18N = {
     cta_email:"Связаться с нами",foot:"Чревовещание · Комедия · Магия · Нью-Йорк",
     nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",press_kit:"Пресс-кит",
     alb_all:"Все",alb_duo:"Вместе",
+    dash_vid:"Смотрите магию Дашнора",
   },
 };
 
 /* ---------- render ---------- */
 let lang = "en", TXT = {};
 
-function renderVideos(){
-  document.getElementById("videoGrid").innerHTML = CONFIG.videos.map(v=>`
+function videoCard(v){
+  return `
     <div class="video-card reveal visible">
       <div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.yt}" title="${v.title}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
       <div class="meta"><h3>${v.title}</h3><p>${(v.sub[lang]||v.sub.en)}</p></div>
-    </div>`).join("");
+    </div>`;
+}
+function renderVideos(){
+  const main = CONFIG.videos.filter(v=>v.person!=="dashnor");
+  const dash = CONFIG.videos.filter(v=>v.person==="dashnor");
+  document.getElementById("videoGrid").innerHTML = main.map(videoCard).join("");
+  document.getElementById("dashVideos").hidden = !dash.length;
+  document.getElementById("dashVideoGrid").innerHTML = dash.map(videoCard).join("");
 }
 const BRAND_ICONS = {
   tiktok:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-2.31-2.83v-3.5a6.37 6.37 0 1 0 5.76 6.33V8.69a8.19 8.19 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.12z"/></svg>',
@@ -1007,7 +1025,7 @@ async function sbGet(path){
         if(s) s.sub = fmt(v)+(socialNames[i]==="YouTube"?" subscribers":" followers");
       }
     });
-    if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, sub:{ en:v.subtitle||"" } }));
+    if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, person:v.person||"nikolas", sub:{ en:v.subtitle||"" } }));
     if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url }));
     if(photos.length) CONFIG.photos = photos.map(p=>({ src:SB_URL+"/storage/v1/object/public/foto/"+p.path, caption:p.caption, album:p.album }));
     applyLang(lang);

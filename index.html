@@ -879,7 +879,7 @@ function renderGallery(){
   const albums = [...new Set(CONFIG.photos.map(p=>p.album).filter(Boolean))];
   const tabs = document.getElementById("albTabs");
   if(albums.length>1){
-    const label = a => a==="duo" ? T.alb_duo : a.charAt(0).toUpperCase()+a.slice(1);
+    const label = a => a==="duo" ? T.alb_duo : a==="nikolas" ? "Nikolas" : a==="dashnor" ? "Dashnor" : a;
     tabs.innerHTML = [`<button data-a="all" class="${albFilter==="all"?"active":""}">${T.alb_all}</button>`]
       .concat(albums.map(a=>`<button data-a="${a}" class="${albFilter===a?"active":""}">${label(a)}</button>`)).join("");
     tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{albFilter=b.dataset.a; renderGallery();}));

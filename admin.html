@@ -341,7 +341,7 @@ const ADM = {
     texts_hint:"Leave a field empty to keep the built-in text. Separate paragraphs with an empty line.",
     tagline_t:"Opening line (under the title)", bio_n:"Nikolas bio", bio_d:"Dashnor bio",
     save_texts:"Save texts", texts_saved:"Texts saved",
-    who:"Section on the website",
+    who:"Section on the website", new_album:"+ New album (event)…", album_name_req:"Type the new album name",
     quotes:"Quotes", quote_text:"Quote", author:"Author", role_l:"Role (e.g. Las Vegas legend)",
     add_quote:"Add quote", no_quotes:"No quotes yet: the website shows the built-in Terry Fator quote.",
     confirm_del_quote:"Delete this quote?", quote_added:"Quote added",
@@ -396,7 +396,7 @@ const ADM = {
     texts_hint:"Lascia vuoto un campo per tenere il testo di partenza. Separa i paragrafi con una riga vuota.",
     tagline_t:"Frase d'apertura (sotto il titolo)", bio_n:"Bio di Nikolas", bio_d:"Bio di Dashnor",
     save_texts:"Salva testi", texts_saved:"Testi salvati",
-    who:"Sezione sul sito",
+    who:"Sezione sul sito", new_album:"+ Nuovo album (evento)…", album_name_req:"Scrivi il nome del nuovo album",
     quotes:"Citazioni", quote_text:"Citazione", author:"Autore", role_l:"Ruolo (es. leggenda di Las Vegas)",
     add_quote:"Aggiungi citazione", no_quotes:"Nessuna citazione: il sito mostra quella di Terry Fator.",
     confirm_del_quote:"Eliminare questa citazione?", quote_added:"Citazione aggiunta",
@@ -707,6 +707,7 @@ async function loadPhotos(){
   if(!data.length){ $("photosList").innerHTML=`<p class="muted">${t("no_photos")}</p>`; return; }
   const pub = p => `${SB_URL}/storage/v1/object/public/foto/${p}`;
   window._photos = data;
+  rebuildAlbumOptions();
   $("photosList").innerHTML = data.map(p=>{
     if(p.id === _phEdit) return `
     <div class="row">
@@ -714,9 +715,7 @@ async function loadPhotos(){
       <div class="grow" style="display:grid;gap:8px">
         <input id="phEditCap" value="${esc(p.caption)}" placeholder="${t("caption_opt")}">
         <select id="phEditAlb">
-          <option value="nikolas" ${p.album==="nikolas"?"selected":""}>Nikolas</option>
-          <option value="dashnor" ${p.album==="dashnor"?"selected":""}>Dashnor</option>
-          <option value="duo" ${p.album==="duo"?"selected":""}>${t("together")}</option>
+          ${["nikolas","dashnor","duo",...customAlbums()].map(a=>`<option value="${esc(a)}" ${p.album===a?"selected":""}>${albumLabel(a)}</option>`).join("")}
         </select>
       </div>
       <button class="btn btn-gold btn-sm" onclick="savePhotoEdit(${p.id})">${t("save_changes")}</button>
@@ -726,7 +725,7 @@ async function loadPhotos(){
     return `
     <div class="row">
       <img src="${pub(esc(p.path))}" alt="">
-      <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${p.album==="duo"?t("together"):esc(p.album)}</span></div>
+      <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${esc(albumLabel(p.album))}</span></div>
       <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="movePhoto(${p.id},-1)">▲</button>
       <button class="btn btn-ghost btn-sm" ${i===data.length-1?"disabled":""} onclick="movePhoto(${p.id},1)">▼</button>
       <button class="btn btn-ghost btn-sm" onclick="editPhoto(${p.id})">${t("edit")}</button>
@@ -744,6 +743,18 @@ async function movePhoto(id,dir){
   }
   loadPhotos();
 }
+function albumLabel(a){ return a==="duo" ? t("together") : a==="nikolas" ? "Nikolas" : a==="dashnor" ? "Dashnor" : a; }
+function customAlbums(){
+  return [...new Set((window._photos||[]).map(p=>p.album).filter(a=>a && !["nikolas","dashnor","duo"].includes(a)))];
+}
+function rebuildAlbumOptions(){
+  const sel = $("phAlbum"), cur = sel.value;
+  sel.innerHTML = `<option value="nikolas">Nikolas</option><option value="dashnor">Dashnor</option><option value="duo">${t("together")}</option>`
+    + customAlbums().map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("")
+    + `<option value="__new">${t("new_album")}</option>`;
+  sel.value = [...sel.options].some(o=>o.value===cur) ? cur : "duo";
+  $("phAlbumNew").hidden = sel.value!=="__new";
+}
 let _phEdit = null;
 function editPhoto(id){ _phEdit = id; loadPhotos(); }
 function cancelPhotoEdit(){ _phEdit = null; loadPhotos(); }
@@ -755,16 +766,21 @@ async function savePhotoEdit(id){
 async function uploadPhotos(){
   const files = $("phFile").files;
   if(!files.length){ toast(t("choose_file"), true); return; }
+  let album = $("phAlbum").value;
+  if(album==="__new"){
+    album = $("phAlbumNew").value.trim();
+    if(!album){ toast(t("album_name_req"), true); return; }
+  }
   toast(t("uploading"));
   for(const f of files){
     const blob = await resizeImg(f, 1600);
     const path = Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
     const { error:e1 } = await sb.storage.from("foto").upload(path, blob, { contentType:"image/jpeg" });
     if(e1){ toast(t("upload_err")+e1.message, true); return; }
-    const { error:e2 } = await sb.from("bushi_photos").insert({ path, caption:$("phCap").value.trim(), album:$("phAlbum").value });
+    const { error:e2 } = await sb.from("bushi_photos").insert({ path, caption:$("phCap").value.trim(), album });
     if(e2){ toast(t("err")+e2.message, true); return; }
   }
-  $("phFile").value=""; $("phCap").value=""; $("phPrev").innerHTML="";
+  $("phFile").value=""; $("phCap").value=""; $("phPrev").innerHTML=""; $("phAlbumNew").value=""; $("phAlbumNew").hidden=true;
   toast(t("photos_uploaded")); loadPhotos();
 }
 async function delPhoto(id, path){

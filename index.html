@@ -220,11 +220,32 @@
   .no-shows{color:var(--muted);border:1px dashed rgba(212,175,55,.35);border-radius:14px;padding:22px 24px}
 
   /* gallery */
+  .alb-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+  .alb-tabs button{
+    background:transparent;border:1px solid rgba(212,175,55,.4);color:var(--muted);
+    padding:7px 20px;border-radius:30px;cursor:pointer;font-family:'Inter',sans-serif;
+    font-size:.85rem;font-weight:600;transition:.2s;
+  }
+  .alb-tabs button.active,.alb-tabs button:hover{background:var(--gold);color:#141005;border-color:var(--gold)}
   .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-  .gallery-grid figure{border-radius:14px;overflow:hidden;background:var(--card);border:1px solid rgba(255,255,255,.07)}
+  .gallery-grid figure{border-radius:14px;overflow:hidden;background:var(--card);border:1px solid rgba(255,255,255,.07);cursor:pointer}
   .gallery-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:.35s}
   .gallery-grid figure:hover img{transform:scale(1.05)}
   .gallery-grid figcaption{padding:10px 14px;font-size:.82rem;color:var(--muted)}
+  .lightbox{
+    position:fixed;inset:0;z-index:300;background:rgba(5,5,8,.95);
+    display:flex;align-items:center;justify-content:center;gap:10px;padding:20px;
+  }
+  .lightbox figure{max-width:88vw;text-align:center}
+  .lightbox img{max-width:88vw;max-height:80vh;border-radius:12px;box-shadow:0 20px 70px rgba(0,0,0,.7)}
+  .lightbox figcaption{margin-top:12px;color:var(--muted);font-size:.9rem}
+  .lb-btn{
+    background:transparent;border:1px solid rgba(212,175,55,.5);color:var(--gold-light);
+    width:44px;height:44px;border-radius:50%;font-size:1.5rem;cursor:pointer;flex-shrink:0;
+    display:grid;place-items:center;transition:.2s;line-height:1;
+  }
+  .lb-btn:hover{background:var(--gold);color:#141005}
+  .lb-x{position:absolute;top:18px;right:18px}
 
   /* form booking */
   .book-form{display:grid;gap:12px;max-width:520px;margin:0 auto 26px;text-align:left}
@@ -409,9 +430,17 @@
   <div class="section-inner">
     <div class="kicker" data-i18n="gal_k">Gallery</div>
     <h2 data-i18n="gal_h">On stage</h2>
-    <div class="gallery-grid" id="galleryGrid" style="margin-top:34px"></div>
+    <div class="alb-tabs" id="albTabs"></div>
+    <div class="gallery-grid" id="galleryGrid" style="margin-top:26px"></div>
   </div>
 </section>
+
+<div id="lightbox" class="lightbox" hidden>
+  <button class="lb-btn lb-x" aria-label="Close">×</button>
+  <button class="lb-btn lb-prev" aria-label="Previous">‹</button>
+  <figure><img id="lbImg" src="" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button class="lb-btn lb-next" aria-label="Next">›</button>
+</div>
 
 <section id="social">
   <div class="section-inner">
@@ -457,7 +486,9 @@ const CONFIG = {
   whatsapp: "",        // ← numero WhatsApp booking, es "+13475551234" (vuoto = bottone nascosto)
   heroVideo: "",       // ← es "video/palco.mp4": clip muta in loop dietro al titolo (vuoto = solo sfondo magico)
   photos: [
-    // ← aggiungi foto così: { src:"foto/nikolas-chris.jpg", caption:"Nikolas & Chris" },
+    // ← aggiungi foto così (album: "nikolas", "dashnor" o "duo"):
+    //   { src:"foto/nikolas-chris.jpg", caption:"Nikolas & Chris", album:"nikolas" },
+    //   { src:"foto/dashnor-magia.jpg", caption:"Dashnor sul palco", album:"dashnor" },
     //   (metti i file nella cartella foto/ — la sezione Galleria appare da sola)
   ],
   shows: [
@@ -521,6 +552,7 @@ const I18N = {
     sub_booking:"Theatres, TV, corporate events, private parties: ventriloquism, comedy and magic in three languages, together or solo, for audiences of every age.",
     cta_email:"Get in touch",foot:"Ventriloquism · Comedy · Magic · New York",
     nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",press_kit:"Press kit",
+    alb_all:"All",alb_duo:"Together",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -558,6 +590,7 @@ const I18N = {
     sub_booking:"Teatri, TV, eventi aziendali, feste private: ventriloquia, comicità e magia in tre lingue, in coppia o da soli, per pubblici di ogni età.",
     cta_email:"Contattaci",foot:"Ventriloquia · Comicità · Magia · New York",
     nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",press_kit:"Press kit",
+    alb_all:"Tutte",alb_duo:"Insieme",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -595,6 +628,7 @@ const I18N = {
     sub_booking:"Teatro, TV, evente korporative, festa private: ventrilokizëm, humor dhe magji në tri gjuhë, bashkë ose veç, për çdo moshë.",
     cta_email:"Na kontakto",foot:"Ventrilokizëm · Humor · Magji · New York",
     nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",press_kit:"Press kit",
+    alb_all:"Të gjitha",alb_duo:"Së bashku",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -632,6 +666,7 @@ const I18N = {
     sub_booking:"Theater, TV, Firmenevents, private Feiern: Bauchreden, Comedy und Magie in drei Sprachen, im Duo oder solo, für jedes Alter.",
     cta_email:"Kontakt aufnehmen",foot:"Bauchreden · Comedy · Magie · New York",
     nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",press_kit:"Pressemappe",
+    alb_all:"Alle",alb_duo:"Zusammen",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -669,6 +704,7 @@ const I18N = {
     sub_booking:"Théâtres, TV, événements d'entreprise, fêtes privées : ventriloquie, comédie et magie en trois langues, en duo ou en solo, pour tous les âges.",
     cta_email:"Nous contacter",foot:"Ventriloquie · Comédie · Magie · New York",
     nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",press_kit:"Dossier de presse",
+    alb_all:"Toutes",alb_duo:"Ensemble",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -706,6 +742,7 @@ const I18N = {
     sub_booking:"Teatros, TV, eventos corporativos, fiestas privadas: ventriloquia, comedia y magia en tres idiomas, juntos o en solitario, para públicos de todas las edades.",
     cta_email:"Contáctanos",foot:"Ventriloquia · Comedia · Magia · Nueva York",
     nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",press_kit:"Kit de prensa",
+    alb_all:"Todas",alb_duo:"Juntos",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -743,6 +780,7 @@ const I18N = {
     sub_booking:"Театры, ТВ, корпоративы, частные праздники: чревовещание, комедия и магия на трёх языках, вдвоём или соло, для зрителей любого возраста.",
     cta_email:"Связаться с нами",foot:"Чревовещание · Комедия · Магия · Нью-Йорк",
     nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",press_kit:"Пресс-кит",
+    alb_all:"Все",alb_duo:"Вместе",
   },
 };
 
@@ -798,12 +836,46 @@ function renderShows(){
   cd.hidden = false;
 }
 
+let albFilter = "all", lbList = [], lbIdx = 0;
+
 function renderGallery(){
   if(!CONFIG.photos.length) return;
   document.getElementById("gallery").hidden = false;
-  document.getElementById("galleryGrid").innerHTML = CONFIG.photos.map(p=>`
-    <figure><img loading="lazy" src="${p.src}" alt="${p.caption||"The Bushi Show"}">${p.caption?`<figcaption>${p.caption}</figcaption>`:""}</figure>`).join("");
+  const T = I18N[lang];
+  const albums = [...new Set(CONFIG.photos.map(p=>p.album).filter(Boolean))];
+  const tabs = document.getElementById("albTabs");
+  if(albums.length>1){
+    const label = a => a==="duo" ? T.alb_duo : a.charAt(0).toUpperCase()+a.slice(1);
+    tabs.innerHTML = [`<button data-a="all" class="${albFilter==="all"?"active":""}">${T.alb_all}</button>`]
+      .concat(albums.map(a=>`<button data-a="${a}" class="${albFilter===a?"active":""}">${label(a)}</button>`)).join("");
+    tabs.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{albFilter=b.dataset.a; renderGallery();}));
+  }else tabs.innerHTML="";
+  lbList = CONFIG.photos.filter(p=>albFilter==="all"||p.album===albFilter);
+  document.getElementById("galleryGrid").innerHTML = lbList.map((p,i)=>`
+    <figure data-i="${i}"><img loading="lazy" src="${p.src}" alt="${p.caption||"The Bushi Show"}">${p.caption?`<figcaption>${p.caption}</figcaption>`:""}</figure>`).join("");
+  document.querySelectorAll("#galleryGrid figure").forEach(f=>f.addEventListener("click",()=>openLb(+f.dataset.i)));
 }
+
+/* lightbox album */
+const lb = document.getElementById("lightbox");
+function openLb(i){ lbIdx=i; updateLb(); lb.hidden=false; document.body.style.overflow="hidden"; }
+function closeLb(){ lb.hidden=true; document.body.style.overflow=""; }
+function updateLb(){
+  const p = lbList[lbIdx];
+  document.getElementById("lbImg").src = p.src;
+  document.getElementById("lbCap").textContent = p.caption||"";
+}
+function stepLb(d){ lbIdx=(lbIdx+d+lbList.length)%lbList.length; updateLb(); }
+lb.querySelector(".lb-x").addEventListener("click",closeLb);
+lb.querySelector(".lb-prev").addEventListener("click",()=>stepLb(-1));
+lb.querySelector(".lb-next").addEventListener("click",()=>stepLb(1));
+lb.addEventListener("click",e=>{ if(e.target===lb) closeLb(); });
+document.addEventListener("keydown",e=>{
+  if(lb.hidden) return;
+  if(e.key==="Escape") closeLb();
+  if(e.key==="ArrowLeft") stepLb(-1);
+  if(e.key==="ArrowRight") stepLb(1);
+});
 
 function applyLang(l){
   if(!I18N[l]) l = "en";
@@ -818,7 +890,7 @@ function applyLang(l){
   document.getElementById("fEmail").placeholder = T.f_email;
   document.getElementById("fMsg").placeholder = T.f_msg;
   document.getElementById("langSel").value = l;
-  renderVideos(); renderSocials(); renderShows();
+  renderVideos(); renderSocials(); renderShows(); renderGallery();
 }
 document.getElementById("langSel").addEventListener("change",e=>applyLang(e.target.value));
 

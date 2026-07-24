@@ -1,0 +1,40 @@
+name: Supabase keep-alive
+# Pinga il database ogni giorno così il progetto Supabase gratuito
+# non va mai in pausa per inattività (7 giorni). Il lunedì aggiorna
+# anche un file nel repo per tenere attivi gli scheduled workflow
+# (GitHub li disattiva dopo 60 giorni senza commit).
+
+on:
+  schedule:
+    - cron: "23 6 * * *"   # ogni giorno alle 06:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -sf "https://yftmbqmodfesprhqqnbw.supabase.co/rest/v1/bushi_settings?select=key&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdG1icW1vZGZlc3ByaHFxbmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NzA0NDgsImV4cCI6MjEwMDQ0NjQ0OH0.l-0iw2OaRiHTpI-R-e3ygDuhoAHiLNEL01Ii334Xbik" \
+            && echo "Supabase attivo"
+
+      - name: Checkout (solo lunedì)
+        if: ${{ github.event_name == 'workflow_dispatch' || format('{0}', github.run_started_at) != '' }}
+        uses: actions/checkout@v4
+
+      - name: Commit settimanale anti-sospensione workflow
+        run: |
+          if [ "$(date +%u)" = "1" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            date -u +"%Y-%m-%d %H:%M UTC" > .keepalive
+            git config user.name "keepalive-bot"
+            git config user.email "actions@github.com"
+            git add .keepalive
+            git diff --cached --quiet || (git commit -m "keepalive" && git push)
+          else
+            echo "Non è lunedì: nessun commit necessario"
+          fi

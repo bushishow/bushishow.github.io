@@ -8,7 +8,9 @@
 <meta property="og:title" content="The Bushi Show · Nikolas & Dashnor Bushi">
 <meta property="og:description" content="Father & Son · Ventriloquism, Comedy & Magic · Albania's Got Talent Winner 2026 · As seen on Rai 1">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2308080d'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23d4af37' stroke-width='2.5'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='bold' text-anchor='middle' fill='%23f0d97a'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="img/favicon-192.png">
+<link rel="apple-touch-icon" href="img/favicon-192.png">
+<meta property="og:image" content="https://bushishow.github.io/img/logo-full.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -82,6 +84,12 @@
   header::after{right:6%;transform-origin:top center;rotate:14deg;animation-delay:-4.5s}
   @keyframes sway{from{opacity:.5;translate:0 0}to{opacity:1;translate:26px 0}}
 
+  .hero-logo{
+    width:clamp(120px,17vw,185px);height:auto;margin-bottom:22px;z-index:2;
+    filter:drop-shadow(0 8px 30px rgba(212,175,55,.35));
+    animation:logoIn 1.2s ease both;
+  }
+  @keyframes logoIn{from{opacity:0;transform:translateY(-14px) scale(.92)}to{opacity:1;transform:none}}
   .badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;z-index:2}
   .badge{
     border:1px solid rgba(212,175,55,.45);border-radius:40px;
@@ -288,7 +296,7 @@
 <body>
 
 <nav>
-  <a class="logo" href="#top"><span class="mono">B</span>THE&nbsp;BUSHI&nbsp;SHOW</a>
+  <a class="logo" href="#top"><img src="img/icon.png" alt="" style="height:32px;width:auto">THE&nbsp;BUSHI&nbsp;SHOW</a>
   <div class="links">
     <a data-nav href="#videos" data-i18n="nav_videos">Videos</a>
     <a data-nav href="#shows" data-i18n="nav_shows">Shows</a>
@@ -311,6 +319,7 @@
 
 <header id="top">
   <canvas id="magic" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
+  <img class="hero-logo" src="img/logo-emblem.png" alt="The Bushi Show">
   <div class="badge-row">
     <span class="badge"><span data-i18n="badge_agt">Albania's Got Talent Winner</span></span>
     <span class="badge"><span data-i18n="badge_rai">As seen on Rai 1</span></span>

@@ -76,6 +76,19 @@
   }
   .mobile-menu a:last-child{border-bottom:none}
   .mobile-menu a:hover{color:var(--gold)}
+  .event-bar{
+    position:fixed;top:61px;left:0;right:0;z-index:97;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:9px 16px;text-decoration:none;color:#141005;font-weight:700;font-size:.85rem;letter-spacing:.03em;
+    background:linear-gradient(100deg,var(--gold) 20%,var(--gold-light) 40%,var(--gold) 60%);
+    background-size:200% 100%;animation:ebshine 5s linear infinite;
+    box-shadow:0 4px 18px rgba(212,175,55,.35);
+  }
+  @keyframes ebshine{to{background-position:-200% 0}}
+  .event-bar .eb-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:82vw}
+  .event-bar .eb-arrow{font-weight:900;animation:ebnudge 1.6s ease-in-out infinite}
+  @keyframes ebnudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+  @media(prefers-reduced-motion:reduce){.event-bar,.event-bar .eb-arrow{animation:none}}
 
   /* ---------- HERO ---------- */
   header{
@@ -337,6 +350,18 @@
     border-top:1px solid rgba(212,175,55,.12);
   }
   footer.site a{color:var(--gold);text-decoration:none}
+  .ck-toast{
+    position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:150;
+    display:flex;align-items:center;gap:12px;max-width:calc(100vw - 28px);
+    background:var(--card);border:1px solid rgba(212,175,55,.45);border-radius:40px;
+    padding:10px 10px 10px 18px;font-size:.8rem;color:var(--muted);
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+  }
+  .ck-toast a{color:var(--gold);text-decoration:none;font-weight:600;flex-shrink:0}
+  .ck-toast button{
+    background:var(--gold);border:none;color:#141005;font-weight:800;cursor:pointer;
+    padding:7px 16px;border-radius:30px;font-family:'Inter',sans-serif;flex-shrink:0;
+  }
 
   /* reveal on scroll */
   .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
@@ -353,6 +378,7 @@
     nav .links{gap:8px;flex-wrap:nowrap}
     .lang-select{padding:4px 7px;font-size:.75rem}
     .mobile-menu{top:52px}
+    .event-bar{top:52px;font-size:.76rem;padding:8px 12px;gap:7px}
   }
 </style>
 </head>
@@ -381,6 +407,11 @@
     </select>
   </div>
 </nav>
+<a id="eventBar" class="event-bar" href="#shows" hidden>
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg>
+  <span class="eb-txt" id="eventBarText"></span>
+  <span class="eb-arrow">→</span>
+</a>
 <div id="mobileMenu" class="mobile-menu" hidden>
   <a href="#videos" data-i18n="nav_videos">Videos</a>
   <a href="#shows" data-i18n="nav_shows">Shows</a>
@@ -614,9 +645,15 @@
   </div>
 </section>
 
+<div id="ckToast" class="ck-toast" hidden>
+  <span data-i18n="cookie_note">This site uses only technical cookies. No tracking.</span>
+  <a href="privacy.html" data-i18n="priv_link">Privacy</a>
+  <button id="ckOk" type="button">OK</button>
+</div>
+
 <footer class="site">
   <div>© <span id="year"></span> Nikolas & Dashnor Bushi · <span data-i18n="foot">Ventriloquism · Comedy · Magic · New York</span></div>
-  <div style="margin-top:6px"><a href="https://www.imdb.com/name/nm13978740/" target="_blank" rel="noopener">IMDb</a> · <a href="#top">↑ Top</a></div>
+  <div style="margin-top:6px"><a href="https://www.imdb.com/name/nm13978740/" target="_blank" rel="noopener">IMDb</a> · <a href="privacy.html" data-i18n="priv_link">Privacy</a> · <a href="#top">↑ Top</a></div>
 </footer>
 
 <script>
@@ -701,6 +738,7 @@ const I18N = {
     k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_err:"Something went wrong, please try again.",
     nav_gallery:"Gallery",gal_all:"See all albums",
     sold_out:"Sold out",add_cal:"Add to calendar",
+    cookie_note:"This site uses only technical cookies. No tracking.",priv_link:"Privacy",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -744,6 +782,7 @@ const I18N = {
     k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_err:"Qualcosa è andato storto, riprova.",
     nav_gallery:"Galleria",gal_all:"Vedi tutti gli album",
     sold_out:"Sold out",add_cal:"Aggiungi al calendario",
+    cookie_note:"Questo sito usa solo cookie tecnici. Nessun tracciamento.",priv_link:"Privacy",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -787,6 +826,7 @@ const I18N = {
     k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_err:"Diçka shkoi keq, provoni përsëri.",
     nav_gallery:"Galeria",gal_all:"Shiko të gjithë albumet",
     sold_out:"Sold out",add_cal:"Shto në kalendar",
+    cookie_note:"Kjo faqe përdor vetëm cookie teknike. Asnjë gjurmim.",priv_link:"Privatësia",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -830,6 +870,7 @@ const I18N = {
     k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
     nav_gallery:"Galerie",gal_all:"Alle Alben ansehen",
     sold_out:"Ausverkauft",add_cal:"Zum Kalender",
+    cookie_note:"Diese Website verwendet nur technische Cookies. Kein Tracking.",priv_link:"Datenschutz",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -873,6 +914,7 @@ const I18N = {
     k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_err:"Une erreur s'est produite, veuillez réessayer.",
     nav_gallery:"Galerie",gal_all:"Voir tous les albums",
     sold_out:"Complet",add_cal:"Ajouter au calendrier",
+    cookie_note:"Ce site n'utilise que des cookies techniques. Aucun traçage.",priv_link:"Confidentialité",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -916,6 +958,7 @@ const I18N = {
     k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_err:"Algo salió mal, inténtalo de nuevo.",
     nav_gallery:"Galería",gal_all:"Ver todos los álbumes",
     sold_out:"Agotado",add_cal:"Añadir al calendario",
+    cookie_note:"Este sitio solo usa cookies técnicas. Sin rastreo.",priv_link:"Privacidad",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -959,6 +1002,7 @@ const I18N = {
     k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
     nav_gallery:"Галерея",gal_all:"Все альбомы",
     sold_out:"Билетов нет",add_cal:"В календарь",
+    cookie_note:"Этот сайт использует только технические cookie. Без слежки.",priv_link:"Конфиденциальность",
   },
 };
 
@@ -1006,6 +1050,7 @@ function renderShows(){
   if(!future.length){
     list.innerHTML = `<p class="no-shows">${T.no_shows}</p>`;
     cd.hidden = true;
+    document.getElementById("eventBar").hidden = true;
     return;
   }
   const mFmt = new Intl.DateTimeFormat(LOCALES[lang]||"en-US",{month:"short"});
@@ -1027,6 +1072,8 @@ function renderShows(){
   const days = Math.round((next.when-today)/86400000);
   document.getElementById("cdText").textContent = `${T.next_label} ${days} ${T.days_label} · ${next.title}, ${next.city}`;
   cd.hidden = false;
+  document.getElementById("eventBarText").textContent = `${T.next_label} ${days} ${T.days_label}: ${next.title} · ${next.city}`;
+  document.getElementById("eventBar").hidden = false;
 }
 
 let lbList = [], lbIdx = 0;
@@ -1190,6 +1237,15 @@ if(CONFIG.heroVideo){
 }
 renderGallery();
 document.getElementById("year").textContent = new Date().getFullYear();
+
+/* avviso cookie (solo informativo, una volta sola) */
+if(!localStorage.getItem("ck_ok")){
+  document.getElementById("ckToast").hidden = false;
+  document.getElementById("ckOk").addEventListener("click", ()=>{
+    localStorage.setItem("ck_ok","1");
+    document.getElementById("ckToast").hidden = true;
+  });
+}
 
 /* counters */
 function fmt(n){ return n>=1e6 ? (n/1e6).toFixed(1).replace(".0","")+"M" : n>=1e3 ? Math.round(n/1e3)+"K" : n; }

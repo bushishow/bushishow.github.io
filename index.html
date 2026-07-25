@@ -1174,6 +1174,16 @@ function applyLang(l){
 }
 document.getElementById("langSel").addEventListener("change",e=>applyLang(e.target.value));
 
+/* navigazione interna SENZA ancore nell'URL: scorre alla sezione
+   ma l'indirizzo resta pulito (niente #shows al refresh) */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener("click", e=>{
+    const id = a.getAttribute("href").slice(1);
+    const el = document.getElementById(id);
+    if(el){ e.preventDefault(); el.scrollIntoView({behavior:"smooth"}); }
+  });
+});
+
 /* menu mobile */
 const mMenu = document.getElementById("mobileMenu");
 const mBurger = document.getElementById("burger");

@@ -8,8 +8,8 @@
 <meta property="og:title" content="Nikolas & Dashnor Bushi">
 <meta property="og:description" content="Father & Son · Ventriloquism, Singing, Magic & Mentalism · Albania's Got Talent Winner 2026 · As seen on Rai 1">
 <meta property="og:type" content="website">
-<link rel="icon" type="image/png" href="img/favicon-v2.png">
-<link rel="apple-touch-icon" href="img/favicon-v2-512.png">
+<link rel="icon" type="image/png" href="img/favicon-v3.png">
+<link rel="apple-touch-icon" href="img/favicon-v3-512.png">
 <meta property="og:image" content="https://www.bushishow.com/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -1036,12 +1036,14 @@ function applyTheme(name){
   const navImg = document.querySelector("nav .logo img");
   const emblem = document.querySelector(".hero-logo");
   const fav = document.querySelector('link[rel="icon"]');
+  const apple = document.querySelector('link[rel="apple-touch-icon"]');
   if(!t){
     ["--gold","--gold-light","--goldRGB","--beam","--heroGlow"].forEach(v=>r.removeProperty(v));
     PCOL.dot="#f0d97a"; PCOL.star="#fff6d8"; PCOL.glow="rgba(240,217,122,.9)";
     if(navImg) navImg.src="img/icon.png";
     if(emblem) emblem.src="img/logo-emblem.png";
-    if(fav) fav.href="img/favicon-v2.png";
+    if(fav) fav.href="img/favicon-v3.png";
+    if(apple) apple.href="img/favicon-v3-512.png";
     return;
   }
   r.setProperty("--gold", t.g); r.setProperty("--gold-light", t.l); r.setProperty("--goldRGB", t.rgb);
@@ -1050,6 +1052,7 @@ function applyTheme(name){
   if(navImg) navImg.src = "img/theme/"+t.dir+"/icon.png";
   if(emblem) emblem.src = "img/theme/"+t.dir+"/emblem.png";
   if(fav) fav.href = "img/theme/"+t.dir+"/favicon.png";
+  if(apple) apple.href = "img/theme/"+t.dir+"/favicon-512.png";
 }
 /* anti-lampeggio: applica subito l'ultimo tema noto, poi il database conferma */
 try{ const c = localStorage.getItem("site_theme"); if(c && c!=="gold") applyTheme(c); }catch(e){}

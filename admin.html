@@ -297,6 +297,16 @@
       <label data-t="whatsapp_l">Booking WhatsApp (with country code, e.g. +1347...)</label><input id="stWa" placeholder="+1...">
     </div>
     <div class="card">
+      <div class="sec-title"><h2 data-t="theme_l">Site theme</h2></div>
+      <p class="muted" style="margin-bottom:10px" data-t="theme_hint">Changes colors and logo on the whole public website (gold is the official identity).</p>
+      <select id="stTheme">
+        <option value="gold" selected>Oro / Gold</option>
+        <option value="champagne">Champagne</option>
+        <option value="platinum">Platino / Platinum</option>
+      </select>
+    </div>
+
+    <div class="card">
       <div class="sec-title"><h2 data-t="followers">Followers (shown on the website)</h2></div>
       <div class="grid2">
         <div><label>TikTok</label><input id="stTk" type="number" placeholder="2600000"></div>
@@ -363,6 +373,7 @@ const ADM = {
     no_photos:"No photos yet.", no_caption:"(no caption)", choose_file:"Choose at least one file",
     uploading:"Uploading...", upload_err:"Upload error: ", photos_uploaded:"Photos uploaded!",
     confirm_del_photo:"Delete this photo?",
+    theme_l:"Site theme", theme_hint:"Changes colors and logo on the whole public website (gold is the official identity).",
     contacts:"Contacts", booking_email_l:"Booking email (receives the website form)",
     whatsapp_l:"Booking WhatsApp (with country code, e.g. +1347...)",
     followers:"Followers (shown on the website)",
@@ -425,6 +436,7 @@ const ADM = {
     no_photos:"Nessuna foto ancora.", no_caption:"(senza didascalia)", choose_file:"Scegli almeno un file",
     uploading:"Caricamento in corso...", upload_err:"Errore caricamento: ", photos_uploaded:"Foto caricate!",
     confirm_del_photo:"Eliminare questa foto?",
+    theme_l:"Tema del sito", theme_hint:"Cambia colori e logo su tutto il sito pubblico (l'oro è l'identità ufficiale).",
     contacts:"Contatti", booking_email_l:"Email booking (riceve il modulo del sito)",
     whatsapp_l:"WhatsApp booking (con prefisso, es +1347...)",
     followers:"Follower (mostrati sul sito)",
@@ -901,7 +913,7 @@ async function removeSpecial(key){
 }
 
 /* ---------- settings ---------- */
-const SET_MAP = { booking_email:"stEmail", whatsapp:"stWa", tiktok_followers:"stTk", youtube_subs:"stYt", instagram_followers:"stIg" };
+const SET_MAP = { booking_email:"stEmail", whatsapp:"stWa", tiktok_followers:"stTk", youtube_subs:"stYt", instagram_followers:"stIg", site_theme:"stTheme" };
 async function loadSettings(){
   const { data, error } = await sb.from("bushi_settings").select("*");
   if(error) return;

@@ -657,6 +657,10 @@
 </footer>
 
 <script>
+/* al refresh riparti dalla cima: i contenuti arrivano dal database
+   e il ripristino automatico dello scroll finirebbe a metà pagina */
+if("scrollRestoration" in history) history.scrollRestoration = "manual";
+
 /* ============================================================
    CONTENUTI — modifica QUI per aggiornare il sito
    (in v2 questa parte verrà gestita dal pannello admin)

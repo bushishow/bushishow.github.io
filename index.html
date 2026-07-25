@@ -660,6 +660,11 @@
 /* al refresh riparti dalla cima: i contenuti arrivano dal database
    e il ripristino automatico dello scroll finirebbe a metà pagina */
 if("scrollRestoration" in history) history.scrollRestoration = "manual";
+/* se l'URL porta un'ancora (#dashnor, #videos...) da un click precedente,
+   toglila: al refresh si riparte sempre dalla cima */
+if(location.hash) history.replaceState(null, "", location.pathname + location.search);
+scrollTo(0, 0);
+window.addEventListener("load", ()=>scrollTo(0, 0));
 
 /* ============================================================
    CONTENUTI — modifica QUI per aggiornare il sito

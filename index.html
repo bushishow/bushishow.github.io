@@ -149,7 +149,7 @@
   }
   .btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#141005;box-shadow:0 6px 28px rgba(212,175,55,.35)}
   .btn-gold:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(212,175,55,.5)}
-  .btn-ghost{border:1.5px solid rgba(245,242,234,.35);color:var(--text)}
+  .btn-ghost{background:transparent;border:1.5px solid rgba(245,242,234,.35);color:var(--text)}
   .btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-3px)}
   .scroll-hint{position:absolute;bottom:26px;font-size:1.5rem;color:var(--gold);opacity:.7;animation:bounce 2s infinite}
   @keyframes bounce{0%,100%{translate:0 0}50%{translate:0 10px}}
@@ -256,6 +256,10 @@
   .show-info b{font-size:1.05rem}
   .show-info span{display:block;color:var(--muted);font-size:.88rem}
   .no-shows{color:var(--muted);border:1px dashed rgba(212,175,55,.35);border-radius:14px;padding:22px 24px}
+  .soldout{
+    border:1.5px solid rgba(192,57,43,.7);color:#e57365;padding:10px 22px;border-radius:40px;
+    font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.8rem;
+  }
 
   /* gallery */
   .alb-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
@@ -696,6 +700,7 @@ const I18N = {
     dash_vid:"Watch Dashnor's magic",
     k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_err:"Something went wrong, please try again.",
     nav_gallery:"Gallery",gal_all:"See all albums",
+    sold_out:"Sold out",add_cal:"Add to calendar",
   },
   it:{
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
@@ -738,6 +743,7 @@ const I18N = {
     dash_vid:"Guarda la magia di Dashnor",
     k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_err:"Qualcosa è andato storto, riprova.",
     nav_gallery:"Galleria",gal_all:"Vedi tutti gli album",
+    sold_out:"Sold out",add_cal:"Aggiungi al calendario",
   },
   al:{
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
@@ -780,6 +786,7 @@ const I18N = {
     dash_vid:"Shiko magjinë e Dashnorit",
     k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_err:"Diçka shkoi keq, provoni përsëri.",
     nav_gallery:"Galeria",gal_all:"Shiko të gjithë albumet",
+    sold_out:"Sold out",add_cal:"Shto në kalendar",
   },
   de:{
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
@@ -822,6 +829,7 @@ const I18N = {
     dash_vid:"Dashnors Magie erleben",
     k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
     nav_gallery:"Galerie",gal_all:"Alle Alben ansehen",
+    sold_out:"Ausverkauft",add_cal:"Zum Kalender",
   },
   fr:{
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
@@ -864,6 +872,7 @@ const I18N = {
     dash_vid:"La magie de Dashnor en vidéo",
     k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_err:"Une erreur s'est produite, veuillez réessayer.",
     nav_gallery:"Galerie",gal_all:"Voir tous les albums",
+    sold_out:"Complet",add_cal:"Ajouter au calendrier",
   },
   es:{
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
@@ -906,6 +915,7 @@ const I18N = {
     dash_vid:"Mira la magia de Dashnor",
     k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_err:"Algo salió mal, inténtalo de nuevo.",
     nav_gallery:"Galería",gal_all:"Ver todos los álbumes",
+    sold_out:"Agotado",add_cal:"Añadir al calendario",
   },
   ru:{
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
@@ -948,6 +958,7 @@ const I18N = {
     dash_vid:"Смотрите магию Дашнора",
     k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
     nav_gallery:"Галерея",gal_all:"Все альбомы",
+    sold_out:"Билетов нет",add_cal:"В календарь",
   },
 };
 
@@ -998,12 +1009,20 @@ function renderShows(){
     return;
   }
   const mFmt = new Intl.DateTimeFormat(LOCALES[lang]||"en-US",{month:"short"});
-  list.innerHTML = future.map(s=>`
+  window._siteShows = future;
+  list.innerHTML = future.map((s,i)=>`
     <div class="show-card reveal visible">
       <div class="show-date"><div class="d">${s.when.getDate()}</div><div class="m">${mFmt.format(s.when)} ${s.when.getFullYear()}</div></div>
-      <div class="show-info"><b>${s.title}</b><span>${s.venue} · ${s.city}</span></div>
-      ${s.url?`<a class="btn btn-gold" style="padding:11px 24px" href="${s.url}" target="_blank" rel="noopener">${T.tickets}</a>`:""}
+      <div class="show-info"><b>${s.title}</b><span>${[s.venue, s.city, s.time].filter(Boolean).join(" · ")}</span></div>
+      ${s.sold_out
+        ? `<span class="soldout">${T.sold_out}</span>`
+        : (s.url?`<a class="btn btn-gold" style="padding:11px 24px" href="${s.url}" target="_blank" rel="noopener">${T.tickets}</a>`:"")}
+      <button class="btn btn-ghost cal-btn" style="padding:10px 18px" data-i="${i}" type="button">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v6M9 17h6"/></svg>
+        <span>${T.add_cal}</span>
+      </button>
     </div>`).join("");
+  list.querySelectorAll(".cal-btn").forEach(b=>b.addEventListener("click",()=>downloadIcs(window._siteShows[+b.dataset.i])));
   const next = future[0];
   const days = Math.round((next.when-today)/86400000);
   document.getElementById("cdText").textContent = `${T.next_label} ${days} ${T.days_label} · ${next.title}, ${next.city}`;
@@ -1011,6 +1030,34 @@ function renderShows(){
 }
 
 let lbList = [], lbIdx = 0;
+
+function downloadIcs(s){
+  const p = n => String(n).padStart(2,"0");
+  const esc = t => (t||"").replace(/([,;])/g,"\\$1");
+  let dtstart, dtend;
+  if(s.time && /^\d{1,2}:\d{2}/.test(s.time)){
+    const [h,m] = s.time.split(":").map(Number);
+    const st = new Date(s.when); st.setHours(h,m,0);
+    const en = new Date(st); en.setHours(en.getHours()+2);
+    const f = d => `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+    dtstart = "DTSTART:"+f(st); dtend = "DTEND:"+f(en);
+  }else{
+    const d = s.date.replace(/-/g,"");
+    dtstart = "DTSTART;VALUE=DATE:"+d; dtend = "DTEND;VALUE=DATE:"+d;
+  }
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//bushishow.com//show//EN","BEGIN:VEVENT",
+    "UID:"+s.date+"-"+Math.random().toString(36).slice(2)+"@bushishow.com",
+    "DTSTAMP:"+s.date.replace(/-/g,"")+"T090000Z",
+    dtstart, dtend,
+    "SUMMARY:"+esc(s.title)+" · Nikolas & Dashnor Bushi",
+    "LOCATION:"+esc([s.venue,s.city].filter(Boolean).join(", ")),
+    s.url?"URL:"+s.url:"",
+    "END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
+  a.download = "show-nikolas-dashnor.ics";
+  a.click();
+}
 
 function renderGallery(){
   if(!CONFIG.photos.length) return;
@@ -1234,7 +1281,7 @@ async function sbGet(path){
       }
     });
     if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, person:v.person||"nikolas", sub:{ en:v.subtitle||"" } }));
-    if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url }));
+    if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url, time:s.time||"", sold_out:!!s.sold_out }));
     if(photos.length) CONFIG.photos = photos.map(p=>({ src:SB_URL+"/storage/v1/object/public/foto/"+p.path, caption:p.caption, album:p.album }));
     REVIEWS = reviews || [];
     renderReviews();

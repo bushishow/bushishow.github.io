@@ -1484,25 +1484,6 @@ try{
 </script>
 
 
-<!-- ============ VERIFY · hand-card (Dash) ============ -->
-<script>
-(function(){
-  var EP="https://svvylcewvscbgwukwzdh.supabase.co/functions/v1/site?profile=dash";
-  var BASE="https://svvylcewvscbgwukwzdh.supabase.co/storage/v1/object/public/thumbs/handcards/dash/";
-  var orig=null, armedCode=null;
-  function poll(){
-    var e=document.getElementById('portraitDash'); if(!e){return;}
-    if(!armedCode&&e.src&&orig===null&&e.src.indexOf('handcards')<0)orig=e.src;
-    fetch(EP,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
-      var code=(j&&j.card&&/^(10|[2-9]|[AJQK])[SHDC]$/.test(j.card))?j.card:null;
-      if(code&&code!==armedCode){var im=new Image();im.onload=function(){e.src=BASE+code+".jpg?t="+code;};im.src=BASE+code+".jpg?t="+code;armedCode=code;}
-      else if(!code&&armedCode){if(orig)e.src=orig;armedCode=null;}
-    }).catch(function(){});
-  }
-  poll();setInterval(poll,5000);
-})();
-</script>
-<!-- ============ fine VERIFY hand-card ============ -->
 
 </body>
 </html>

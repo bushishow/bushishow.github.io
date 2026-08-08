@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>The Bushi Show</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#07070c;color:#a7a294;font-family:Inter,sans-serif}
+  body{overflow:hidden}
+  #vf{position:fixed;inset:0;z-index:9999;display:none;background:#0a0a0e}
+  #vf.on{display:block}
+  .reel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    gap:30px;padding:34px 12px 70px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .face{position:relative;flex:0 0 auto}
+  .face canvas{display:block;max-width:92vw;border-radius:12px;touch-action:pan-y;
+    box-shadow:0 20px 50px -22px #000}
+  .name{text-align:center;font-family:'Playfair Display',serif;color:#8a8578;font-size:14px;margin-top:10px;letter-spacing:.06em}
+  #hint{position:fixed;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom));text-align:center;
+    font-family:'Playfair Display',serif;font-size:clamp(15px,4.4vw,21px);color:#f0d97a;z-index:10000;
+    text-shadow:0 2px 22px #000;opacity:0;transition:opacity 1s ease;pointer-events:none;padding:0 24px}
+  #hint.on{opacity:.85}
+  #glint{position:absolute;width:14px;height:14px;border-radius:50%;pointer-events:none;z-index:10001;
+    background:radial-gradient(circle,#fff,rgba(240,217,122,.6),transparent 70%);opacity:0;transition:opacity .8s}
+  #glint.on{opacity:.9;animation:tw 1.8s ease-in-out infinite}
+  @keyframes tw{50%{transform:scale(1.5);opacity:.55}}
+  .site{height:100%;display:flex;flex-direction:column}
+  .nav{padding:18px;text-align:center}.nav a{color:#a7a294;margin:0 10px;text-decoration:none}
+  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .h{font-family:'Playfair Display',serif;color:#d4af37;font-size:30px}
+</style>
+</head>
+<body>
+<div class="site">
+  <div class="nav"><a>Home</a><a>Show</a><a>Gallery</a><a>Contact</a></div>
+  <div class="hero"><div class="h">The Bushi Show</div><p>Father &amp; Son · Magic &amp; Mentalism</p>
+    <p style="font-size:12px;opacity:.5;margin-top:8px">prova occhio · auto-detect · Dashnor + Nikolas</p></div>
+</div>
+
+<div id="vf"><div class="reel" id="reel"></div></div>
+<div id="glint"></div>
+<div id="hint"></div>
+
+<script type="module">
+import {FaceLandmarker, FilesetResolver} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+const EP="https://svvylcewvscbgwukwzdh.supabase.co/functions/v1/site?profile=dash";
+const BASE="https://svvylcewvscbgwukwzdh.supabase.co/storage/v1/object/public/thumbs/";
+const CARDS=BASE+"cards/";
+const HINT={it:"Guardami negli occhi…",en:"Look into my eyes…",sq:"Shiko në sytë e mi…"};
+const PORTRAITS=[
+  {url:BASE+"portraits/dash.jpg", name:"Dashnor"},
+  {url:BASE+"portraits/nikolas.jpg", name:"Nikolas"}
+];
+
+const vf=document.getElementById('vf'), reel=document.getElementById('reel'),
+      hint=document.getElementById('hint'), glint=document.getElementById('glint');
+let shown=false, armedCard=null, landmarker=null;
+const cardImg=new Image(); cardImg.crossOrigin="anonymous";
+
+async function getLandmarker(){
+  if(landmarker)return landmarker;
+  const fs=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  landmarker=await FaceLandmarker.createFromOptions(fs,{
+    baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"},
+    runningMode:"IMAGE", numFaces:2
+  });
+  return landmarker;
+}
+
+// una faccia interattiva (canvas + lente + iride auto)
+class EyeFace{
+  constructor(item){
+    this.name=item.name;
+    this.img=new Image(); this.img.crossOrigin="anonymous";
+    this.iris={x:0,y:0,r:14,ok:false};
+    this.lens={x:-1,y:-1,active:false}; this.Z=3.1; this.LR=76; this.fit=1;
+    this.wrap=document.createElement('div'); this.wrap.className='face';
+    this.cv=document.createElement('canvas'); this.g=this.cv.getContext('2d');
+    const nm=document.createElement('div'); nm.className='name'; nm.textContent=item.name;
+    this.wrap.appendChild(this.cv); this.wrap.appendChild(nm);
+    this.img.onload=()=>this.ready(item);
+    this.img.src=item.url;
+    this.bind();
+  }
+  async ready(item){
+    try{ await this.img.decode(); }catch(_){}
+    this.layout();
+    // rileva iride
+    try{
+      const lm=(await getLandmarker()).detect(this.img);
+      const f=lm.faceLandmarks && lm.faceLandmarks[0];
+      if(f && f[468]){
+        const W=this.img.naturalWidth,H=this.img.naturalHeight, c=f[468], e=f[469];
+        this.iris={x:c.x*W, y:c.y*H, r:(Math.hypot((e.x-c.x)*W,(e.y-c.y)*H)||14), ok:true};
+      }
+    }catch(err){ console.warn("detect",item.name,err); }
+  }
+  layout(){
+    const maxW=Math.min(innerWidth*0.92, this.img.naturalWidth);
+    const s=maxW/this.img.naturalWidth;
+    this.cv.width=this.img.naturalWidth*s; this.cv.height=this.img.naturalHeight*s;
+    this.cv.style.width=this.cv.width+'px'; this.cv.style.height=this.cv.height+'px';
+    this.fit=s;
+  }
+  bind(){
+    const p=e=>{const r=this.cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+    const move=e=>{const q=p(e);this.lens.x=q.x;this.lens.y=q.y;this.lens.active=true;};
+    this.cv.addEventListener('pointerdown',e=>{move(e);});
+    this.cv.addEventListener('pointermove',e=>{if(e.pressure>0||this.lens.active)move(e);});
+    this.cv.addEventListener('pointerup',()=>this.lens.active=false);
+    this.cv.addEventListener('pointerleave',()=>this.lens.active=false);
+  }
+  draw(){
+    if(!this.img.complete||!this.img.naturalWidth)return;
+    const g=this.g,cv=this.cv;
+    g.clearRect(0,0,cv.width,cv.height);
+    g.drawImage(this.img,0,0,cv.width,cv.height);
+    if(!this.lens.active)return;
+    const r=this.LR;
+    g.save();
+    g.beginPath();g.arc(this.lens.x,this.lens.y,r,0,7);g.clip();
+    const sx=this.lens.x/this.fit - r/(this.fit*this.Z), sy=this.lens.y/this.fit - r/(this.fit*this.Z),
+          sw=(2*r)/(this.fit*this.Z), sh=(2*r)/(this.fit*this.Z);
+    g.drawImage(this.img, sx,sy,sw,sh, this.lens.x-r,this.lens.y-r, 2*r,2*r);
+    if(this.iris.ok && cardImg.complete){
+      const ix=this.iris.x*this.fit, iy=this.iris.y*this.fit, irr=this.iris.r*this.fit;
+      const d=Math.hypot(this.lens.x-ix,this.lens.y-iy);
+      if(d < r*0.95){
+        const mx=this.lens.x+(ix-this.lens.x)*this.Z, my=this.lens.y+(iy-this.lens.y)*this.Z, mr=irr*this.Z*1.05;
+        g.save();
+        g.beginPath();g.arc(mx,my,mr,0,7);g.clip();
+        const ratio=(cardImg.naturalWidth/cardImg.naturalHeight)||0.71;
+        const cw=mr*2.2, ch=cw/ratio;
+        g.globalAlpha=0.9;g.globalCompositeOperation='screen';
+        g.drawImage(cardImg, mx-cw/2, my-ch/2, cw, ch);
+        g.globalCompositeOperation='source-over';
+        g.globalAlpha=0.5;g.fillStyle='rgba(255,255,255,.9)';
+        g.beginPath();g.arc(mx-mr*0.3,my-mr*0.35,mr*0.16,0,7);g.fill();
+        g.restore();
+        g.globalAlpha=0.85;g.fillStyle='#0a0a0e';
+        g.beginPath();g.arc(mx,my,mr*0.42,0,7);g.fill();g.globalAlpha=1;
+      }
+    }
+    g.restore();
+    g.lineWidth=3;g.strokeStyle='rgba(212,175,55,.85)';
+    g.beginPath();g.arc(this.lens.x,this.lens.y,r,0,7);g.stroke();
+    g.lineWidth=1;g.strokeStyle='rgba(255,255,255,.25)';
+    g.beginPath();g.arc(this.lens.x,this.lens.y,r-2,0,7);g.stroke();
+  }
+}
+
+let faces=[];
+function loop(){requestAnimationFrame(loop);if(!shown)return;for(const f of faces)f.draw();}
+
+// piccolo luccichio curioso sull'occhio del primo volto: invita ad avvicinarsi
+function placeGlint(){
+  const f=faces[0]; if(!f||!f.iris.ok){return;}
+  const r=f.cv.getBoundingClientRect();
+  glint.style.left=(r.left+f.iris.x*f.fit-7)+'px';
+  glint.style.top=(r.top+f.iris.y*f.fit-7)+'px';
+  glint.classList.add('on');
+  setTimeout(()=>glint.classList.remove('on'),6000);
+}
+
+async function start(code,lang){
+  if(shown)return;shown=true;armedCard=code;
+  cardImg.src=CARDS+code+".svg";
+  vf.classList.add('on');
+  await getLandmarker().catch(()=>{});
+  for(const item of PORTRAITS){const f=new EyeFace(item);faces.push(f);reel.appendChild(f.wrap);}
+  hint.textContent=HINT[lang]||HINT.en;hint.classList.add('on');
+  setTimeout(()=>hint.classList.remove('on'),5500);
+  requestAnimationFrame(loop);
+  // quando la prima iride è pronta, mostra il luccichio invitante
+  let tries=0;const gi=setInterval(()=>{tries++;if((faces[0]&&faces[0].iris.ok)||tries>40){clearInterval(gi);placeGlint();}},150);
+  // nascondi il luccichio appena si tocca
+  vf.addEventListener('pointerdown',()=>glint.classList.remove('on'),{once:true});
+}
+addEventListener('resize',()=>{if(shown)for(const f of faces)f.layout();});
+
+function check(){fetch(EP,{cache:'no-store'}).then(r=>r.json()).then(j=>{
+  if(!j)return;const code=j.card&&/^(10|[2-9]|[AJQK])[SHDC]$/.test(j.card)?j.card:null;
+  if(code)start(code,j.lang||'en');
+}).catch(()=>{});}
+check(); setInterval(()=>{if(!shown)check();},4000);
+</script>
+</body>
+</html>

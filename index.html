@@ -1487,22 +1487,21 @@ try{
 
 
 
+
 <!-- ============ VERIFY · home (occhio + phantom) ============ -->
 <style>
   #vfPh{position:fixed;inset:0;z-index:100000;display:none}
   #vfPh.on{display:block}
   #vfFlash{position:fixed;inset:0;z-index:99998;background:radial-gradient(circle at 50% 46%,#fff,rgba(255,255,255,0) 60%);opacity:0;pointer-events:none}
-  #vfShadow,#vfCard{position:absolute;left:0;top:0;width:min(360px,86vw);aspect-ratio:239/335}
-  #vfShadow{border-radius:18px;background:#000;filter:blur(34px);opacity:.5;pointer-events:none}
-  #vfCard{pointer-events:auto;touch-action:none;will-change:transform}
-  #vfInner{position:absolute;inset:0;border-radius:16px;overflow:hidden}
+  #vfCard{position:absolute;left:0;top:0;width:min(360px,86vw);aspect-ratio:239/335;pointer-events:auto;touch-action:none;will-change:transform;filter:drop-shadow(0 22px 26px rgba(0,0,0,.55))}
+  #vfInner{position:absolute;inset:0}
   #vfCard img{width:100%;height:100%;display:block;object-fit:contain}
-  #vfGlare{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;border-radius:16px;opacity:.45;background:linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.28) 50%,rgba(255,255,255,0) 60%);background-size:300% 300%;background-position:50% 50%}
+  #vfGlare{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.35;background:linear-gradient(115deg,rgba(255,255,255,0) 42%,rgba(255,255,255,.25) 50%,rgba(255,255,255,0) 58%);background-size:280% 280%;background-position:50% 50%}
   #vfTip{position:fixed;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom));text-align:center;font-family:'Playfair Display',Georgia,serif;color:#f0d97a;font-size:17px;opacity:0;transition:opacity .5s;z-index:100002;pointer-events:none;text-shadow:0 2px 18px #000}
   #vfTip.on{opacity:.9}
 </style>
 <div id="vfFlash"></div>
-<div id="vfPh"><div id="vfShadow"></div><div id="vfCard"><div id="vfInner"><img id="vfImg" alt=""><div id="vfGlare"></div></div></div></div>
+<div id="vfPh"><div id="vfCard"><div id="vfInner"><img id="vfImg" alt=""><div id="vfGlare"></div></div></div></div>
 <div id="vfTip"></div>
 <script>
 (function(){
@@ -1512,7 +1511,7 @@ try{
   var MOVE={it:"Muovi il telefono… poi trascìnala via",en:"Move the phone… then swipe it away",sq:"Lëviz telefonin… pastaj hidhe"};
   var origPortrait=null;
   var ph=document.getElementById('vfPh'),card=document.getElementById('vfCard'),img=document.getElementById('vfImg'),
-      shadow=document.getElementById('vfShadow'),inner=document.getElementById('vfInner'),glare=document.getElementById('vfGlare'),
+      inner=document.getElementById('vfInner'),glare=document.getElementById('vfGlare'),
       flash=document.getElementById('vfFlash'),tip=document.getElementById('vfTip');
   var pending=null,mode='',lang='it',phReady=false,shown=false,pdone=false,gotMotion=false;
   var dragX=0,dragY=0,dragging=false,gone=false,flung=false,flingRot=0,vx=0,vy=0,lastX=0,lastY=0,gGamma=0,gBeta=40,DEAD=14;
@@ -1526,20 +1525,17 @@ try{
     if(el){ if(origPortrait===null&&el.src&&el.src.indexOf('eyecards')<0)origPortrait=el.src;
       if(code&&(mode==='eye'||mode==='all')){var im=new Image();im.onload=function(){el.src=EYE+code+'.jpg';};im.src=EYE+code+'.jpg';}
       else if(origPortrait){el.src=origPortrait;} }
-    if(code&&(mode==='phantom'||mode==='all')&&!pdone){
-      img.src=PH+code+'.png';
-      if(!phReady&&!shown)setTip('👻 Tocca lo schermo');
-    } else if(!code){hideTip();}
+    if(code&&(mode==='phantom'||mode==='all')&&!pdone){ img.src=PH+code+'.png';
+      if(!phReady&&!shown)setTip('👻 Tocca lo schermo per attivare'); }
+    else if(!code){hideTip();}
   }).catch(function(){});}
 
   function enablePhantom(){
     if(phReady||!pending||pdone||!(mode==='phantom'||mode==='all'))return;
     phReady=true;
-    function go(){
-      window.addEventListener('devicemotion',onMotion);window.addEventListener('deviceorientation',onOrient);
+    function go(){window.addEventListener('devicemotion',onMotion);window.addEventListener('deviceorientation',onOrient);
       requestAnimationFrame(loop);setTip('Sbatti il telefono!');
-      setTimeout(function(){ if(!gotMotion&&!shown) setTip('Sbatti forte il telefono'); },2500);
-    }
+      setTimeout(function(){if(!gotMotion&&!shown)setTip('Sbatti forte il telefono');},2500);}
     if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
       DeviceMotionEvent.requestPermission().then(function(s){
         if(s!=='granted'){phReady=false;setTip('Consenti il movimento e riprova');return;}
@@ -1549,17 +1545,16 @@ try{
   }
   document.addEventListener('click',enablePhantom);
   document.addEventListener('touchend',enablePhantom);
-  document.addEventListener('pointerup',enablePhantom);
   function onOrient(e){gGamma=e.gamma||0;gBeta=e.beta||40;}
   function onMotion(e){gotMotion=true;if(shown||pdone||!pending)return;
-    var a=e.acceleration,m=0;
-    if(a&&(a.x!=null||a.y!=null||a.z!=null)){m=Math.hypot(a.x||0,a.y||0,a.z||0);if(m>16)appear();}
-    else{var g=e.accelerationIncludingGravity||{};m=Math.hypot(g.x||0,g.y||0,g.z||0);if(m>30)appear();}}
+    var a=e.acceleration;
+    if(a&&(a.x!=null||a.y!=null||a.z!=null)){if(Math.hypot(a.x||0,a.y||0,a.z||0)>16)appear();}
+    else{var g=e.accelerationIncludingGravity||{};if(Math.hypot(g.x||0,g.y||0,g.z||0)>30)appear();}}
   function appear(){if(shown||pdone)return;shown=true;ph.classList.add('on');hideTip();
-    flash.animate([{opacity:0},{opacity:.85,offset:.12},{opacity:0}],{duration:340});
-    ph.animate([{transform:'translateY(0)'},{transform:'translateY(9px)'},{transform:'translateY(0)'}],{duration:240});
+    flash.animate([{opacity:0},{opacity:.9,offset:.1},{opacity:0}],{duration:320});
+    ph.animate([{transform:'translateY(0)'},{transform:'translateY(10px)'},{transform:'translateY(0)'}],{duration:230});
     inner.animate([{opacity:0,transform:'translateY(-70px) scale(.18) rotate(-8deg)'},{opacity:1,offset:.55,transform:'translateY(8px) scale(1.14) rotate(2deg)'},{opacity:1,transform:'translateY(0) scale(1) rotate(0)'}],{duration:560,easing:'cubic-bezier(.2,1.35,.35,1)'});
-    setTip(MOVE[lang]||MOVE.it);setTimeout(hideTip,4500);
+    setTimeout(function(){setTip(MOVE[lang]||MOVE.it);setTimeout(hideTip,4000);},700);
     if(navigator.vibrate)navigator.vibrate([60,25,140]);}
   function loop(){requestAnimationFrame(loop);if(!shown)return;
     var cw=card.offsetWidth||300,ch=card.offsetHeight||420,bX=(innerWidth-cw)/2,bY=innerHeight*0.46-ch/2;
@@ -1573,8 +1568,7 @@ try{
     }else if(flung){dragX+=vx;dragY+=vy;vx*=0.99;vy*=0.99;flingRot+=vx*0.5;
       if(bX+dragX< -cw*1.2||bX+dragX>innerWidth+cw*0.2||bY+dragY< -ch*1.2||bY+dragY>innerHeight+ch*0.2)dismiss();}
     card.style.transform='translate('+(bX+dragX)+'px,'+(bY+dragY)+'px)'+(flung?' rotate('+flingRot+'deg)':'');
-    glare.style.backgroundPosition=(50-gGamma*1.2)+'% '+(50+(gBeta-40)*1.2)+'%';
-    shadow.style.transform='translate('+(bX+dragX)+'px,'+(bY+dragY+18)+'px)';}
+    glare.style.backgroundPosition=(50-gGamma*1.2)+'% '+(50+(gBeta-40)*1.2)+'%';}
   card.addEventListener('pointerdown',function(e){e.stopPropagation();dragging=true;flung=false;card.setPointerCapture(e.pointerId);lastX=e.clientX;lastY=e.clientY;vx=vy=0;});
   card.addEventListener('pointermove',function(e){if(!dragging)return;var mx=e.clientX-lastX,my=e.clientY-lastY;dragX+=mx;dragY+=my;vx=vx*0.35+mx*0.65;vy=vy*0.35+my*0.65;lastX=e.clientX;lastY=e.clientY;});
   card.addEventListener('pointerup',function(e){e.stopPropagation();dragging=false;if(Math.hypot(vx,vy)>10){flung=true;vx*=2.6;vy*=2.6;}});

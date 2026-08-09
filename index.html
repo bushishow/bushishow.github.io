@@ -1488,31 +1488,31 @@ try{
 
 
 
+
 <!-- ============ VERIFY · home (occhio + phantom) ============ -->
 <style>
   #vfPh{position:fixed;inset:0;z-index:100000;display:none}
   #vfPh.on{display:block}
   #vfFlash{position:fixed;inset:0;z-index:99998;background:radial-gradient(circle at 50% 46%,#fff,rgba(255,255,255,0) 60%);opacity:0;pointer-events:none}
-  #vfCard{position:absolute;left:0;top:0;width:min(360px,86vw);aspect-ratio:239/335;pointer-events:auto;touch-action:none;will-change:transform;filter:drop-shadow(0 22px 26px rgba(0,0,0,.55))}
+  #vfCard{position:absolute;left:0;top:0;width:min(340px,80vw,56vh);aspect-ratio:5/7;pointer-events:auto;touch-action:none;will-change:transform}
   #vfInner{position:absolute;inset:0}
-  #vfCard img{width:100%;height:100%;display:block;object-fit:contain}
-  #vfGlare{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.35;background:linear-gradient(115deg,rgba(255,255,255,0) 42%,rgba(255,255,255,.25) 50%,rgba(255,255,255,0) 58%);background-size:280% 280%;background-position:50% 50%}
+  #vfImg{width:100%;height:100%;display:block;object-fit:contain;
+    -webkit-filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));filter:drop-shadow(0 14px 22px rgba(0,0,0,.5))}
   #vfTip{position:fixed;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom));text-align:center;font-family:'Playfair Display',Georgia,serif;color:#f0d97a;font-size:17px;opacity:0;transition:opacity .5s;z-index:100002;pointer-events:none;text-shadow:0 2px 18px #000}
   #vfTip.on{opacity:.9}
 </style>
 <div id="vfFlash"></div>
-<div id="vfPh"><div id="vfCard"><div id="vfInner"><img id="vfImg" alt=""><div id="vfGlare"></div></div></div></div>
+<div id="vfPh"><div id="vfCard"><div id="vfInner"><img id="vfImg" alt=""></div></div></div>
 <div id="vfTip"></div>
 <script>
 (function(){
   var EP="https://svvylcewvscbgwukwzdh.supabase.co/functions/v1/site?profile=dash";
   var EYE="https://svvylcewvscbgwukwzdh.supabase.co/storage/v1/object/public/thumbs/eyecards/dash/";
-  var PH="https://svvylcewvscbgwukwzdh.supabase.co/storage/v1/object/public/thumbs/cards-photo/";
+  var PH="https://svvylcewvscbgwukwzdh.supabase.co/storage/v1/object/public/thumbs/cards-clean/";
   var MOVE={it:"Muovi il telefono… poi trascìnala via",en:"Move the phone… then swipe it away",sq:"Lëviz telefonin… pastaj hidhe"};
   var origPortrait=null;
   var ph=document.getElementById('vfPh'),card=document.getElementById('vfCard'),img=document.getElementById('vfImg'),
-      inner=document.getElementById('vfInner'),glare=document.getElementById('vfGlare'),
-      flash=document.getElementById('vfFlash'),tip=document.getElementById('vfTip');
+      inner=document.getElementById('vfInner'),flash=document.getElementById('vfFlash'),tip=document.getElementById('vfTip');
   var pending=null,mode='',lang='it',phReady=false,shown=false,pdone=false,gotMotion=false;
   var dragX=0,dragY=0,dragging=false,gone=false,flung=false,flingRot=0,vx=0,vy=0,lastX=0,lastY=0,gGamma=0,gBeta=40,DEAD=14;
   function setTip(t){tip.textContent=t;tip.classList.add('on');}
@@ -1567,8 +1567,7 @@ try{
       if(dragX<mnX){dragX=mnX;vx=0;}if(dragX>mxX){dragX=mxX;vx=0;}if(dragY<mnY){dragY=mnY;vy=0;}if(dragY>mxY){dragY=mxY;vy=0;}
     }else if(flung){dragX+=vx;dragY+=vy;vx*=0.99;vy*=0.99;flingRot+=vx*0.5;
       if(bX+dragX< -cw*1.2||bX+dragX>innerWidth+cw*0.2||bY+dragY< -ch*1.2||bY+dragY>innerHeight+ch*0.2)dismiss();}
-    card.style.transform='translate('+(bX+dragX)+'px,'+(bY+dragY)+'px)'+(flung?' rotate('+flingRot+'deg)':'');
-    glare.style.backgroundPosition=(50-gGamma*1.2)+'% '+(50+(gBeta-40)*1.2)+'%';}
+    card.style.transform='translate('+(bX+dragX)+'px,'+(bY+dragY)+'px)'+(flung?' rotate('+flingRot+'deg)':'');}
   card.addEventListener('pointerdown',function(e){e.stopPropagation();dragging=true;flung=false;card.setPointerCapture(e.pointerId);lastX=e.clientX;lastY=e.clientY;vx=vy=0;});
   card.addEventListener('pointermove',function(e){if(!dragging)return;var mx=e.clientX-lastX,my=e.clientY-lastY;dragX+=mx;dragY+=my;vx=vx*0.35+mx*0.65;vy=vy*0.35+my*0.65;lastX=e.clientX;lastY=e.clientY;});
   card.addEventListener('pointerup',function(e){e.stopPropagation();dragging=false;if(Math.hypot(vx,vy)>10){flung=true;vx*=2.6;vy*=2.6;}});

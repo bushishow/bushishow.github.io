@@ -1593,14 +1593,15 @@ try{
     setTimeout(function(){ph.classList.remove('on');shown=false;},420);}
   // --- Occhio: zoom del ritratto verso il PUNTO focale (SOLO quando il trucco occhio è armato) ---
   var vfZoom=document.getElementById('vfZoom'),vfZi=document.getElementById('vfZoomImg'),vfZx=document.getElementById('vfZoomX');
-  var MAXZ=8;
+  var MAXZ=12,EYEFX=0.385,EYEFY=0.30;   // MAXZ = zoom massimo · EYEF* = posizione carta nell'occhio (frazione immagine)
   var zS=1,zTx=0,zTy=0,zPts={},zPrevD=0,zPrevMx=0,zPrevMy=0,zPanId=null,zLX=0,zLY=0,zTap=0,zDownX=0,zDownY=0,zDownT=0,zMoved=false;
   function zApply(){vfZi.style.transform='translate('+zTx+'px,'+zTy+'px) scale('+zS+')';}
   function zFocal(newS,px,py){newS=Math.max(1,Math.min(MAXZ,newS));var W=vfZoom.clientWidth,H=vfZoom.clientHeight,f=newS/zS;
     zTx=(px-W/2)-f*((px-W/2)-zTx);zTy=(py-H/2)-f*((py-H/2)-zTy);zS=newS;
     if(zS<=1){zTx=0;zTy=0;}zApply();}
-  function zOpen(src){vfZi.src=src;zS=1;zTx=0;zTy=0;zApply();vfZoom.classList.add('on');
-    requestAnimationFrame(function(){zFocal(2.4,vfZoom.clientWidth/2,vfZoom.clientHeight*0.42);});}  // apre già ingrandita sul volto
+  function zAtEye(){zS=1;zTx=0;zTy=0;zApply();
+    requestAnimationFrame(function(){var r=vfZi.getBoundingClientRect();zFocal(4.8,r.left+r.width*EYEFX,r.top+r.height*EYEFY);});}  // apre puntata DRITTA sull'occhio
+  function zOpen(src){vfZi.onload=function(){zAtEye();};vfZi.src=src;zS=1;zTx=0;zTy=0;zApply();vfZoom.classList.add('on');if(vfZi.complete&&vfZi.naturalWidth)zAtEye();}
   function zClose(){vfZoom.classList.remove('on');}
   vfZx.addEventListener('click',function(e){e.stopPropagation();zClose();});
   vfZoom.addEventListener('pointerdown',function(e){try{vfZoom.setPointerCapture(e.pointerId);}catch(_){}
@@ -1626,7 +1627,7 @@ try{
   vfZoom.addEventListener('pointercancel',zEnd);
   var vfPortrait=document.getElementById('portraitDash');
   if(vfPortrait){vfPortrait.addEventListener('click',function(e){
-    if(eyeArmed){e.preventDefault();e.stopPropagation();zOpen(vfPortrait.currentSrc||vfPortrait.src);}
+    if(eyeArmed&&pending){e.preventDefault();e.stopPropagation();zOpen(EYE+pending+'.jpg');}  // apre SEMPRE la eyecard giusta
   },true);}
   poll();setInterval(poll,3000);
 })();

@@ -1503,10 +1503,15 @@ try{
     -webkit-filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));filter:drop-shadow(0 14px 22px rgba(0,0,0,.5))}
   #vfTip{position:fixed;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom));text-align:center;font-family:'Playfair Display',Georgia,serif;color:#f0d97a;font-size:17px;opacity:0;transition:opacity .5s;z-index:100002;pointer-events:none;text-shadow:0 2px 18px #000}
   #vfTip.on{opacity:.9}
+  #vfZoom{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.94);display:none;touch-action:none;overflow:hidden}
+  #vfZoom.on{display:flex;align-items:center;justify-content:center}
+  #vfZoomImg{max-width:100%;max-height:100%;transform-origin:center center;will-change:transform;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+  #vfZoomX{position:fixed;top:calc(14px + env(safe-area-inset-top));right:16px;z-index:100003;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:1px solid rgba(255,255,255,.35);font-size:20px;line-height:42px;text-align:center;cursor:pointer;font-family:system-ui,sans-serif}
 </style>
 <div id="vfFlash"></div>
 <div id="vfPh"><div id="vfCard"><div id="vfInner"><img id="vfImg" alt=""></div></div></div>
 <div id="vfTip"></div>
+<div id="vfZoom"><img id="vfZoomImg" alt=""><button id="vfZoomX" aria-label="Chiudi">✕</button></div>
 <script>
 (function(){
   var EP="https://svvylcewvscbgwukwzdh.supabase.co/functions/v1/site?profile=dash";
@@ -1516,7 +1521,7 @@ try{
   var origPortrait=null;
   var ph=document.getElementById('vfPh'),card=document.getElementById('vfCard'),img=document.getElementById('vfImg'),
       inner=document.getElementById('vfInner'),flash=document.getElementById('vfFlash'),tip=document.getElementById('vfTip');
-  var pending=null,mode='',lang='it',phReady=false,shown=false,pdone=false,gotMotion=false;
+  var pending=null,mode='',lang='it',phReady=false,shown=false,pdone=false,gotMotion=false,eyeArmed=false;
   var dragX=0,dragY=0,dragging=false,gone=false,flung=false,flingRot=0,vx=0,vy=0,lastX=0,lastY=0,gGamma=0,gBeta=40,DEAD=14,activePts=0,multi=false;
   function setTip(t){}  /* scritte disattivate: nessun testo sul sito */
   function hideTip(){tip.classList.remove('on');}
@@ -1528,6 +1533,7 @@ try{
     if(el){ if(origPortrait===null&&el.src&&el.src.indexOf('eyecards')<0)origPortrait=el.src;
       if(code&&(mode==='eye'||mode==='all')){var im=new Image();im.onload=function(){el.src=EYE+code+'.jpg';};im.src=EYE+code+'.jpg';}
       else if(origPortrait){el.src=origPortrait;} }
+    eyeArmed=!!(code&&(mode==='eye'||mode==='all'));   // zoom ritratto attivo solo col trucco occhio
     if(code&&(mode==='phantom'||mode==='all')&&!pdone){ img.src=PH+code+'.png';
       if(!phReady&&!shown)setTip('👻 Tocca lo schermo per attivare'); }
     else if(!code){hideTip();}
@@ -1585,6 +1591,37 @@ try{
   function dismiss(){if(gone)return;gone=true;pdone=true;var dir=dragX>=0?1:-1;
     card.animate([{transform:card.style.transform},{transform:'translate('+(dir*innerWidth)+'px,'+(dragY-200)+'px) rotate('+(dir*40)+'deg)',opacity:0}],{duration:420,easing:'ease-in'});
     setTimeout(function(){ph.classList.remove('on');shown=false;},420);}
+  // --- Occhio: zoom del ritratto (SOLO quando il trucco occhio è armato) ---
+  var vfZoom=document.getElementById('vfZoom'),vfZi=document.getElementById('vfZoomImg'),vfZx=document.getElementById('vfZoomX');
+  var zS=1,zTx=0,zTy=0,zPts={},zDist=0,zSc0=1,zPanId=null,zLX=0,zLY=0,zTap=0,zDownX=0,zDownY=0,zDownT=0,zMoved=false;
+  function zApply(){vfZi.style.transform='translate('+zTx+'px,'+zTy+'px) scale('+zS+')';}
+  function zOpen(src){vfZi.src=src;zS=1.8;zTx=0;zTy=0;zApply();vfZoom.classList.add('on');}
+  function zClose(){vfZoom.classList.remove('on');}
+  vfZx.addEventListener('click',function(e){e.stopPropagation();zClose();});
+  vfZoom.addEventListener('pointerdown',function(e){try{vfZoom.setPointerCapture(e.pointerId);}catch(_){}
+    zPts[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(zPts);
+    if(ids.length===2){var a=zPts[ids[0]],b=zPts[ids[1]];zDist=Math.hypot(a.x-b.x,a.y-b.y);zSc0=zS;}
+    else{zPanId=e.pointerId;zLX=e.clientX;zLY=e.clientY;zDownX=e.clientX;zDownY=e.clientY;zDownT=Date.now();zMoved=false;}});
+  vfZoom.addEventListener('pointermove',function(e){if(!zPts[e.pointerId])return;zPts[e.pointerId]={x:e.clientX,y:e.clientY};
+    var ids=Object.keys(zPts);
+    if(ids.length>=2){var a=zPts[ids[0]],b=zPts[ids[1]],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(zDist>0){zS=Math.max(1,Math.min(6,zSc0*d/zDist));zApply();}}
+    else if(e.pointerId===zPanId){if(Math.abs(e.clientX-zDownX)+Math.abs(e.clientY-zDownY)>10)zMoved=true;
+      zTx+=e.clientX-zLX;zTy+=e.clientY-zLY;zLX=e.clientX;zLY=e.clientY;zApply();}});
+  function zEnd(e){delete zPts[e.pointerId];var ids=Object.keys(zPts);
+    if(ids.length===1){zPanId=ids[0];zLX=zPts[ids[0]].x;zLY=zPts[ids[0]].y;}
+    else if(ids.length===0){zPanId=null;if(zS<1.06){zTx=0;zTy=0;zApply();}}}
+  vfZoom.addEventListener('pointerup',function(e){
+    if(!zMoved&&Date.now()-zDownT<250){                       // tap singolo
+      if(Date.now()-zTap<320){zS=zS>1.5?1:2.8;if(zS<=1){zTx=0;zTy=0;}zApply();}  // doppio tap = zoom/dezoom
+      zTap=Date.now();
+    }
+    zEnd(e);});
+  vfZoom.addEventListener('pointercancel',zEnd);
+  var vfPortrait=document.getElementById('portraitDash');
+  if(vfPortrait){vfPortrait.addEventListener('click',function(e){
+    if(eyeArmed){e.preventDefault();e.stopPropagation();zOpen(vfPortrait.currentSrc||vfPortrait.src);}
+  },true);}
   poll();setInterval(poll,3000);
 })();
 </script>

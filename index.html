@@ -1541,9 +1541,9 @@ try{
       setTimeout(function(){if(!gotMotion&&!shown)setTip('Sbatti forte il telefono');},2500);}
     if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
       DeviceMotionEvent.requestPermission().then(function(s){
-        if(s!=='granted'){phReady=false;setTip('Consenti il movimento e riprova');return;}
+        if(s!=='granted'){phReady=false;setTip('iPhone→Impostazioni→Safari→Movimento e orientamento, poi ricarica');return;}
         if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(function(){});
-        go();}).catch(function(){phReady=false;setTip('Tocca ancora per attivare');});
+        go();}).catch(function(){phReady=false;setTip('Tocca ancora, poi premi Consenti');});
     }else go();
   }
   document.addEventListener('click',enablePhantom);

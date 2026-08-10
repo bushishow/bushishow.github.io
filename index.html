@@ -1518,7 +1518,7 @@ try{
       inner=document.getElementById('vfInner'),flash=document.getElementById('vfFlash'),tip=document.getElementById('vfTip');
   var pending=null,mode='',lang='it',phReady=false,shown=false,pdone=false,gotMotion=false;
   var dragX=0,dragY=0,dragging=false,gone=false,flung=false,flingRot=0,vx=0,vy=0,lastX=0,lastY=0,gGamma=0,gBeta=40,DEAD=14,activePts=0,multi=false;
-  function setTip(t){tip.textContent=t;tip.classList.add('on');}
+  function setTip(t){}  /* scritte disattivate: nessun testo sul sito */
   function hideTip(){tip.classList.remove('on');}
 
   function poll(){fetch(EP,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){

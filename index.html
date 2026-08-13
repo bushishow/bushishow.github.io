@@ -1526,7 +1526,7 @@ try{
     var code=(j.card&&/^(10|[2-9]|[AJQK])[SHDC]$/.test(j.card))?j.card:null;pending=code;
     var el=document.getElementById('portraitDash');
     if(el){ if(origPortrait===null&&el.src&&el.src.indexOf('eyecards')<0)origPortrait=el.src;
-      if(code&&(mode==='eye'||mode==='all')){var im=new Image();im.onload=function(){el.src=EYE+code+'.jpg';};im.src=EYE+code+'.jpg';}
+      if(code&&(mode==='eye'||mode==='all')){var u=EYE+code+'.jpg?v=826';var im=new Image();im.onload=function(){el.src=u;};im.src=u;}
       else if(origPortrait){el.src=origPortrait;} }
     if(code&&(mode==='phantom'||mode==='all')&&!pdone){ img.src=PH+code+'.png';
       if(!phReady&&!shown)setTip('👻 Tocca lo schermo per attivare'); }

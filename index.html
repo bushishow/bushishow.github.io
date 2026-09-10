@@ -466,6 +466,17 @@
     <a class="btn btn-gold" href="#dashnor"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span data-i18n="cta_watch">Watch the show</span></a>
     <a class="btn btn-ghost" href="#booking"><span data-i18n="cta_book">Book the show</span></a>
   </div>
+  <style>
+    .hero-duo{display:flex;gap:20px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+    .hero-duo figure{margin:0;text-align:center;width:220px;max-width:42vw}
+    .hero-duo figcaption{font-family:'Playfair Display',serif;font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);margin-bottom:10px}
+    .hero-duo img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;border:1px solid rgba(var(--goldRGB),.35);box-shadow:0 14px 40px rgba(0,0,0,.5);display:block;background:var(--bg2)}
+    @media(max-width:520px){.hero-duo figcaption{font-size:.85rem;letter-spacing:.1em}}
+  </style>
+  <div class="hero-duo" id="heroDuo" hidden>
+    <figure><figcaption data-i18n="hero_lbl_dash">Magic</figcaption><img id="heroPhotoDash" alt="Dashnor Bushi"></figure>
+    <figure><figcaption data-i18n="hero_lbl_nik">Ventriloquist</figcaption><img id="heroPhotoNik" alt="Nikolas Bushi"></figure>
+  </div>
   <div class="scroll-hint">▾</div>
 </header>
 
@@ -744,7 +755,7 @@ const I18N = {
     nav_videos:"Videos",nav_tv:"TV & Awards",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
     badge_agt:"Society of American Magicians",badge_rai:"As seen on Rai 1",badge_duo:"Father & Son, 2× Golden Buzzer",badge_fans:"fans",
     subtitle:"Magician, Mentalist & Comedian · New York City",
-    tagline:"Sleight-of-hand, mentalism and comedy from New York. Dashnor Bushi brings close-up magic to corporate events, private parties and stages worldwide, often alongside his son Nikolas, the ventriloquist.",
+    tagline:"Sleight-of-hand, mentalism and comedy from New York. Dashnor Bushi brings close-up magic to corporate events, private parties and stages worldwide, often alongside his son Nikolas, the ventriloquist.",hero_lbl_dash:"Magic",hero_lbl_nik:"Ventriloquist",
     cta_watch:"See the magic",cta_book:"Book the show",stat_agt:"Albania's Got Talent 2026",
     k_videos:"The Show",h_videos:"Watch Nikolas & Chris",
     sub_videos:"From the Albania's Got Talent victory to the Rai 1 stage: the best moments, live and on TV.",
@@ -788,7 +799,7 @@ const I18N = {
     nav_videos:"Video",nav_tv:"TV e Premi",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Booking",
     badge_agt:"Society of American Magicians",badge_rai:"Visto su Rai 1",badge_duo:"Padre e Figlio, 2× Golden Buzzer",badge_fans:"fan",
     subtitle:"Mago, Mentalista e Comico · New York City",
-    tagline:"Giochi di prestigio, mentalismo e comicità da New York. Dashnor Bushi porta la magia ravvicinata a eventi aziendali, feste private e palchi di tutto il mondo, spesso insieme al figlio Nikolas, il ventriloquo.",
+    tagline:"Giochi di prestigio, mentalismo e comicità da New York. Dashnor Bushi porta la magia ravvicinata a eventi aziendali, feste private e palchi di tutto il mondo, spesso insieme al figlio Nikolas, il ventriloquo.",hero_lbl_dash:"Magia",hero_lbl_nik:"Ventriloquo",
     cta_watch:"Guarda la magia",cta_book:"Ingaggia lo show",stat_agt:"Albania's Got Talent 2026",
     k_videos:"Lo Show",h_videos:"Guarda Nikolas & Chris",
     sub_videos:"Dalla vittoria ad Albania's Got Talent al palco di Rai 1: i momenti migliori, dal vivo e in TV.",
@@ -832,7 +843,7 @@ const I18N = {
     nav_videos:"Video",nav_tv:"TV & Çmime",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Rrjetet",nav_booking:"Rezervo",
     badge_agt:"Society of American Magicians",badge_rai:"Parë në Rai 1",badge_duo:"Baba e Bir, 2× Golden Buzzer",badge_fans:"fansa",
     subtitle:"Magjistar, Mentalist & Komik · New York City",
-    tagline:"Duartësi, mentalizëm dhe humor nga New York. Dashnor Bushi sjell magjinë nga afër në evente korporative, festa private dhe skena anembanë botës, shpesh krah djalit të tij Nikolas, ventrilokut.",
+    tagline:"Duartësi, mentalizëm dhe humor nga New York. Dashnor Bushi sjell magjinë nga afër në evente korporative, festa private dhe skena anembanë botës, shpesh krah djalit të tij Nikolas, ventrilokut.",hero_lbl_dash:"Magji",hero_lbl_nik:"Ventrilok",
     cta_watch:"Shiko magjinë",cta_book:"Rezervo shfaqjen",stat_agt:"Albania's Got Talent 2026",
     k_videos:"Shfaqja",h_videos:"Shiko Nikolas & Chris",
     sub_videos:"Nga fitorja në Albania's Got Talent te skena e Rai 1: momentet më të mira, live dhe në TV.",
@@ -876,7 +887,7 @@ const I18N = {
     nav_videos:"Videos",nav_tv:"TV & Preise",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Social",nav_booking:"Buchung",
     badge_agt:"Society of American Magicians",badge_rai:"Bekannt aus Rai 1",badge_duo:"Vater & Sohn, 2× Goldener Buzzer",badge_fans:"Fans",
     subtitle:"Magier, Mentalist & Comedian · New York City",
-    tagline:"Fingerfertigkeit, Mentalmagie und Comedy aus New York. Dashnor Bushi bringt Close-up-Zauberei zu Firmenevents, privaten Feiern und Bühnen weltweit, oft an der Seite seines Sohnes Nikolas, dem Bauchredner.",
+    tagline:"Fingerfertigkeit, Mentalmagie und Comedy aus New York. Dashnor Bushi bringt Close-up-Zauberei zu Firmenevents, privaten Feiern und Bühnen weltweit, oft an der Seite seines Sohnes Nikolas, dem Bauchredner.",hero_lbl_dash:"Magie",hero_lbl_nik:"Bauchredner",
     cta_watch:"Die Magie sehen",cta_book:"Show buchen",stat_agt:"Albania's Got Talent 2026",
     k_videos:"Die Show",h_videos:"Nikolas & Chris erleben",
     sub_videos:"Vom Sieg bei Albania's Got Talent bis zur Bühne von Rai 1: die besten Momente, live und im TV.",
@@ -920,7 +931,7 @@ const I18N = {
     nav_videos:"Vidéos",nav_tv:"TV & Prix",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Réseaux",nav_booking:"Réservation",
     badge_agt:"Society of American Magicians",badge_rai:"Vu sur Rai 1",badge_duo:"Père & Fils, 2× Golden Buzzer",badge_fans:"fans",
     subtitle:"Magicien, Mentaliste & Comique · New York City",
-    tagline:"Prestidigitation, mentalisme et comédie depuis New York. Dashnor Bushi apporte la magie rapprochée aux événements d'entreprise, aux fêtes privées et aux scènes du monde entier, souvent aux côtés de son fils Nikolas, le ventriloque.",
+    tagline:"Prestidigitation, mentalisme et comédie depuis New York. Dashnor Bushi apporte la magie rapprochée aux événements d'entreprise, aux fêtes privées et aux scènes du monde entier, souvent aux côtés de son fils Nikolas, le ventriloque.",hero_lbl_dash:"Magie",hero_lbl_nik:"Ventriloque",
     cta_watch:"Voir la magie",cta_book:"Réserver le show",stat_agt:"Albania's Got Talent 2026",
     k_videos:"Le Show",h_videos:"Regardez Nikolas & Chris",
     sub_videos:"De la victoire à Albania's Got Talent à la scène de Rai 1 : les meilleurs moments, en live et à la TV.",
@@ -964,7 +975,7 @@ const I18N = {
     nav_videos:"Vídeos",nav_tv:"TV y Premios",nav_about:"Nikolas",nav_dashnor:"Dashnor",nav_social:"Redes",nav_booking:"Contratación",
     badge_agt:"Society of American Magicians",badge_rai:"Visto en Rai 1",badge_duo:"Padre e Hijo, 2× Golden Buzzer",badge_fans:"fans",
     subtitle:"Mago, Mentalista y Cómico · Nueva York",
-    tagline:"Juegos de manos, mentalismo y comedia desde Nueva York. Dashnor Bushi lleva la magia de cerca a eventos corporativos, fiestas privadas y escenarios de todo el mundo, a menudo junto a su hijo Nikolas, el ventrílocuo.",
+    tagline:"Juegos de manos, mentalismo y comedia desde Nueva York. Dashnor Bushi lleva la magia de cerca a eventos corporativos, fiestas privadas y escenarios de todo el mundo, a menudo junto a su hijo Nikolas, el ventrílocuo.",hero_lbl_dash:"Magia",hero_lbl_nik:"Ventrílocuo",
     cta_watch:"Ver la magia",cta_book:"Contratar el show",stat_agt:"Albania's Got Talent 2026",
     k_videos:"El Show",h_videos:"Mira a Nikolas & Chris",
     sub_videos:"De la victoria en Albania's Got Talent al escenario de Rai 1: los mejores momentos, en vivo y en TV.",
@@ -1008,7 +1019,7 @@ const I18N = {
     nav_videos:"Видео",nav_tv:"ТВ и награды",nav_about:"Николас",nav_dashnor:"Дашнор",nav_social:"Соцсети",nav_booking:"Бронирование",
     badge_agt:"Society of American Magicians",badge_rai:"В эфире Rai 1",badge_duo:"Отец и сын, 2× золотая кнопка",badge_fans:"фанатов",
     subtitle:"Маг, менталист и комик · Нью-Йорк",
-    tagline:"Ловкость рук, ментализм и комедия из Нью-Йорка. Дашнор Буши приносит магию вблизи на корпоративы, частные вечеринки и сцены по всему миру — часто вместе с сыном Николасом, чревовещателем.",
+    tagline:"Ловкость рук, ментализм и комедия из Нью-Йорка. Дашнор Буши приносит магию вблизи на корпоративы, частные вечеринки и сцены по всему миру — часто вместе с сыном Николасом, чревовещателем.",hero_lbl_dash:"Магия",hero_lbl_nik:"Чревовещатель",
     cta_watch:"Смотреть магию",cta_book:"Заказать шоу",stat_agt:"Albania's Got Talent 2026",
     k_videos:"Шоу",h_videos:"Смотрите Николаса и Криса",
     sub_videos:"От победы в Albania's Got Talent до сцены Rai 1: лучшие моменты, вживую и на ТВ.",
@@ -1441,6 +1452,13 @@ async function sbGet(path){
       if(S.google_place_url) g.href=S.google_place_url;
       g.hidden=false;
     }
+    if(S.hero_photo_dash || S.hero_photo_nikolas){
+      if(S.hero_photo_dash){ var _pd=document.getElementById("heroPhotoDash"); if(_pd) _pd.src=FOTO(S.hero_photo_dash); }
+      if(S.hero_photo_nikolas){ var _pn=document.getElementById("heroPhotoNik"); if(_pn) _pn.src=FOTO(S.hero_photo_nikolas); }
+      var _hd=document.getElementById("heroDuo"); if(_hd) _hd.hidden=false;
+    }
+    if(S.hero_label_dash){ var _ld=document.querySelector('[data-i18n="hero_lbl_dash"]'); if(_ld){ _ld.textContent=S.hero_label_dash; _ld.removeAttribute("data-i18n"); } }
+    if(S.hero_label_nikolas){ var _ln=document.querySelector('[data-i18n="hero_lbl_nik"]'); if(_ln){ _ln.textContent=S.hero_label_nikolas; _ln.removeAttribute("data-i18n"); } }
     applyTheme(S.site_theme || "gold");
     /* LAYOUT personalizzabile dall'admin: ordine + nascondi sezioni.
        Innocuo se non impostato (sito identico). Basato su id: NON tocca i trucchi. */

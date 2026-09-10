@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Sincronizza le recensioni Google di "Magic by Dash" nel database del sito.
 # Chiamate API: 1 per esecuzione (schedulata 1/giorno). Nessun segreto nel codice.
-import os, json, urllib.request
+import os, json, time, urllib.request, urllib.parse
 
 PLACE_ID = "ChIJq6rhBqxFwokRIWtohGi16_w"
 KEY = os.environ["GOOGLE_PLACES_KEY"]
@@ -55,3 +55,37 @@ for k, v in [("google_rating", str(rating)), ("google_review_count", str(count))
     sb("POST", "bushi_settings?on_conflict=key", [{"key": k, "value": v}],
        {"Prefer": "resolution=merge-duplicates,return=minimal"})
 print("Settings aggiornate.")
+
+# 6) TRADUZIONI recensioni (MyMemory, gratis, senza chiave) nelle 6 lingue del sito.
+#    Salvate in bushi_settings.review_translations come JSON { testo: { lingua_sito: traduzione } }.
+#    (mymemory_code, site_code)  -> l'albanese sul sito e' "al", MyMemory usa "sq"
+LANGS = [("it", "it"), ("sq", "al"), ("de", "de"), ("fr", "fr"), ("es", "es"), ("ru", "ru")]
+
+def translate(text, mm):
+    q = urllib.parse.quote(text[:480])
+    url = "https://api.mymemory.translated.net/get?q=%s&langpair=en|%s&de=booking@magicbydash.com" % (q, mm)
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "MagicByDash/1.0"})
+        d = json.load(urllib.request.urlopen(req, timeout=30))
+        if d.get("responseStatus") == 200:
+            tr = (d.get("responseData", {}) or {}).get("translatedText", "") or ""
+            if tr and "MYMEMORY WARNING" not in tr.upper() and "QUERY LENGTH" not in tr.upper():
+                return tr
+    except Exception:
+        pass
+    return None  # None = niente traduzione, il sito mostra l'originale
+
+trans = {}
+for row in rows:
+    t = row["text"]
+    trans[t] = {}
+    for mm, site in LANGS:
+        tr = translate(t, mm)
+        if tr:
+            trans[t][site] = tr
+        time.sleep(0.4)  # gentile con il servizio gratuito
+sb("POST", "bushi_settings?on_conflict=key",
+   [{"key": "review_translations", "value": json.dumps(trans, ensure_ascii=False)}],
+   {"Prefer": "resolution=merge-duplicates,return=minimal"})
+n = sum(len(v) for v in trans.values())
+print("Traduzioni salvate: %d testi tradotti." % n)

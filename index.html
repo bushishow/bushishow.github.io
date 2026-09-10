@@ -1261,7 +1261,7 @@ function applyLang(l){
   document.getElementById("rvEmail").placeholder = T.f_email;
   document.getElementById("rvText").placeholder = T.rev_ph;
   document.getElementById("langSel").value = l;
-  renderVideos(); renderSocials(); renderShows(); renderGallery();
+  renderVideos(); renderSocials(); renderShows(); renderGallery(); renderReviews();
 }
 document.getElementById("langSel").addEventListener("change",e=>applyLang(e.target.value));
 
@@ -1286,12 +1286,13 @@ document.addEventListener("click", e=>{
 });
 
 /* recensioni dei clienti */
-let REVIEWS = [];
+let REVIEWS = [], REV_TRANS = {};
+function revText(r){ var m = REV_TRANS[r.text]; return (m && m[lang]) ? m[lang] : r.text; }
 function renderReviews(){
   document.getElementById("revGrid").innerHTML = REVIEWS.map(r=>`
     <div class="rev-card reveal visible">
       <div class="stars">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</div>
-      <p>“${r.text.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}”</p>
+      <p>“${revText(r).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}”</p>
       <footer><b>${r.author.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</b>${r.role?" · "+r.role.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])):""}</footer>
     </div>`).join("");
   const many = REVIEWS.length > 3;
@@ -1512,6 +1513,7 @@ async function sbGet(path){
     if(videos.length) CONFIG.videos = videos.map(v=>({ yt:v.yt, title:v.title, person:v.person||"nikolas", sub:{ en:v.subtitle||"" } }));
     if(shows.length)  CONFIG.shows  = shows.map(s=>({ date:s.date, title:s.title, venue:s.venue, city:s.city, url:s.url, time:s.time||"", sold_out:!!s.sold_out }));
     if(photos.length) CONFIG.photos = photos.map(p=>({ src:SB_URL+"/storage/v1/object/public/foto/"+p.path, caption:p.caption, album:p.album }));
+    if(S.review_translations){ try{ REV_TRANS = JSON.parse(S.review_translations); }catch(e){} }
     REVIEWS = reviews || [];
     renderReviews();
     applyLang(lang);

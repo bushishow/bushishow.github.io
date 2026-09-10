@@ -207,6 +207,13 @@
       <p class="muted" style="margin-bottom:14px" data-t="special_hint">One photo per spot: uploading a new one replaces the old one on the website.</p>
       <div id="specialList" class="muted">...</div>
     </div>
+    <div class="card">
+      <div class="sec-title"><h2>Scritte sopra le foto (hero)</h2></div>
+      <p class="muted" style="margin-bottom:14px">Le scritte "Magic / Ventriloquism" sopra le due foto. Lascia VUOTO per usare la traduzione automatica nella lingua del visitatore. Scrivi qui solo se vuoi forzare un testo tuo.</p>
+      <label>Scritta sopra la foto di Dash</label><input id="heroLabelDash" placeholder="Magic (automatico se vuoto)">
+      <label>Scritta sopra la foto di Nikolas</label><input id="heroLabelNik" placeholder="Ventriloquism (automatico se vuoto)">
+      <button class="btn btn-gold" style="margin-top:16px" onclick="saveHeroLabels()">Salva scritte</button>
+    </div>
     <div class="card"><div id="photosList" class="muted">...</div></div>
   </div>
 
@@ -639,7 +646,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",
 setTab(localStorage.getItem("adm_tab")||"shows");
 
 /* ---------- loadAll (SOLO dopo login) ---------- */
-function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSpecials(); loadSettings(); loadTexts(); loadQuotes(); loadReviews(); loadStats(); loadLayout(); loadSeo(); }
+function loadAll(){ loadShows(); loadVideos(); loadPhotos(); loadSpecials(); loadSettings(); loadTexts(); loadQuotes(); loadReviews(); loadStats(); loadLayout(); loadSeo(); loadHeroLabels(); }
 
 /* ---------- Layout: ordine + visibilita delle sezioni ---------- */
 const LAYOUT_SECTIONS = [
@@ -714,6 +721,22 @@ async function saveSeo(){
     if(error){ toast("Errore nel salvataggio SEO", true); return; }
   }
   toast("SEO salvato. Ricarica il sito per applicarlo.");
+}
+
+/* ---------- Scritte hero (Magic / Ventriloquism) ---------- */
+async function loadHeroLabels(){
+  try{
+    const { data } = await sb.from("bushi_settings").select("key,value").in("key",["hero_label_dash","hero_label_nikolas"]);
+    const m = Object.fromEntries((data||[]).map(r=>[r.key, r.value]));
+    if($("heroLabelDash")) $("heroLabelDash").value = m.hero_label_dash || "";
+    if($("heroLabelNik"))  $("heroLabelNik").value  = m.hero_label_nikolas || "";
+  }catch(e){}
+}
+async function saveHeroLabels(){
+  const a = await sb.from("bushi_settings").upsert({ key:"hero_label_dash",     value: $("heroLabelDash").value.trim() });
+  const b = await sb.from("bushi_settings").upsert({ key:"hero_label_nikolas",  value: $("heroLabelNik").value.trim() });
+  if(a.error || b.error){ toast("Errore nel salvataggio", true); return; }
+  toast("Scritte salvate. Ricarica il sito per vederle.");
 }
 
 /* ---------- shows ---------- */
@@ -966,6 +989,8 @@ const SPECIALS = [
   { key:"portrait_nikolas", tkey:"sp_nik",  maxW:1200 },
   { key:"portrait_dashnor", tkey:"sp_dash", maxW:1200 },
   { key:"hero_bg",          tkey:"sp_hero", maxW:1920 },
+  { key:"hero_photo_dash",    label:"Foto hero - Dash (Magic)",           maxW:1000 },
+  { key:"hero_photo_nikolas", label:"Foto hero - Nikolas (Ventriloquist)", maxW:1000 },
 ];
 async function loadSpecials(){
   const { data, error } = await sb.from("bushi_settings").select("*").in("key", SPECIALS.map(x=>x.key));
@@ -977,7 +1002,7 @@ async function loadSpecials(){
     return `
     <div class="row">
       ${cur ? `<img src="${pub(esc(cur))}" alt="">` : `<div style="width:74px;height:56px;border:1px dashed rgba(212,175,55,.4);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:.65rem;flex-shrink:0">${t("sp_none")}</div>`}
-      <div class="grow"><b>${t(sp.tkey)}</b></div>
+      <div class="grow"><b>${sp.label ? esc(sp.label) : t(sp.tkey)}</b></div>
       <input type="file" id="spf_${sp.key}" accept="image/*" hidden>
       <button class="btn btn-gold btn-sm" onclick="$('spf_${sp.key}').click()">${t("sp_upload")}</button>
       ${cur ? `<button class="btn btn-danger btn-sm" onclick="removeSpecial('${sp.key}')">${t("sp_remove")}</button>` : ""}

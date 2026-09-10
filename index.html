@@ -1450,6 +1450,12 @@ async function sbGet(path){
         });
       }
     }catch(_e){}
+    /* SEO personalizzabile dall'admin (innocuo se non impostato) */
+    try{
+      if(S.seo_title){ document.title=S.seo_title; var _ot=document.querySelector('meta[property="og:title"]'); if(_ot)_ot.setAttribute("content",S.seo_title); var _tt=document.querySelector('meta[name="twitter:title"]'); if(_tt)_tt.setAttribute("content",S.seo_title); }
+      if(S.seo_description){ var _md=document.querySelector('meta[name="description"]'); if(_md)_md.setAttribute("content",S.seo_description); var _od=document.querySelector('meta[property="og:description"]'); if(_od)_od.setAttribute("content",S.seo_description); var _td=document.querySelector('meta[name="twitter:description"]'); if(_td)_td.setAttribute("content",S.seo_description); }
+      if(S.seo_image){ var _oi=document.querySelector('meta[property="og:image"]'); if(_oi)_oi.setAttribute("content",S.seo_image); var _ti=document.querySelector('meta[name="twitter:image"]'); if(_ti)_ti.setAttribute("content",S.seo_image); }
+    }catch(_e2){}
     const counts = [S.tiktok_followers, S.youtube_subs, S.instagram_followers];
     const socialNames = ["TikTok","YouTube","Instagram"];
     document.querySelectorAll("[data-count]").forEach((el,i)=>{

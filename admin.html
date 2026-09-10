@@ -581,7 +581,7 @@ $("forgotLink").addEventListener("click", async e=>{
   const em = $("logEmail").value.trim();
   if(!em){ toast(t("enter_email_first"), true); return; }
   const captchaToken = window.turnstile ? turnstile.getResponse() : undefined;
-  const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo:"https://www.bushishow.com/admin.html", captchaToken });
+  const { error } = await sb.auth.resetPasswordForEmail(em, { redirectTo:"https://magicbydash.com/admin.html", captchaToken });
   if(error){ toast(t("err")+error.message, true); return; }
   toast(t("reset_sent"));
 });

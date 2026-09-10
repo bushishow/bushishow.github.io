@@ -48,7 +48,9 @@ sb("POST", "bushi_reviews", rows, {"Prefer": "return=minimal"})
 print(f"Aggiornate {len(rows)} recensioni Google.")
 
 # 5) rating/conteggio/link per l'intestazione del sito (upsert)
-place_url = "https://www.google.com/maps/place/?q=place_id:"+PLACE_ID
+# Link = pagina/scheda Google di Dash (knowledge panel, mostra rating e recensioni),
+# non l'app Maps. e' il link ufficiale del suo profilo (anche sul biglietto da visita).
+place_url = "https://g.co/kgs/jyDp8wc"
 for k, v in [("google_rating", str(rating)), ("google_review_count", str(count)), ("google_place_url", place_url)]:
     sb("POST", "bushi_settings?on_conflict=key", [{"key": k, "value": v}],
        {"Prefer": "resolution=merge-duplicates,return=minimal"})

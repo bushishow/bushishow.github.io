@@ -1108,9 +1108,9 @@ async function changePassword(){
   if(newP.length < 8){ toast(t("pw_min"), true); return; }
   if(newP !== conf){ toast(t("pw_mismatch"), true); return; }
   if(newP === oldP){ toast(t("pw_same"), true); return; }
-  const { data:{ user } } = await sb.auth.getUser();
-  const { error:e1 } = await sb.auth.signInWithPassword({ email:user.email, password:oldP });
-  if(e1){ toast(t("pw_wrong"), true); return; }
+  // Ri-login interno rimosso: la protezione captcha (Turnstile) blocca il signIn
+  // senza token, dando un falso "password sbagliata". L'utente e' gia' autenticato
+  // in questa sessione, quindi updateUser basta per cambiare la password.
   const { error:e2 } = await sb.auth.updateUser({ password:newP });
   if(e2){ toast(t("err")+e2.message, true); return; }
   ["pwOld","pwNew","pwConf"].forEach(i=>$(i).value="");

@@ -601,6 +601,13 @@
   <div class="section-inner">
     <div class="kicker" data-i18n="k_rev">Reviews</div>
     <h2 data-i18n="h_rev">What clients say</h2>
+    <div style="text-align:center;margin-top:18px">
+      <a id="googleRev" href="#" target="_blank" rel="noopener" hidden style="display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;padding:11px 22px;border:1px solid rgba(var(--goldRGB),.35);border-radius:999px;text-decoration:none">
+        <span style="color:var(--gold-light);font-size:1.05rem;letter-spacing:3px">★★★★★</span>
+        <span style="color:var(--text);font-size:.95rem"><b id="gRating" style="color:var(--gold-light)">5.0</b> · <span id="gCount">12</span> <span data-i18n="rev_on_google">reviews on Google</span></span>
+        <span style="color:var(--gold-light);font-weight:600;font-size:.95rem" data-i18n="rev_see_all">See all on Google →</span>
+      </a>
+    </div>
     <div class="rev-wrap" style="margin-top:34px">
       <button class="rev-nav rev-prev" id="revPrev" type="button" aria-label="Previous" hidden>‹</button>
       <div class="rev-grid" id="revGrid"></div>
@@ -750,7 +757,7 @@ const I18N = {
     nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",press_kit:"Press kit",
     alb_all:"All",alb_duo:"Together",
     dash_vid:"Watch Dashnor's magic",
-    k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_err:"Something went wrong, please try again.",
+    k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_on_google:"reviews on Google",rev_see_all:"See all on Google →",rev_err:"Something went wrong, please try again.",
     nav_gallery:"Gallery",gal_all:"See all albums",
     sold_out:"Sold out",add_cal:"Add to calendar",
     cookie_note:"This site uses only technical cookies. No tracking.",priv_link:"Privacy",
@@ -794,7 +801,7 @@ const I18N = {
     nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",press_kit:"Press kit",
     alb_all:"Tutte",alb_duo:"Insieme",
     dash_vid:"Guarda la magia di Dashnor",
-    k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_err:"Qualcosa è andato storto, riprova.",
+    k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_on_google:"recensioni su Google",rev_see_all:"Vedi tutte su Google →",rev_err:"Qualcosa è andato storto, riprova.",
     nav_gallery:"Galleria",gal_all:"Vedi tutti gli album",
     sold_out:"Sold out",add_cal:"Aggiungi al calendario",
     cookie_note:"Questo sito usa solo cookie tecnici. Nessun tracciamento.",priv_link:"Privacy",
@@ -838,7 +845,7 @@ const I18N = {
     nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",press_kit:"Press kit",
     alb_all:"Të gjitha",alb_duo:"Së bashku",
     dash_vid:"Shiko magjinë e Dashnorit",
-    k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_err:"Diçka shkoi keq, provoni përsëri.",
+    k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_on_google:"vlerësime në Google",rev_see_all:"Shiko të gjitha në Google →",rev_err:"Diçka shkoi keq, provoni përsëri.",
     nav_gallery:"Galeria",gal_all:"Shiko të gjithë albumet",
     sold_out:"Sold out",add_cal:"Shto në kalendar",
     cookie_note:"Kjo faqe përdor vetëm cookie teknike. Asnjë gjurmim.",priv_link:"Privatësia",
@@ -882,7 +889,7 @@ const I18N = {
     nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",press_kit:"Pressemappe",
     alb_all:"Alle",alb_duo:"Zusammen",
     dash_vid:"Dashnors Magie erleben",
-    k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
+    k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_on_google:"Bewertungen auf Google",rev_see_all:"Alle auf Google ansehen →",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
     nav_gallery:"Galerie",gal_all:"Alle Alben ansehen",
     sold_out:"Ausverkauft",add_cal:"Zum Kalender",
     cookie_note:"Diese Website verwendet nur technische Cookies. Kein Tracking.",priv_link:"Datenschutz",
@@ -926,7 +933,7 @@ const I18N = {
     nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",press_kit:"Dossier de presse",
     alb_all:"Toutes",alb_duo:"Ensemble",
     dash_vid:"La magie de Dashnor en vidéo",
-    k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_err:"Une erreur s'est produite, veuillez réessayer.",
+    k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_on_google:"avis sur Google",rev_see_all:"Voir tout sur Google →",rev_err:"Une erreur s'est produite, veuillez réessayer.",
     nav_gallery:"Galerie",gal_all:"Voir tous les albums",
     sold_out:"Complet",add_cal:"Ajouter au calendrier",
     cookie_note:"Ce site n'utilise que des cookies techniques. Aucun traçage.",priv_link:"Confidentialité",
@@ -970,7 +977,7 @@ const I18N = {
     nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",press_kit:"Kit de prensa",
     alb_all:"Todas",alb_duo:"Juntos",
     dash_vid:"Mira la magia de Dashnor",
-    k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_err:"Algo salió mal, inténtalo de nuevo.",
+    k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_on_google:"reseñas en Google",rev_see_all:"Ver todas en Google →",rev_err:"Algo salió mal, inténtalo de nuevo.",
     nav_gallery:"Galería",gal_all:"Ver todos los álbumes",
     sold_out:"Agotado",add_cal:"Añadir al calendario",
     cookie_note:"Este sitio solo usa cookies técnicas. Sin rastreo.",priv_link:"Privacidad",
@@ -1014,7 +1021,7 @@ const I18N = {
     nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",press_kit:"Пресс-кит",
     alb_all:"Все",alb_duo:"Вместе",
     dash_vid:"Смотрите магию Дашнора",
-    k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
+    k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_on_google:"отзывов в Google",rev_see_all:"Все отзывы в Google →",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
     nav_gallery:"Галерея",gal_all:"Все альбомы",
     sold_out:"Билетов нет",add_cal:"В календарь",
     cookie_note:"Этот сайт использует только технические cookie. Без слежки.",priv_link:"Конфиденциальность",
@@ -1386,6 +1393,13 @@ async function sbGet(path){
       const hb = document.getElementById("heroBg");
       hb.style.backgroundImage = "url('"+FOTO(S.hero_bg)+"')";
       hb.hidden = false;
+    }
+    if(S.google_rating){
+      var g=document.getElementById("googleRev");
+      document.getElementById("gRating").textContent=parseFloat(S.google_rating).toFixed(1);
+      if(S.google_review_count) document.getElementById("gCount").textContent=S.google_review_count;
+      if(S.google_place_url) g.href=S.google_place_url;
+      g.hidden=false;
     }
     applyTheme(S.site_theme || "gold");
     const counts = [S.tiktok_followers, S.youtube_subs, S.instagram_followers];

@@ -642,14 +642,15 @@
     <div class="kicker" data-i18n="k_booking">Live Shows & Events</div>
     <h2 data-i18n="h_booking">Book Nikolas & Dashnor for your event</h2>
     <p class="section-sub" style="margin:0 auto 34px" data-i18n="sub_booking">Theatres, TV, corporate events, private parties: ventriloquism, comedy and magic in three languages, together or solo, for audiences of every age.</p>
-    <form id="bookForm" class="book-form" method="POST" target="_blank">
+    <form id="bookForm" class="book-form" method="POST">
       <input type="text" name="name" id="fName" required placeholder="Your name">
       <input type="email" name="email" id="fEmail" required placeholder="Your email">
       <textarea name="message" id="fMsg" rows="4" required placeholder="Tell us about your event: date, place, type of audience"></textarea>
-      <input type="hidden" name="_subject" value="Booking request - Nikolas & Dashnor Bushi">
+      <input type="hidden" name="_subject" value="Booking request - Magic by Dash">
       <input type="hidden" name="_captcha" value="false">
       <button class="btn btn-gold" type="submit"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span data-i18n="f_send">Send request</span></button>
     </form>
+    <p id="bookMsg" style="text-align:center;margin-top:18px;font-weight:600" hidden></p>
     <div class="alt-contacts">
       <a class="btn btn-ghost" id="bookingBtn" href="#"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><span data-i18n="cta_email">Get in touch</span></a>
       <a class="btn btn-ghost" id="waBtn" href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.11 3.22 5.1 4.51.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35ZM12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 1 1 8.38 4.63Zm8.4-18.25A11.8 11.8 0 0 0 12.04 0C5.5 0 .16 5.33.16 11.88c0 2.1.55 4.14 1.59 5.94L.06 24l6.33-1.66a11.87 11.87 0 0 0 5.65 1.44h.01c6.54 0 11.87-5.33 11.87-11.88 0-3.18-1.24-6.16-3.47-8.35Z"/></svg><span>WhatsApp</span></a>
@@ -754,7 +755,7 @@ const I18N = {
     k_booking:"Live Shows & Events",h_booking:"Book Dashnor Bushi for your event",
     sub_booking:"Corporate events, private parties, theatres and TV: close-up magic, mentalism and comedy in three languages, solo or together with his son Nikolas, the ventriloquist, for audiences of every age.",
     cta_email:"Get in touch",foot:"Ventriloquism · Singing · Comedy · Magic · Mentalism · New York",
-    nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",press_kit:"Press kit",
+    nav_shows:"Shows",k_shows:"Live",h_shows:"Upcoming shows",next_label:"Next show in",days_label:"days",tickets:"Tickets",no_shows:"New dates are coming soon. Follow us on social to be the first to know!",gal_k:"Gallery",gal_h:"On stage",f_name:"Your name",f_email:"Your email",f_msg:"Tell us about your event: date, place, type of audience",f_send:"Send request",f_sent:"Thank you! Your request has been sent, we'll reply soon.",press_kit:"Press kit",
     alb_all:"All",alb_duo:"Together",
     dash_vid:"Watch Dashnor's magic",
     k_rev:"Reviews",h_rev:"What clients say",rev_leave:"Leave a review",rev_ph:"Tell us about the show you attended",rev_send:"Submit review",rev_thanks:"Thank you! Your review will appear after it has been checked.",rev_on_google:"reviews on Google",rev_see_all:"See all on Google →",rev_err:"Something went wrong, please try again.",
@@ -798,7 +799,7 @@ const I18N = {
     k_booking:"Spettacoli ed Eventi",h_booking:"Ingaggia Dashnor Bushi per il tuo evento",
     sub_booking:"Eventi aziendali, feste private, teatri e TV: magia ravvicinata, mentalismo e comicità in tre lingue, da solo o insieme al figlio Nikolas, il ventriloquo, per un pubblico di ogni età.",
     cta_email:"Contattaci",foot:"Ventriloquia · Canto · Comicità · Magia · Mentalismo · New York",
-    nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",press_kit:"Press kit",
+    nav_shows:"Show",k_shows:"Dal vivo",h_shows:"Prossimi spettacoli",next_label:"Prossimo show fra",days_label:"giorni",tickets:"Biglietti",no_shows:"Nuove date in arrivo. Seguici sui social per saperlo per primo!",gal_k:"Galleria",gal_h:"Sul palco",f_name:"Il tuo nome",f_email:"La tua email",f_msg:"Raccontaci il tuo evento: data, luogo, tipo di pubblico",f_send:"Invia richiesta",f_sent:"Grazie! La tua richiesta è stata inviata, ti rispondiamo presto.",press_kit:"Press kit",
     alb_all:"Tutte",alb_duo:"Insieme",
     dash_vid:"Guarda la magia di Dashnor",
     k_rev:"Recensioni",h_rev:"Cosa dicono i clienti",rev_leave:"Lascia una recensione",rev_ph:"Raccontaci lo spettacolo a cui hai assistito",rev_send:"Invia recensione",rev_thanks:"Grazie! La tua recensione apparirà dopo la verifica.",rev_on_google:"recensioni su Google",rev_see_all:"Vedi tutte su Google →",rev_err:"Qualcosa è andato storto, riprova.",
@@ -842,7 +843,7 @@ const I18N = {
     k_booking:"Shfaqje & Evente",h_booking:"Rezervo Dashnor Bushi për eventin tënd",
     sub_booking:"Evente korporative, festa private, teatro dhe TV: magji nga afër, mentalizëm dhe humor në tri gjuhë, vetëm ose bashkë me djalin Nikolas, ventrilokun, për publik të çdo moshe.",
     cta_email:"Na kontakto",foot:"Ventrilokizëm · Këngë · Humor · Magji · Mentalizëm · New York",
-    nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",press_kit:"Press kit",
+    nav_shows:"Shfaqjet",k_shows:"Live",h_shows:"Shfaqjet e ardhshme",next_label:"Shfaqja tjetër pas",days_label:"ditësh",tickets:"Bileta",no_shows:"Data të reja së shpejti. Ndiqni në rrjetet sociale për t'i mësuar të parët!",gal_k:"Galeria",gal_h:"Në skenë",f_name:"Emri juaj",f_email:"Email-i juaj",f_msg:"Na tregoni për eventin tuaj: data, vendi, lloji i publikut",f_send:"Dërgo kërkesën",f_sent:"Faleminderit! Kërkesa juaj u dërgua, do t'ju përgjigjemi së shpejti.",press_kit:"Press kit",
     alb_all:"Të gjitha",alb_duo:"Së bashku",
     dash_vid:"Shiko magjinë e Dashnorit",
     k_rev:"Vlerësimet",h_rev:"Çfarë thonë klientët",rev_leave:"Lini një vlerësim",rev_ph:"Na tregoni për shfaqjen që patë",rev_send:"Dërgo vlerësimin",rev_thanks:"Faleminderit! Vlerësimi juaj do të shfaqet pas verifikimit.",rev_on_google:"vlerësime në Google",rev_see_all:"Shiko të gjitha në Google →",rev_err:"Diçka shkoi keq, provoni përsëri.",
@@ -886,7 +887,7 @@ const I18N = {
     k_booking:"Live-Shows & Events",h_booking:"Buchen Sie Dashnor Bushi für Ihr Event",
     sub_booking:"Firmenevents, private Feiern, Theater und TV: Close-up-Magie, Mentalmagie und Comedy in drei Sprachen, solo oder gemeinsam mit seinem Sohn Nikolas, dem Bauchredner, für Publikum jeden Alters.",
     cta_email:"Kontakt aufnehmen",foot:"Bauchreden · Gesang · Comedy · Magie · Mentalismus · New York",
-    nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",press_kit:"Pressemappe",
+    nav_shows:"Termine",k_shows:"Live",h_shows:"Kommende Shows",next_label:"Nächste Show in",days_label:"Tagen",tickets:"Tickets",no_shows:"Neue Termine folgen in Kürze. Folgen Sie uns auf Social Media!",gal_k:"Galerie",gal_h:"Auf der Bühne",f_name:"Ihr Name",f_email:"Ihre E-Mail",f_msg:"Erzählen Sie uns von Ihrem Event: Datum, Ort, Publikum",f_send:"Anfrage senden",f_sent:"Danke! Ihre Anfrage wurde gesendet, wir melden uns bald.",press_kit:"Pressemappe",
     alb_all:"Alle",alb_duo:"Zusammen",
     dash_vid:"Dashnors Magie erleben",
     k_rev:"Bewertungen",h_rev:"Was Kunden sagen",rev_leave:"Bewertung schreiben",rev_ph:"Erzählen Sie uns von der Show, die Sie gesehen haben",rev_send:"Bewertung senden",rev_thanks:"Danke! Ihre Bewertung erscheint nach der Prüfung.",rev_on_google:"Bewertungen auf Google",rev_see_all:"Alle auf Google ansehen →",rev_err:"Etwas ist schiefgelaufen, bitte erneut versuchen.",
@@ -930,7 +931,7 @@ const I18N = {
     k_booking:"Spectacles & Événements",h_booking:"Réservez Dashnor Bushi pour votre événement",
     sub_booking:"Événements d'entreprise, fêtes privées, théâtres et TV : magie rapprochée, mentalisme et comédie en trois langues, en solo ou avec son fils Nikolas, le ventriloque, pour tous les publics.",
     cta_email:"Nous contacter",foot:"Ventriloquie · Chant · Comédie · Magie · Mentalisme · New York",
-    nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",press_kit:"Dossier de presse",
+    nav_shows:"Dates",k_shows:"En live",h_shows:"Prochains spectacles",next_label:"Prochain show dans",days_label:"jours",tickets:"Billets",no_shows:"De nouvelles dates arrivent bientôt. Suivez-nous sur les réseaux !",gal_k:"Galerie",gal_h:"Sur scène",f_name:"Votre nom",f_email:"Votre e-mail",f_msg:"Parlez-nous de votre événement : date, lieu, type de public",f_send:"Envoyer la demande",f_sent:"Merci ! Votre demande a été envoyée, nous vous répondrons bientôt.",press_kit:"Dossier de presse",
     alb_all:"Toutes",alb_duo:"Ensemble",
     dash_vid:"La magie de Dashnor en vidéo",
     k_rev:"Avis",h_rev:"Ce que disent les clients",rev_leave:"Laisser un avis",rev_ph:"Parlez-nous du spectacle auquel vous avez assisté",rev_send:"Envoyer l'avis",rev_thanks:"Merci ! Votre avis apparaîtra après vérification.",rev_on_google:"avis sur Google",rev_see_all:"Voir tout sur Google →",rev_err:"Une erreur s'est produite, veuillez réessayer.",
@@ -974,7 +975,7 @@ const I18N = {
     k_booking:"Shows y Eventos",h_booking:"Contrata a Dashnor Bushi para tu evento",
     sub_booking:"Eventos corporativos, fiestas privadas, teatros y TV: magia de cerca, mentalismo y comedia en tres idiomas, en solitario o junto a su hijo Nikolas, el ventrílocuo, para públicos de todas las edades.",
     cta_email:"Contáctanos",foot:"Ventriloquia · Canto · Comedia · Magia · Mentalismo · Nueva York",
-    nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",press_kit:"Kit de prensa",
+    nav_shows:"Fechas",k_shows:"En vivo",h_shows:"Próximos shows",next_label:"Próximo show en",days_label:"días",tickets:"Entradas",no_shows:"Nuevas fechas muy pronto. ¡Síguenos en redes para enterarte primero!",gal_k:"Galería",gal_h:"En el escenario",f_name:"Tu nombre",f_email:"Tu email",f_msg:"Cuéntanos tu evento: fecha, lugar, tipo de público",f_send:"Enviar solicitud",f_sent:"¡Gracias! Tu solicitud ha sido enviada, te responderemos pronto.",press_kit:"Kit de prensa",
     alb_all:"Todas",alb_duo:"Juntos",
     dash_vid:"Mira la magia de Dashnor",
     k_rev:"Reseñas",h_rev:"Lo que dicen los clientes",rev_leave:"Deja una reseña",rev_ph:"Cuéntanos sobre el show al que asististe",rev_send:"Enviar reseña",rev_thanks:"¡Gracias! Tu reseña aparecerá tras la verificación.",rev_on_google:"reseñas en Google",rev_see_all:"Ver todas en Google →",rev_err:"Algo salió mal, inténtalo de nuevo.",
@@ -1018,7 +1019,7 @@ const I18N = {
     k_booking:"Шоу и мероприятия",h_booking:"Пригласите Дашнора Буши на ваше мероприятие",
     sub_booking:"Корпоративы, частные вечеринки, театры и ТВ: магия вблизи, ментализм и комедия на трёх языках — соло или вместе с сыном Николасом, чревовещателем, для зрителей любого возраста.",
     cta_email:"Связаться с нами",foot:"Чревовещание · Вокал · Комедия · Магия · Ментализм · Нью-Йорк",
-    nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",press_kit:"Пресс-кит",
+    nav_shows:"Афиша",k_shows:"Вживую",h_shows:"Ближайшие шоу",next_label:"До следующего шоу",days_label:"дней",tickets:"Билеты",no_shows:"Новые даты скоро. Подписывайтесь на соцсети, чтобы узнать первыми!",gal_k:"Галерея",gal_h:"На сцене",f_name:"Ваше имя",f_email:"Ваш email",f_msg:"Расскажите о вашем мероприятии: дата, место, публика",f_send:"Отправить заявку",f_sent:"Спасибо! Ваша заявка отправлена, мы скоро ответим.",press_kit:"Пресс-кит",
     alb_all:"Все",alb_duo:"Вместе",
     dash_vid:"Смотрите магию Дашнора",
     k_rev:"Отзывы",h_rev:"Что говорят клиенты",rev_leave:"Оставить отзыв",rev_ph:"Расскажите о шоу, которое вы посетили",rev_send:"Отправить отзыв",rev_thanks:"Спасибо! Ваш отзыв появится после проверки.",rev_on_google:"отзывов в Google",rev_see_all:"Все отзывы в Google →",rev_err:"Что-то пошло не так, попробуйте ещё раз.",
@@ -1290,8 +1291,26 @@ document.getElementById("revForm").addEventListener("submit", async e=>{
 });
 
 /* booking: modulo, email, whatsapp */
-document.getElementById("bookForm").action = "https://formsubmit.co/"+CONFIG.bookingEmail;
-document.getElementById("bookingBtn").href = "mailto:"+CONFIG.bookingEmail+"?subject=Booking%20request%20Nikolas%20Dashnor%20Bushi";
+(function(){
+  var bf = document.getElementById("bookForm");
+  bf.action = "https://formsubmit.co/"+CONFIG.bookingEmail;   /* fallback senza JS */
+  document.getElementById("bookingBtn").href = "mailto:"+CONFIG.bookingEmail+"?subject=Booking%20request%20Magic%20by%20Dash";
+  bf.addEventListener("submit", async function(e){
+    e.preventDefault();
+    var T = I18N[lang] || I18N.en, msg = document.getElementById("bookMsg");
+    var btn = bf.querySelector('button[type="submit"]');
+    if(btn) btn.disabled = true;
+    try{
+      var r = await fetch("https://formsubmit.co/ajax/"+CONFIG.bookingEmail, { method:"POST", headers:{Accept:"application/json"}, body:new FormData(bf) });
+      if(!r.ok) throw new Error();
+      bf.reset();
+      msg.textContent = T.f_sent; msg.style.color = "var(--gold-light)"; msg.hidden = false;
+      msg.scrollIntoView({behavior:"smooth",block:"center"});
+    }catch(err){
+      msg.textContent = T.rev_err; msg.style.color = "#e57365"; msg.hidden = false;
+    }finally{ if(btn) btn.disabled = false; }
+  });
+})();
 if(CONFIG.whatsapp){
   const wa = document.getElementById("waBtn");
   wa.href = "https://wa.me/"+CONFIG.whatsapp.replace(/[^0-9]/g,"");

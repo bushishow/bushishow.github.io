@@ -1434,6 +1434,22 @@ async function sbGet(path){
       g.hidden=false;
     }
     applyTheme(S.site_theme || "gold");
+    /* LAYOUT personalizzabile dall'admin: ordine + nascondi sezioni.
+       Innocuo se non impostato (sito identico). Basato su id: NON tocca i trucchi. */
+    try{
+      if(S.layout_order){
+        var _bk = document.getElementById("booking");
+        JSON.parse(S.layout_order).forEach(function(id){
+          var el = document.getElementById(id);
+          if(el && _bk && el !== _bk) _bk.parentNode.insertBefore(el, _bk);
+        });
+      }
+      if(S.layout_hidden){
+        JSON.parse(S.layout_hidden).forEach(function(id){
+          var el = document.getElementById(id); if(el) el.style.display = "none";
+        });
+      }
+    }catch(_e){}
     const counts = [S.tiktok_followers, S.youtube_subs, S.instagram_followers];
     const socialNames = ["TikTok","YouTube","Instagram"];
     document.querySelectorAll("[data-count]").forEach((el,i)=>{

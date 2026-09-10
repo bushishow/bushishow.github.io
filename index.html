@@ -1390,10 +1390,12 @@ counters.forEach(c=>cObs.observe(c));
 const rObs = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("visible"); rObs.unobserve(e.target);} }),{threshold:.12});
 document.querySelectorAll(".reveal").forEach(el=>rObs.observe(el));
 
-/* lingua iniziale dal browser */
+/* lingua iniziale: ?lang= (dagli articoli, resta nella lingua giusta) oppure dal browser/paese */
+const _validLang = ["en","it","al","de","fr","es","ru"];
+const _qpLang = new URLSearchParams(location.search).get("lang");
 const code = (navigator.language||"en").slice(0,2).toLowerCase();
 const MAP = {it:"it",sq:"al",de:"de",fr:"fr",es:"es",ru:"ru"};
-applyLang(MAP[code]||"en");
+applyLang(_validLang.includes(_qpLang) ? _qpLang : (MAP[code]||"en"));
 
 /* ---------- contenuti dal database (pannello admin) ---------- */
 const SB_URL = "https://yftmbqmodfesprhqqnbw.supabase.co";

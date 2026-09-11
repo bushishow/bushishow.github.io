@@ -62,6 +62,8 @@
     line-height:1.6;
   }
   h1,h2,h3,.serif{font-family:'Playfair Display',Georgia,serif}
+  html.font-modern h1,html.font-modern h2,html.font-modern h3,html.font-modern .serif,
+  html.font-modern nav .logo,html.font-modern .stat .num{font-family:'Inter',system-ui,sans-serif;letter-spacing:0}
 
   /* ---------- NAV ---------- */
   nav{
@@ -1078,6 +1080,27 @@ const THEMES = {
   platinum:{  g:"#a9b4c2", l:"#e6ebf2", rgb:"169,180,194", beam:"rgba(230,235,242,.10)", hero:"rgba(169,180,194,.16)",
               dot:"#e6ebf2", star:"#ffffff", glow:"rgba(230,235,242,.9)", dir:"platinum" },
 };
+/* Design avanzato (opzionale): colore accento, sfondo hero, font titoli.
+   Si sovrappone al tema. Innocuo se non impostato. NON tocca i trucchi. */
+function applyDesign(S){
+  try{
+    var root = document.documentElement.style;
+    var acc = (S.design_accent||"").trim();
+    var m = /^#?([0-9a-fA-F]{6})$/.exec(acc);
+    if(m){
+      var hx=m[1], r=parseInt(hx.slice(0,2),16), g=parseInt(hx.slice(2,4),16), b=parseInt(hx.slice(4,6),16);
+      var lite=function(c){ return Math.round(c+(255-c)*0.45); };
+      var lr=lite(r), lg=lite(g), lb=lite(b);
+      root.setProperty("--goldRGB", r+","+g+","+b);
+      root.setProperty("--gold", "#"+hx);
+      root.setProperty("--gold-light", "rgb("+lr+","+lg+","+lb+")");
+      try{ PCOL.dot="rgb("+lr+","+lg+","+lb+")"; PCOL.star="#fff6d8"; PCOL.glow="rgba("+lr+","+lg+","+lb+",.9)"; }catch(_p){}
+    }
+    var cv = document.getElementById("magic");
+    if(cv) cv.style.display = (S.hero_style==="gradient") ? "none" : "";
+    document.documentElement.classList.toggle("font-modern", S.heading_font==="modern");
+  }catch(_e){}
+}
 function applyTheme(name){
   const t = THEMES[name];
   try{ localStorage.setItem("site_theme", t ? name : "gold"); }catch(e){}
@@ -1484,6 +1507,7 @@ async function sbGet(path){
       if(S.hero_label_nikolas){ var y=document.getElementById("capNik"); if(y){ y.textContent=S.hero_label_nikolas; y.removeAttribute("data-i18n"); } }
     })();
     applyTheme(S.site_theme || "gold");
+    applyDesign(S);
     /* LAYOUT personalizzabile dall'admin: ordine + nascondi sezioni.
        Innocuo se non impostato (sito identico). Basato su id: NON tocca i trucchi. */
     try{

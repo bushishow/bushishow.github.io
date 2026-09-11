@@ -242,6 +242,7 @@
 
   <!-- SITE TEXTS -->
   <div id="tab-texts" hidden>
+    <div class="layout-grid">
     <div class="card">
       <div class="sec-title"><h2>Testi del sito</h2></div>
       <p class="muted" style="margin-bottom:12px">Scegli la lingua in alto e compila i campi per quella lingua. Lascia vuoto per usare il testo automatico integrato (l'inglese fa da ripiego). Separa i paragrafi con una riga vuota.</p>
@@ -260,6 +261,11 @@
       <label>Biografia Nikolas</label><textarea id="txBioNik" rows="5"></textarea>
       <label>Biografia Dashnor</label><textarea id="txBioDash" rows="5"></textarea>
       <button class="btn btn-gold" style="margin-top:16px" onclick="saveTexts()" data-t="save_texts">Salva testi</button>
+    </div>
+    <div>
+      <div class="layout-sub">Anteprima dal vivo</div>
+      <div class="layout-frame-wrap"><iframe id="txtFrame" class="layout-frame" src="index.html?preview=1" title="Anteprima"></iframe></div>
+    </div>
     </div>
 
     <div class="card" style="margin-top:18px">
@@ -322,6 +328,8 @@
 
   <!-- SETTINGS -->
   <div id="tab-settings" hidden>
+    <div class="layout-grid">
+    <div>
     <div class="card">
       <div class="sec-title"><h2 data-t="contacts">Contacts</h2></div>
       <label data-t="booking_email_l">Booking email (receives the website form)</label><input id="stEmail" placeholder="booking@...">
@@ -387,6 +395,12 @@
       <div class="sec-title"><h2 data-t="backup">Backup</h2></div>
       <p class="muted" style="margin-bottom:14px" data-t="backup_hint">Downloads a file with all shows, videos, quotes, texts and settings. Photos stay safely in the cloud.</p>
       <button class="btn btn-ghost" onclick="downloadBackup()" data-t="backup_btn">Download backup</button>
+    </div>
+    </div>
+    <div>
+      <div class="layout-sub">Anteprima dal vivo (design)</div>
+      <div class="layout-frame-wrap"><iframe id="setFrame" class="layout-frame" src="index.html?preview=1" title="Anteprima"></iframe></div>
+    </div>
     </div>
   </div>
 
@@ -766,8 +780,38 @@ function layoutPreviewPush(){
   const f = document.getElementById("layoutFrame");
   if(f && f.contentWindow) f.contentWindow.postMessage({ type:"previewLayout", order:layoutOrder, hidden:layoutHidden }, "*");
 }
+function frameWin(id){ const f=document.getElementById(id); return f && f.contentWindow; }
+/* anteprima TESTI dal vivo */
+function txtPreviewPush(){
+  txtCollect();
+  const w = frameWin("txtFrame");
+  if(w) w.postMessage({ type:"previewTexts", texts:_txtData, lang:_txtLang }, "*");
+}
+/* anteprima DESIGN dal vivo */
+function designPreviewPush(){
+  const w = frameWin("setFrame"); if(!w) return;
+  w.postMessage({ type:"previewDesign", S:{
+    site_theme:    $("stTheme") ? $("stTheme").value : "gold",
+    design_accent: ($("stAccentOn") && $("stAccentOn").checked) ? $("stAccent").value : "",
+    hero_style:    $("stHeroStyle") ? $("stHeroStyle").value : "stars",
+    heading_font:  $("stFont") ? $("stFont").value : "classic"
+  }}, "*");
+}
+/* un solo gestore per i 3 iframe: quando uno e' pronto, gli mando lo stato giusto */
 window.addEventListener("message", function(ev){
-  if(ev.data && ev.data.type === "previewReady"){ _frameReady = true; if(_layoutLoaded) layoutPreviewPush(); }
+  if(!ev.data || ev.data.type !== "previewReady") return;
+  const src = ev.source;
+  if(src === frameWin("layoutFrame")){ _frameReady = true; if(_layoutLoaded) layoutPreviewPush(); }
+  else if(src === frameWin("txtFrame")) txtPreviewPush();
+  else if(src === frameWin("setFrame")) designPreviewPush();
+});
+/* aggiorna l'anteprima dal vivo mentre scrivi/cambi i controlli */
+["txHeroTitle","txHeroSub","txTagline","txBioNik","txBioDash"].forEach(function(id){
+  const el = document.getElementById(id); if(el) el.addEventListener("input", txtPreviewPush);
+});
+["stTheme","stAccentOn","stAccent","stHeroStyle","stFont"].forEach(function(id){
+  const el = document.getElementById(id); if(!el) return;
+  el.addEventListener("input", designPreviewPush); el.addEventListener("change", designPreviewPush);
 });
 function layMove(i,dir){
   const j = i+dir; if(j<0 || j>=layoutOrder.length) return;
@@ -1191,7 +1235,7 @@ function renderTexts(){
 function txtCollect(){
   TXT_FIELDS.forEach(f=>{ const el=$(f.el); if(!el) return; (_txtData[f.key]=_txtData[f.key]||{})[_txtLang] = el.value; });
 }
-function txtSetLang(l){ txtCollect(); _txtLang = l; renderTexts(); }
+function txtSetLang(l){ txtCollect(); _txtLang = l; renderTexts(); txtPreviewPush(); }
 async function saveTexts(){
   txtCollect();
   const rows = [];

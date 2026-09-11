@@ -1580,8 +1580,21 @@ function applyLayout(order, hidden){
 /* anteprima dal vivo: l'admin invia ordine/nascoste mentre modifichi (stesso dominio) */
 window.addEventListener("message", function(ev){
   if(ev.origin !== location.origin && ev.origin !== "null") return;
-  var d = ev.data;
-  if(d && d.type === "previewLayout") applyLayout(d.order || [], d.hidden || []);
+  var d = ev.data; if(!d) return;
+  if(d.type === "previewLayout") applyLayout(d.order || [], d.hidden || []);
+  else if(d.type === "previewTexts"){
+    try{
+      var tx = d.texts || {};
+      Object.keys(tx).forEach(function(f){
+        TXT[f] = TXT[f] || {};
+        Object.keys(tx[f]).forEach(function(l){ var v = tx[f][l]; if(v) TXT[f][l] = v; else if(TXT[f]) delete TXT[f][l]; });
+      });
+      applyLang(d.lang || lang);
+    }catch(_e){}
+  }
+  else if(d.type === "previewDesign"){
+    try{ var SS = d.S || {}; applyTheme(SS.site_theme || "gold"); applyDesign(SS); }catch(_e){}
+  }
 });
 
 /* ---------- sfondo magico: polvere d'oro fluttuante ---------- */

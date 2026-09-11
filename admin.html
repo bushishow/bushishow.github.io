@@ -48,6 +48,11 @@
   .lay-eye svg{width:17px;height:17px;display:block}
   .lay-arrow{background:transparent;border:1px solid rgba(245,242,234,.2);color:var(--text);border-radius:8px;padding:3px 9px;cursor:pointer;font-size:.85rem}
   .lay-arrow:disabled{opacity:.25;cursor:default}
+  /* ---- drag-and-drop liste (video/foto) ---- */
+  .row[draggable="true"]{cursor:grab}
+  .row.dragging{opacity:.4;border:1px dashed var(--gold)}
+  .row.drop-target{outline:2px solid var(--gold);outline-offset:-2px}
+  .row img{-webkit-user-drag:none;user-select:none}
   .login{max-width:380px;margin:12vh auto 0;text-align:center}
   .login .mono{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold-light);margin:0 auto 18px}
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
@@ -865,7 +870,7 @@ async function loadVideos(){
   if(error){ $("videosList").textContent=t("err")+error.message; return; }
   if(!data.length){ $("videosList").innerHTML=`<p class="muted">${t("no_videos")}</p>`; return; }
   $("videosList").innerHTML = data.map((v,i)=>`
-    <div class="row" style="${v.visible?"":"opacity:.45"}">
+    <div class="row" data-id="${v.id}" style="${v.visible?"":"opacity:.45"}">
       <img src="https://i.ytimg.com/vi/${esc(v.yt)}/mqdefault.jpg" alt="">
       <div class="grow"><b>${esc(v.title)}</b><span>${esc(v.subtitle)}</span><span class="pill" style="margin-top:4px;display:inline-block">${v.person==="dashnor"?"Dashnor":"Nikolas & Chris"}</span></div>
       <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="moveVideo(${v.id},-1)">▲</button>
@@ -875,6 +880,29 @@ async function loadVideos(){
       <button class="btn btn-danger btn-sm" onclick="delVideo(${v.id})">${t("del")}</button>
     </div>`).join("");
   window._videos = data;
+  enableDragSort("videosList","bushi_videos",loadVideos);
+}
+/* riordino drag-and-drop generico per liste con colonna position. Le frecce restano come riserva. */
+function enableDragSort(containerId, table, reload){
+  const box = document.getElementById(containerId); if(!box) return;
+  let dragEl = null;
+  box.querySelectorAll('.row[data-id]').forEach(row=>{
+    row.setAttribute('draggable','true');
+    row.addEventListener('dragstart', e=>{ dragEl=row; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{e.dataTransfer.setData('text/plain','');}catch(_){} });
+    row.addEventListener('dragend', ()=>{ dragEl=null; box.querySelectorAll('.row').forEach(r=>r.classList.remove('dragging','drop-target')); });
+    row.addEventListener('dragover', e=>{ e.preventDefault(); if(dragEl && row!==dragEl) row.classList.add('drop-target'); });
+    row.addEventListener('dragleave', ()=>row.classList.remove('drop-target'));
+    row.addEventListener('drop', async e=>{
+      e.preventDefault(); row.classList.remove('drop-target');
+      if(!dragEl || dragEl===row) return;
+      const ids = [...box.querySelectorAll('.row[data-id]')].map(r=>+r.dataset.id);
+      const from = ids.indexOf(+dragEl.dataset.id), to = ids.indexOf(+row.dataset.id);
+      if(from<0 || to<0) return;
+      ids.splice(to, 0, ids.splice(from, 1)[0]);
+      for(let k=0;k<ids.length;k++){ await sb.from(table).update({position:k}).eq('id',ids[k]); }
+      reload();
+    });
+  });
 }
 /* anteprima video mentre incolli il link */
 $("vdUrl").addEventListener("input", ()=>{
@@ -974,7 +1002,7 @@ async function loadPhotos(){
     </div>`;
     const i = data.indexOf(p);
     return `
-    <div class="row">
+    <div class="row" data-id="${p.id}">
       <img src="${pub(esc(p.path))}" alt="">
       <div class="grow"><b>${esc(p.caption)||t("no_caption")}</b><span class="pill">${esc(albumLabel(p.album))}</span></div>
       <button class="btn btn-ghost btn-sm" ${i===0?"disabled":""} onclick="movePhoto(${p.id},-1)">▲</button>
@@ -983,6 +1011,7 @@ async function loadPhotos(){
       <button class="btn btn-danger btn-sm" onclick="delPhoto(${p.id},'${esc(p.path)}')">${t("del")}</button>
     </div>`;
   }).join("");
+  enableDragSort("photosList","bushi_photos",loadPhotos);
 }
 async function movePhoto(id,dir){
   const arr = [...(window._photos||[])];

@@ -459,7 +459,7 @@
     <span class="badge"><span data-i18n="badge_duo">Father & Son, 2× Golden Buzzer</span></span>
     <span class="badge">3.5M+ <span data-i18n="badge_fans">fans</span></span>
   </div>
-  <h1><span class="title-wrap"><span class="grad">MAGIC BY DASH</span><svg class="deco deco-hat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 16V7c0-1.4 2.4-2.5 5.5-2.5S17.5 5.6 17.5 7v9"/><path d="M6.5 12.2c1.5.6 3.4.9 5.5.9s4-.3 5.5-.9"/><ellipse cx="12" cy="16.8" rx="9.5" ry="2.4"/></svg><svg class="deco deco-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 21 14.5 9.5"/><path class="sp" fill="currentColor" stroke="none" d="M18 2.6l1 2.3 2.3 1-2.3 1-1 2.3-1-2.3-2.3-1 2.3-1z"/><path class="sp2" fill="currentColor" stroke="none" d="M21.2 10.8l.55 1.25 1.25.55-1.25.55-.55 1.25-.55-1.25-1.25-.55 1.25-.55z"/><circle class="sp2" cx="13.2" cy="3.8" r="1" fill="currentColor" stroke="none"/><circle class="sp" cx="22" cy="7.6" r=".7" fill="currentColor" stroke="none"/></svg></span></h1>
+  <h1><span class="title-wrap"><span class="grad" data-default="MAGIC BY DASH">MAGIC BY DASH</span><svg class="deco deco-hat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 16V7c0-1.4 2.4-2.5 5.5-2.5S17.5 5.6 17.5 7v9"/><path d="M6.5 12.2c1.5.6 3.4.9 5.5.9s4-.3 5.5-.9"/><ellipse cx="12" cy="16.8" rx="9.5" ry="2.4"/></svg><svg class="deco deco-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 21 14.5 9.5"/><path class="sp" fill="currentColor" stroke="none" d="M18 2.6l1 2.3 2.3 1-2.3 1-1 2.3-1-2.3-2.3-1 2.3-1z"/><path class="sp2" fill="currentColor" stroke="none" d="M21.2 10.8l.55 1.25 1.25.55-1.25.55-.55 1.25-.55-1.25-1.25-.55 1.25-.55z"/><circle class="sp2" cx="13.2" cy="3.8" r="1" fill="currentColor" stroke="none"/><circle class="sp" cx="22" cy="7.6" r=".7" fill="currentColor" stroke="none"/></svg></span></h1>
   <div class="subtitle" data-i18n="subtitle">Ventriloquist, Singer & Comedian · Magician, Mentalist & Comedian</div>
   <p class="tagline" data-i18n="tagline">A father and son show from New York: Nikolas, ventriloquist and singer with his puppets, and Dashnor, magician and mentalist. Comedy, magic and voices you won't believe.</p>
   <div class="cta-row">
@@ -1253,6 +1253,12 @@ function applyLang(l){
   const setBio = (sel, txt) => { if(txt) document.querySelector(sel).innerHTML = txt.split(/\n\s*\n/).map(p=>"<p>"+escT(p)+"</p>").join(""); };
   setBio("#about .bio-text", pickTxt(TXT.bio_nikolas));
   setBio("#dashnor .bio-text", pickTxt(TXT.bio_dashnor));
+  /* titolo hero: override dall'admin oppure default di marca */
+  var _grad = document.querySelector('h1 .grad');
+  if(_grad) _grad.textContent = pickTxt(TXT.hero_title) || _grad.dataset.default || "MAGIC BY DASH";
+  /* sottotitolo hero: override dall'admin (se vuoto resta quello i18n) */
+  var _hs = pickTxt(TXT.hero_subtitle);
+  if(_hs){ var _sub = document.querySelector('[data-i18n="subtitle"]'); if(_sub) _sub.textContent = _hs; }
   const T = I18N[l];
   document.getElementById("fName").placeholder = T.f_name;
   document.getElementById("fEmail").placeholder = T.f_email;
@@ -1428,7 +1434,7 @@ async function sbGet(path){
     }
     const S = Object.fromEntries(settings.map(r=>[r.key, r.value]));
     Object.entries(S).forEach(([k,v])=>{
-      const m = k.match(/^txt_(tagline|bio_nikolas|bio_dashnor)_(en|it|al)$/);
+      const m = k.match(/^txt_(tagline|bio_nikolas|bio_dashnor|hero_title|hero_subtitle)_(en|it|al|de|fr|es|ru)$/);
       if(m && v){ (TXT[m[1]] = TXT[m[1]] || {})[m[2]] = v; }
     });
     if(S.booking_email){

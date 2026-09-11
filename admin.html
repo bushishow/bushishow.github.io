@@ -237,26 +237,25 @@
 
   <!-- SITE TEXTS -->
   <div id="tab-texts" hidden>
-    <p class="muted" style="margin-bottom:14px" data-t="texts_hint">Leave a field empty to keep the built-in text. Separate paragraphs with an empty line.</p>
     <div class="card">
-      <div class="sec-title"><h2 data-t="tagline_t">Opening line (under the title)</h2></div>
-      <label>English</label><input id="txTagEn">
-      <label>Italiano</label><input id="txTagIt">
-      <label>Shqip</label><input id="txTagAl">
+      <div class="sec-title"><h2>Testi del sito</h2></div>
+      <p class="muted" style="margin-bottom:12px">Scegli la lingua in alto e compila i campi per quella lingua. Lascia vuoto per usare il testo automatico integrato (l'inglese fa da ripiego). Separa i paragrafi con una riga vuota.</p>
+      <div class="lang-switch" id="txtLangSwitch" style="margin-bottom:18px">
+        <button type="button" data-l="en" class="active" onclick="txtSetLang('en')">EN</button>
+        <button type="button" data-l="it" onclick="txtSetLang('it')">IT</button>
+        <button type="button" data-l="al" onclick="txtSetLang('al')">SQ</button>
+        <button type="button" data-l="de" onclick="txtSetLang('de')">DE</button>
+        <button type="button" data-l="fr" onclick="txtSetLang('fr')">FR</button>
+        <button type="button" data-l="es" onclick="txtSetLang('es')">ES</button>
+        <button type="button" data-l="ru" onclick="txtSetLang('ru')">RU</button>
+      </div>
+      <label>Titolo hero <span class="muted" style="font-weight:400">(vuoto = "MAGIC BY DASH")</span></label><input id="txHeroTitle" placeholder="MAGIC BY DASH">
+      <label>Sottotitolo hero</label><input id="txHeroSub" placeholder="Mago, Mentalista & Comico · New York City">
+      <label>Frase di apertura (tagline)</label><input id="txTagline">
+      <label>Biografia Nikolas</label><textarea id="txBioNik" rows="5"></textarea>
+      <label>Biografia Dashnor</label><textarea id="txBioDash" rows="5"></textarea>
+      <button class="btn btn-gold" style="margin-top:16px" onclick="saveTexts()" data-t="save_texts">Salva testi</button>
     </div>
-    <div class="card">
-      <div class="sec-title"><h2 data-t="bio_n">Nikolas bio</h2></div>
-      <label>English</label><textarea id="txBnEn" rows="5"></textarea>
-      <label>Italiano</label><textarea id="txBnIt" rows="5"></textarea>
-      <label>Shqip</label><textarea id="txBnAl" rows="5"></textarea>
-    </div>
-    <div class="card">
-      <div class="sec-title"><h2 data-t="bio_d">Dashnor bio</h2></div>
-      <label>English</label><textarea id="txBdEn" rows="5"></textarea>
-      <label>Italiano</label><textarea id="txBdIt" rows="5"></textarea>
-      <label>Shqip</label><textarea id="txBdAl" rows="5"></textarea>
-    </div>
-    <button class="btn btn-gold" onclick="saveTexts()" data-t="save_texts">Save texts</button>
 
     <div class="card" style="margin-top:18px">
       <div class="sec-title"><h2 data-t="quotes">Quotes</h2></div>
@@ -1108,22 +1107,40 @@ async function saveSettings(){
   toast(t("settings_saved"));
 }
 
-/* ---------- site texts ---------- */
-const TXT_MAP = {
-  txt_tagline_en:"txTagEn", txt_tagline_it:"txTagIt", txt_tagline_al:"txTagAl",
-  txt_bio_nikolas_en:"txBnEn", txt_bio_nikolas_it:"txBnIt", txt_bio_nikolas_al:"txBnAl",
-  txt_bio_dashnor_en:"txBdEn", txt_bio_dashnor_it:"txBdIt", txt_bio_dashnor_al:"txBdAl",
-};
+/* ---------- site texts (7 lingue: hero title/subtitle, tagline, bio) ---------- */
+const TXT_FIELDS = [
+  {key:"hero_title",   el:"txHeroTitle"},
+  {key:"hero_subtitle",el:"txHeroSub"},
+  {key:"tagline",      el:"txTagline"},
+  {key:"bio_nikolas",  el:"txBioNik"},
+  {key:"bio_dashnor",  el:"txBioDash"},
+];
+const TXT_LANGS = ["en","it","al","de","fr","es","ru"];
+let _txtData = {}, _txtLang = "en";
 async function loadTexts(){
-  const { data, error } = await sb.from("bushi_settings").select("*").like("key","txt_%");
+  const { data, error } = await sb.from("bushi_settings").select("key,value").like("key","txt_%");
   if(error) return;
-  data.forEach(r=>{ const el = TXT_MAP[r.key] && $(TXT_MAP[r.key]); if(el) el.value = r.value; });
+  _txtData = {};
+  data.forEach(r=>{
+    const m = r.key.match(/^txt_(hero_title|hero_subtitle|tagline|bio_nikolas|bio_dashnor)_(en|it|al|de|fr|es|ru)$/);
+    if(m){ (_txtData[m[1]] = _txtData[m[1]] || {})[m[2]] = r.value; }
+  });
+  renderTexts();
 }
+function renderTexts(){
+  TXT_FIELDS.forEach(f=>{ const el=$(f.el); if(el) el.value = (_txtData[f.key] && _txtData[f.key][_txtLang]) || ""; });
+  document.querySelectorAll("#txtLangSwitch button").forEach(b=>b.classList.toggle("active", b.dataset.l===_txtLang));
+}
+function txtCollect(){
+  TXT_FIELDS.forEach(f=>{ const el=$(f.el); if(!el) return; (_txtData[f.key]=_txtData[f.key]||{})[_txtLang] = el.value; });
+}
+function txtSetLang(l){ txtCollect(); _txtLang = l; renderTexts(); }
 async function saveTexts(){
-  for(const [key, elId] of Object.entries(TXT_MAP)){
-    const { error } = await sb.from("bushi_settings").upsert({ key, value:$(elId).value.trim() });
-    if(error){ toast(t("err")+error.message, true); return; }
-  }
+  txtCollect();
+  const rows = [];
+  TXT_FIELDS.forEach(f=>TXT_LANGS.forEach(l=>rows.push({ key:"txt_"+f.key+"_"+l, value:((_txtData[f.key]&&_txtData[f.key][l])||"").trim() })));
+  const { error } = await sb.from("bushi_settings").upsert(rows);
+  if(error){ toast(t("err")+error.message, true); return; }
   toast(t("texts_saved"));
 }
 

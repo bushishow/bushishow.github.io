@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="img/favicon-v3.png">
+<title>Magic by Dash · Guida admin / Admin guide</title>
+<style>
+  :root{
+    --bg:#fbf9f4; --panel:#ffffff; --ink:#1a1710; --muted:#6b6355;
+    --gold:#a8842a; --gold-soft:#c8a34a; --line:#e7dfce;
+    --tint:#faf4e6; --shadow:0 10px 34px rgba(60,45,10,.10);
+    --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+    --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e0d12; --panel:#16151d; --ink:#f3efe6; --muted:#a49c8c;
+      --gold:#e7c56a; --gold-soft:#f0d97a; --line:#2a2735;
+      --tint:#1b1922; --shadow:0 14px 40px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e0d12; --panel:#16151d; --ink:#f3efe6; --muted:#a49c8c;
+    --gold:#e7c56a; --gold-soft:#f0d97a; --line:#2a2735;
+    --tint:#1b1922; --shadow:0 14px 40px rgba(0,0,0,.5);
+  }
+  :root[data-theme="light"]{
+    --bg:#fbf9f4; --panel:#ffffff; --ink:#1a1710; --muted:#6b6355;
+    --gold:#a8842a; --gold-soft:#c8a34a; --line:#e7dfce;
+    --tint:#faf4e6; --shadow:0 10px 34px rgba(60,45,10,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;padding:40px 5vw 72px}
+  .wrap{max-width:860px;margin:0 auto}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-weight:800;
+    letter-spacing:.04em;color:var(--gold);font-size:1.02rem}
+  .brand .em{width:34px;height:34px;border:1.5px solid var(--gold);border-radius:50%;
+    display:grid;place-items:center;flex-shrink:0}
+  .brand svg{width:18px;height:18px;color:var(--gold)}
+  .langtoggle{display:inline-flex;border:1px solid var(--line);border-radius:30px;overflow:hidden}
+  .langtoggle button{border:0;background:transparent;color:var(--muted);font-family:var(--sans);
+    font-weight:700;font-size:.78rem;letter-spacing:.05em;padding:7px 16px;cursor:pointer}
+  .langtoggle button.active{background:var(--gold);color:#fff}
+  h1{font-family:var(--serif);font-weight:800;font-size:clamp(1.9rem,4.5vw,2.7rem);
+    line-height:1.08;margin:.5rem 0 .1rem;text-wrap:balance}
+  .sub{color:var(--muted);font-size:1rem;margin-bottom:30px;max-width:60ch}
+  h2{font-family:var(--serif);font-weight:700;font-size:1.25rem;color:var(--gold);
+    margin:34px 0 12px;display:flex;align-items:center;gap:10px}
+  h2 svg{width:20px;height:20px;flex-shrink:0}
+  .steps{list-style:none;padding:0;margin:0;counter-reset:s}
+  .steps li{counter-increment:s;position:relative;padding:10px 0 10px 44px;border-bottom:1px solid var(--line)}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:28px;height:28px;
+    background:var(--tint);border:1px solid var(--gold-soft);color:var(--gold);border-radius:50%;
+    display:grid;place-items:center;font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums}
+  .steps b{color:var(--ink)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:6px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+  .card .ic{width:34px;height:34px;border-radius:9px;background:var(--tint);border:1px solid var(--gold-soft);
+    display:grid;place-items:center;margin-bottom:10px}
+  .card .ic svg{width:18px;height:18px;color:var(--gold)}
+  .card h3{font-family:var(--sans);font-size:.98rem;margin:0 0 4px}
+  .card p{margin:0;color:var(--muted);font-size:.88rem}
+  .rules{background:var(--tint);border:1px solid var(--gold-soft);border-radius:14px;padding:18px 20px;margin-top:8px}
+  .rules ul{margin:0;padding-left:20px}
+  .rules li{margin:8px 0}
+  .rules b{color:var(--gold)}
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+  .mono{font-variant-numeric:tabular-nums;background:var(--tint);border:1px solid var(--line);
+    border-radius:6px;padding:1px 7px;font-size:.9em;white-space:nowrap}
+  [data-lang]{display:none}
+  body.it [data-lang="it"]{display:revert}
+  body.en [data-lang="en"]{display:revert}
+  .steps li[data-lang]{display:none}
+  body.it .steps li[data-lang="it"]{display:list-item}
+  body.en .steps li[data-lang="en"]{display:list-item}
+  @media print{
+    body{padding:0;background:#fff;color:#000}
+    .langtoggle,.print-hide{display:none}
+    .card,.rules{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 16V7c0-1.4 2.4-2.5 5.5-2.5S17.5 5.6 17.5 7v9"/><path d="M6.5 12.2c1.5.6 3.4.9 5.5.9s4-.3 5.5-.9"/><ellipse cx="12" cy="16.8" rx="9.5" ry="2.4"/></svg></span>
+      MAGIC BY DASH
+    </div>
+    <div class="langtoggle print-hide">
+      <button id="btIt" class="active" onclick="setLang('it')">ITALIANO</button>
+      <button id="btEn" onclick="setLang('en')">ENGLISH</button>
+    </div>
+  </div>
+
+  <h1><span data-lang="it">Guida rapida all'admin</span><span data-lang="en">Admin quick guide</span></h1>
+  <p class="sub">
+    <span data-lang="it">Come gestire il sito magicbydash.com. Semplice, in pochi passi. Qualsiasi cosa tu cambi, i trucchi di magia restano sempre al sicuro.</span>
+    <span data-lang="en">How to manage the magicbydash.com website. Simple, in a few steps. Whatever you change, the magic tricks always stay safe.</span>
+  </p>
+
+  <h2>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <span data-lang="it">1. Accedere</span><span data-lang="en">1. Log in</span>
+  </h2>
+  <ul class="steps">
+    <li data-lang="it">Apri <span class="mono">magicbydash.com/admin.html</span> dal browser.</li>
+    <li data-lang="en">Open <span class="mono">magicbydash.com/admin.html</span> in your browser.</li>
+    <li data-lang="it">Inserisci <b>email e password</b>. La prima volta ti chiede un codice via email (sicurezza).</li>
+    <li data-lang="en">Enter your <b>email and password</b>. The first time it asks for a code sent by email (security).</li>
+    <li data-lang="it">Sul tuo telefono/computer puoi attivare <b>Face ID / impronta</b> per entrare piu veloce (tab Impostazioni).</li>
+    <li data-lang="en">On your phone/computer you can enable <b>Face ID / fingerprint</b> for faster access (Settings tab).</li>
+  </ul>
+
+  <h2>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span data-lang="it">2. Cosa puoi fare</span><span data-lang="en">2. What you can do</span>
+  </h2>
+  <div class="grid">
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/><path d="M9 20h6M12 4v16"/></svg></div>
+      <h3><span data-lang="it">Testi in 7 lingue</span><span data-lang="en">Texts in 7 languages</span></h3>
+      <p><span data-lang="it">Titolo, sottotitolo, tagline e biografie. Scegli la lingua in alto e scrivi. L'anteprima a lato cambia dal vivo.</span><span data-lang="en">Title, subtitle, tagline and bios. Pick the language at the top and type. The preview on the side updates live.</span></p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <h3><span data-lang="it">Ordine sezioni (Layout)</span><span data-lang="en">Section order (Layout)</span></h3>
+      <p><span data-lang="it">Trascina per riordinare, tocca l'occhio per mostrare o nascondere. Vedi il sito vero cambiare a sinistra.</span><span data-lang="en">Drag to reorder, tap the eye to show or hide. You see the real site change on the left.</span></p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17" cy="13.5" r="2.5"/><path d="M12 22a10 10 0 1 1 0-20"/></svg></div>
+      <h3><span data-lang="it">Colori e font (Design)</span><span data-lang="en">Colours and font (Design)</span></h3>
+      <p><span data-lang="it">In Impostazioni: colore accento, sfondo hero, font dei titoli. Anteprima dal vivo a lato.</span><span data-lang="en">In Settings: accent colour, hero background, title font. Live preview on the side.</span></p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 4 6 4 10"/><polyline points="16 18 20 18 20 14"/><path d="M4 6l7 7M20 18l-7-7"/><path d="M9 20H4v-5M20 9V4h-5"/></svg></div>
+      <h3><span data-lang="it">Riordina trascinando</span><span data-lang="en">Reorder by dragging</span></h3>
+      <p><span data-lang="it">Video e foto: trascina le righe per cambiarne l'ordine (o usa le frecce).</span><span data-lang="en">Videos and photos: drag the rows to change their order (or use the arrows).</span></p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26 6.85.68-5.17 4.57 1.5 6.72L12 16.77l-6.08 3.46 1.5-6.72L2.25 8.94l6.85-.68z"/></svg></div>
+      <h3><span data-lang="it">Recensioni</span><span data-lang="en">Reviews</span></h3>
+      <p><span data-lang="it">Le recensioni Google arrivano da sole. Puoi approvare o nascondere quelle inviate dal sito.</span><span data-lang="en">Google reviews arrive automatically. You can approve or hide the ones sent from the site.</span></p>
+    </div>
+    <div class="card">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <h3><span data-lang="it">Spettacoli, video, foto</span><span data-lang="en">Shows, videos, photos</span></h3>
+      <p><span data-lang="it">Aggiungi date degli show, link YouTube e foto negli album. Tutto con anteprima prima di salvare.</span><span data-lang="en">Add show dates, YouTube links and photos in albums. All with a preview before saving.</span></p>
+    </div>
+  </div>
+
+  <h2>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.9H22l-5.8 4.3 2.2 7L12 15.9 5.6 20.2l2.2-7L2 8.9h7.6z"/></svg>
+    <span data-lang="it">Regole d'oro</span><span data-lang="en">Golden rules</span>
+  </h2>
+  <div class="rules">
+    <ul>
+      <li data-lang="it"><b>Salva, poi ricarica il sito.</b> Le modifiche appaiono dopo aver premuto "Salva" e ricaricato la pagina.</li>
+      <li data-lang="en"><b>Save, then reload the website.</b> Changes appear after you press "Save" and reload the page.</li>
+      <li data-lang="it"><b>SEO: lascia titolo e descrizione vuoti.</b> Il sito usa gia testi ottimizzati e tradotti. Riempili solo per un testo tuo su misura.</li>
+      <li data-lang="en"><b>SEO: leave title and description empty.</b> The site already uses optimised, translated texts. Only fill them for a custom text of your own.</li>
+      <li data-lang="it"><b>L'anteprima e "prova".</b> Quello che vedi a lato non e ancora pubblico: diventa reale solo quando premi Salva.</li>
+      <li data-lang="en"><b>The preview is a "test".</b> What you see on the side is not public yet: it becomes real only when you press Save.</li>
+      <li data-lang="it"><b>I trucchi di magia sono sempre al sicuro.</b> Qualsiasi cosa cambi nell'admin, non li tocca.</li>
+      <li data-lang="en"><b>The magic tricks are always safe.</b> Nothing you change in the admin affects them.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span data-lang="it">Magic by Dash · Guida per Nikolas · In caso di dubbi, chiedi prima di cancellare qualcosa.</span>
+    <span data-lang="en">Magic by Dash · Guide for Nikolas · When in doubt, ask before deleting anything.</span>
+  </div>
+</div>
+
+<script>
+  function setLang(l){
+    document.body.className = l;
+    document.getElementById('btIt').classList.toggle('active', l === 'it');
+    document.getElementById('btEn').classList.toggle('active', l === 'en');
+    try{ localStorage.setItem('guide_lang', l); }catch(e){}
+  }
+  setLang((function(){
+    try{ var s = localStorage.getItem('guide_lang'); if(s) return s; }catch(e){}
+    return (navigator.language||'it').slice(0,2) === 'en' ? 'en' : 'it';
+  })());
+</script>
+
+</body>
+</html>

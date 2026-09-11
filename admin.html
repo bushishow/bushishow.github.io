@@ -30,6 +30,27 @@
   input:focus,textarea:focus,select:focus{border-color:var(--gold)}
   label{font-size:.8rem;color:var(--muted);display:block;margin:12px 0 5px;letter-spacing:.04em}
   .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;margin-bottom:18px}
+  /* ---- Layout customizer ---- */
+  .layout-grid{display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:22px;align-items:start}
+  @media(max-width:640px){.layout-grid{grid-template-columns:1fr}}
+  .layout-sub{font-size:.78rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:9px}
+  .layout-preview{background:#0d0d15;border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:12px;position:sticky;top:14px}
+  .lp-block{border-radius:8px;padding:9px 11px;margin-bottom:7px;font-size:.82rem;font-weight:600;border:1px solid transparent;transition:.2s}
+  .lp-fixed{background:linear-gradient(135deg,rgba(240,217,122,.22),rgba(212,175,55,.12));border-color:rgba(212,175,55,.4);color:var(--gold-light);text-align:center;letter-spacing:.03em}
+  .lp-on{background:rgba(212,175,55,.10);border-color:rgba(212,175,55,.30);color:var(--text)}
+  .lp-off{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.07);color:var(--muted);opacity:.55;text-decoration:line-through}
+  .lp-num{display:inline-block;width:18px;color:var(--gold);font-weight:700}
+  .lay-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid rgba(212,175,55,.25);border-radius:10px;margin-bottom:8px;background:rgba(212,175,55,.04);cursor:grab;transition:.15s}
+  .lay-row:hover{border-color:rgba(212,175,55,.5)}
+  .lay-row.dragging{opacity:.4;border-style:dashed}
+  .lay-row.drop-target{border-color:var(--gold);background:rgba(212,175,55,.14)}
+  .lay-handle{color:var(--muted);font-size:1.1rem;cursor:grab;user-select:none;line-height:1}
+  .lay-name{flex:1;font-weight:600}
+  .lay-name.off{opacity:.45;text-decoration:line-through}
+  .lay-eye{background:transparent;border:1px solid rgba(212,175,55,.35);border-radius:8px;padding:5px 8px;cursor:pointer;line-height:0}
+  .lay-eye svg{width:17px;height:17px;display:block}
+  .lay-arrow{background:transparent;border:1px solid rgba(245,242,234,.2);color:var(--text);border-radius:8px;padding:3px 9px;cursor:pointer;font-size:.85rem}
+  .lay-arrow:disabled{opacity:.25;cursor:default}
   .login{max-width:380px;margin:12vh auto 0;text-align:center}
   .login .mono{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold-light);margin:0 auto 18px}
   .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
@@ -352,16 +373,25 @@
   <div id="tab-layout" hidden>
     <div class="card">
       <div class="sec-title"><h2>Ordine e visibilita delle sezioni</h2></div>
-      <p class="muted" style="margin-bottom:14px">Cambia l'ordine con le frecce e scegli quali sezioni mostrare sul sito. I trucchi di magia restano sempre attivi. Dopo il salvataggio, ricarica il sito per vedere le modifiche.</p>
-      <div id="layoutList"></div>
-      <button class="btn btn-gold" style="margin-top:16px" onclick="saveLayout()">Salva layout</button>
+      <p class="muted" style="margin-bottom:16px">Trascina le sezioni per riordinarle (o usa le frecce), e tocca l'occhio per mostrarle o nasconderle. L'anteprima a sinistra si aggiorna dal vivo. Hero e Contatti restano sempre in cima e in fondo. I trucchi di magia restano sempre attivi. Premi <b>Salva layout</b>, poi ricarica il sito.</p>
+      <div class="layout-grid">
+        <div>
+          <div class="layout-sub">Anteprima</div>
+          <div id="layoutPreview" class="layout-preview"></div>
+        </div>
+        <div>
+          <div class="layout-sub">Sezioni <span class="muted" style="font-weight:400">(trascina / frecce / occhio)</span></div>
+          <div id="layoutList"></div>
+          <button class="btn btn-gold" style="margin-top:16px;width:100%" onclick="saveLayout()">Salva layout</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <div id="tab-seo" hidden>
     <div class="card">
       <div class="sec-title"><h2>SEO — come appari su Google</h2></div>
-      <p class="muted" style="margin-bottom:14px">Personalizza titolo, descrizione e immagine di condivisione. Le parti tecniche (dati strutturati, sitemap) restano automatiche. Dopo il salvataggio, ricarica il sito.</p>
+      <p class="muted" style="margin-bottom:14px">Questi campi sono <b>facoltativi</b>. <b>Lasciali vuoti</b> per usare titolo e descrizione automatici, gia ottimizzati e tradotti in tutte le lingue (consigliato). Compilali solo se vuoi forzare un testo fisso tuo: attenzione, sovrascrive tutte le lingue. Le parti tecniche (dati strutturati, sitemap) restano sempre automatiche. Dopo il salvataggio, ricarica il sito.</p>
       <label>Titolo (mostrato su Google e nella scheda del browser)</label><input id="seoTitle" placeholder="Magic by Dash - Magician & Mentalist in New York">
       <label>Descrizione (max ~160 caratteri)</label><textarea id="seoDesc" rows="3" placeholder="Dashnor Bushi, mago e mentalista a New York..."></textarea>
       <label>Immagine di condivisione social (URL)</label><input id="seoImage" placeholder="https://magicbydash.com/img/og.jpg">
@@ -669,24 +699,54 @@ async function loadLayout(){
   }catch(e){ layoutOrder = []; layoutHidden = []; }
   renderLayout();
 }
+const EYE_ON  = '<svg viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="#a7a294" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3.5 7 10 7a9.1 9.1 0 0 0 3.39-.66"/><line x1="2" y1="2" x2="22" y2="22"/></svg>';
 function renderLayout(){
   const valid = LAYOUT_SECTIONS.map(s=>s.id);
   layoutOrder = [...layoutOrder.filter(id=>valid.includes(id)), ...valid.filter(id=>!layoutOrder.includes(id))];
+  /* ---- anteprima a blocchi ---- */
+  const pv = $("layoutPreview");
+  if(pv){
+    let html = '<div class="lp-block lp-fixed">HERO (titolo + bottoni)</div>';
+    let n = 0;
+    layoutOrder.forEach(id=>{
+      const s = LAYOUT_SECTIONS.find(x=>x.id===id);
+      const hidden = layoutHidden.includes(id);
+      if(hidden){ html += '<div class="lp-block lp-off">'+esc(s.name)+'</div>'; }
+      else { n++; html += '<div class="lp-block lp-on"><span class="lp-num">'+n+'</span>'+esc(s.name)+'</div>'; }
+    });
+    html += '<div class="lp-block lp-fixed">CONTATTI / Prenota</div>';
+    pv.innerHTML = html;
+  }
+  /* ---- controlli drag-and-drop ---- */
   const box = $("layoutList"); if(!box) return;
   box.innerHTML = "";
   layoutOrder.forEach((id,i)=>{
     const s = LAYOUT_SECTIONS.find(x=>x.id===id);
     const hidden = layoutHidden.includes(id);
     const row = document.createElement("div");
-    row.style.cssText = "display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid rgba(212,175,55,.25);border-radius:10px;margin-bottom:8px;background:rgba(212,175,55,.04)";
+    row.className = "lay-row";
+    row.setAttribute("draggable","true");
+    row.dataset.idx = i;
+    row.ondragstart = e=>layDragStart(e,i);
+    row.ondragover  = e=>layDragOver(e,i);
+    row.ondragleave = e=>e.currentTarget.classList.remove("drop-target");
+    row.ondrop      = e=>layDrop(e,i);
+    row.ondragend   = layDragEnd;
     row.innerHTML =
-      '<span style="flex:1;font-weight:600'+(hidden?';opacity:.45;text-decoration:line-through':'')+'">'+s.name+'</span>'+
-      '<button class="btn btn-ghost" style="padding:4px 11px" onclick="layMove('+i+',-1)"'+(i===0?' disabled':'')+'>&#8593;</button>'+
-      '<button class="btn btn-ghost" style="padding:4px 11px" onclick="layMove('+i+',1)"'+(i===layoutOrder.length-1?' disabled':'')+'>&#8595;</button>'+
-      '<button class="btn '+(hidden?'btn-ghost':'btn-gold')+'" style="padding:4px 12px;min-width:92px" onclick="layToggle(\''+id+'\')">'+(hidden?'Nascosta':'Visibile')+'</button>';
+      '<span class="lay-handle" title="Trascina">&#x2807;</span>'+
+      '<span class="lay-name'+(hidden?' off':'')+'">'+esc(s.name)+'</span>'+
+      '<button class="lay-arrow" onclick="layMove('+i+',-1)"'+(i===0?' disabled':'')+' title="Su">&#8593;</button>'+
+      '<button class="lay-arrow" onclick="layMove('+i+',1)"'+(i===layoutOrder.length-1?' disabled':'')+' title="Giu">&#8595;</button>'+
+      '<button class="lay-eye" onclick="layToggle(\''+id+'\')" title="'+(hidden?'Mostra':'Nascondi')+'">'+(hidden?EYE_OFF:EYE_ON)+'</button>';
     box.appendChild(row);
   });
 }
+let _layDrag = -1;
+function layDragStart(e,i){ _layDrag = i; e.currentTarget.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; try{e.dataTransfer.setData("text/plain",String(i));}catch(_){} }
+function layDragOver(e,i){ e.preventDefault(); e.dataTransfer.dropEffect="move"; if(i!==_layDrag) e.currentTarget.classList.add("drop-target"); }
+function layDrop(e,i){ e.preventDefault(); if(_layDrag<0 || _layDrag===i){ return; } const it = layoutOrder.splice(_layDrag,1)[0]; layoutOrder.splice(i,0,it); _layDrag=-1; renderLayout(); }
+function layDragEnd(){ _layDrag=-1; document.querySelectorAll(".lay-row").forEach(r=>r.classList.remove("dragging","drop-target")); }
 function layMove(i,dir){
   const j = i+dir; if(j<0 || j>=layoutOrder.length) return;
   const tmp = layoutOrder[i]; layoutOrder[i] = layoutOrder[j]; layoutOrder[j] = tmp;

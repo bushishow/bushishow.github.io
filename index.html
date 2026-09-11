@@ -1481,19 +1481,11 @@ async function sbGet(path){
     /* LAYOUT personalizzabile dall'admin: ordine + nascondi sezioni.
        Innocuo se non impostato (sito identico). Basato su id: NON tocca i trucchi. */
     try{
-      if(S.layout_order){
-        var _bk = document.getElementById("booking");
-        JSON.parse(S.layout_order).forEach(function(id){
-          var el = document.getElementById(id);
-          if(el && _bk && el !== _bk) _bk.parentNode.insertBefore(el, _bk);
-        });
-      }
-      if(S.layout_hidden){
-        JSON.parse(S.layout_hidden).forEach(function(id){
-          var el = document.getElementById(id); if(el) el.style.display = "none";
-        });
-      }
+      applyLayout(S.layout_order ? JSON.parse(S.layout_order) : null,
+                  S.layout_hidden ? JSON.parse(S.layout_hidden) : []);
     }catch(_e){}
+    /* se sono dentro l'anteprima dell'admin, segnalo che sono pronto a ricevere le modifiche */
+    try{ if(location.search.indexOf("preview")>-1 && window.parent!==window) window.parent.postMessage({type:"previewReady"},"*"); }catch(_ep){}
     /* SEO personalizzabile dall'admin (innocuo se non impostato) */
     try{
       if(S.seo_title){ document.title=S.seo_title; var _ot=document.querySelector('meta[property="og:title"]'); if(_ot)_ot.setAttribute("content",S.seo_title); var _tt=document.querySelector('meta[name="twitter:title"]'); if(_tt)_tt.setAttribute("content",S.seo_title); }
@@ -1524,6 +1516,7 @@ async function sbGet(path){
    confermato solo dopo 4 secondi di permanenza sulla pagina */
 try{
   if(!navigator.webdriver
+     && location.search.indexOf("preview")===-1
      && !/bot|crawl|spider|headless|lighthouse|preview|slurp|fetch/i.test(navigator.userAgent)
      && !sessionStorage.getItem("bvis")){
     setTimeout(()=>{
@@ -1535,6 +1528,31 @@ try{
     }, 4000);
   }
 }catch(e){}
+
+/* ---------- Layout: ordine + visibilita sezioni (riusabile) + anteprima dal vivo dall'admin.
+   NON tocca i trucchi di magia: agisce solo su id di sezione, sposta/nasconde. ---------- */
+var _layHid = [];
+function applyLayout(order, hidden){
+  try{
+    var bk = document.getElementById("booking");
+    if(order && bk){
+      order.forEach(function(id){
+        var el = document.getElementById(id);
+        if(el && el !== bk) bk.parentNode.insertBefore(el, bk);
+      });
+    }
+    /* ripristina SOLO le sezioni che avevo nascosto io (non tocca quelle nascoste da altra logica) */
+    _layHid.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=""; });
+    _layHid = Array.isArray(hidden) ? hidden.slice() : [];
+    _layHid.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display="none"; });
+  }catch(_e){}
+}
+/* anteprima dal vivo: l'admin invia ordine/nascoste mentre modifichi (stesso dominio) */
+window.addEventListener("message", function(ev){
+  if(ev.origin !== location.origin && ev.origin !== "null") return;
+  var d = ev.data;
+  if(d && d.type === "previewLayout") applyLayout(d.order || [], d.hidden || []);
+});
 
 /* ---------- sfondo magico: polvere d'oro fluttuante ---------- */
 (function(){

@@ -31,15 +31,12 @@
   label{font-size:.8rem;color:var(--muted);display:block;margin:12px 0 5px;letter-spacing:.04em}
   .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px;margin-bottom:18px}
   /* ---- Layout customizer ---- */
-  .layout-grid{display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:22px;align-items:start}
-  @media(max-width:640px){.layout-grid{grid-template-columns:1fr}}
+  .layout-grid{display:grid;grid-template-columns:1fr minmax(240px,300px);gap:22px;align-items:start}
+  @media(max-width:720px){.layout-grid{grid-template-columns:1fr}}
   .layout-sub{font-size:.78rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:9px}
-  .layout-preview{background:#0d0d15;border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:12px;position:sticky;top:14px}
-  .lp-block{border-radius:8px;padding:9px 11px;margin-bottom:7px;font-size:.82rem;font-weight:600;border:1px solid transparent;transition:.2s}
-  .lp-fixed{background:linear-gradient(135deg,rgba(240,217,122,.22),rgba(212,175,55,.12));border-color:rgba(212,175,55,.4);color:var(--gold-light);text-align:center;letter-spacing:.03em}
-  .lp-on{background:rgba(212,175,55,.10);border-color:rgba(212,175,55,.30);color:var(--text)}
-  .lp-off{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.07);color:var(--muted);opacity:.55;text-decoration:line-through}
-  .lp-num{display:inline-block;width:18px;color:var(--gold);font-weight:700}
+  .layout-frame-wrap{border:1px solid rgba(212,175,55,.22);border-radius:12px;overflow:hidden;background:#0d0d15;position:sticky;top:14px;height:640px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .layout-frame{width:100%;height:100%;border:0;display:block}
+  @media(max-width:720px){.layout-frame-wrap{height:460px;position:static}}
   .lay-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid rgba(212,175,55,.25);border-radius:10px;margin-bottom:8px;background:rgba(212,175,55,.04);cursor:grab;transition:.15s}
   .lay-row:hover{border-color:rgba(212,175,55,.5)}
   .lay-row.dragging{opacity:.4;border-style:dashed}
@@ -376,8 +373,11 @@
       <p class="muted" style="margin-bottom:16px">Trascina le sezioni per riordinarle (o usa le frecce), e tocca l'occhio per mostrarle o nasconderle. L'anteprima a sinistra si aggiorna dal vivo. Hero e Contatti restano sempre in cima e in fondo. I trucchi di magia restano sempre attivi. Premi <b>Salva layout</b>, poi ricarica il sito.</p>
       <div class="layout-grid">
         <div>
-          <div class="layout-sub">Anteprima</div>
-          <div id="layoutPreview" class="layout-preview"></div>
+          <div class="layout-sub">Anteprima del sito dal vivo</div>
+          <div class="layout-frame-wrap">
+            <iframe id="layoutFrame" class="layout-frame" src="index.html?preview=1" title="Anteprima del sito"></iframe>
+          </div>
+          <p class="muted" style="font-size:.72rem;margin-top:7px">Mostra le modifiche non ancora salvate. Premi "Salva layout" per renderle definitive sul sito.</p>
         </div>
         <div>
           <div class="layout-sub">Sezioni <span class="muted" style="font-weight:400">(trascina / frecce / occhio)</span></div>
@@ -698,26 +698,16 @@ async function loadLayout(){
     layoutHidden = m.layout_hidden ? JSON.parse(m.layout_hidden) : [];
   }catch(e){ layoutOrder = []; layoutHidden = []; }
   renderLayout();
+  _layoutLoaded = true;
+  if(_frameReady) layoutPreviewPush();
 }
 const EYE_ON  = '<svg viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="#a7a294" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3.5 7 10 7a9.1 9.1 0 0 0 3.39-.66"/><line x1="2" y1="2" x2="22" y2="22"/></svg>';
 function renderLayout(){
   const valid = LAYOUT_SECTIONS.map(s=>s.id);
   layoutOrder = [...layoutOrder.filter(id=>valid.includes(id)), ...valid.filter(id=>!layoutOrder.includes(id))];
-  /* ---- anteprima a blocchi ---- */
-  const pv = $("layoutPreview");
-  if(pv){
-    let html = '<div class="lp-block lp-fixed">HERO (titolo + bottoni)</div>';
-    let n = 0;
-    layoutOrder.forEach(id=>{
-      const s = LAYOUT_SECTIONS.find(x=>x.id===id);
-      const hidden = layoutHidden.includes(id);
-      if(hidden){ html += '<div class="lp-block lp-off">'+esc(s.name)+'</div>'; }
-      else { n++; html += '<div class="lp-block lp-on"><span class="lp-num">'+n+'</span>'+esc(s.name)+'</div>'; }
-    });
-    html += '<div class="lp-block lp-fixed">CONTATTI / Prenota</div>';
-    pv.innerHTML = html;
-  }
+  /* ---- anteprima dal vivo: invia ordine/nascoste all'iframe del sito ---- */
+  layoutPreviewPush();
   /* ---- controlli drag-and-drop ---- */
   const box = $("layoutList"); if(!box) return;
   box.innerHTML = "";
@@ -747,6 +737,15 @@ function layDragStart(e,i){ _layDrag = i; e.currentTarget.classList.add("draggin
 function layDragOver(e,i){ e.preventDefault(); e.dataTransfer.dropEffect="move"; if(i!==_layDrag) e.currentTarget.classList.add("drop-target"); }
 function layDrop(e,i){ e.preventDefault(); if(_layDrag<0 || _layDrag===i){ return; } const it = layoutOrder.splice(_layDrag,1)[0]; layoutOrder.splice(i,0,it); _layDrag=-1; renderLayout(); }
 function layDragEnd(){ _layDrag=-1; document.querySelectorAll(".lay-row").forEach(r=>r.classList.remove("dragging","drop-target")); }
+/* anteprima dal vivo: comunica con l'iframe del sito */
+let _frameReady = false, _layoutLoaded = false;
+function layoutPreviewPush(){
+  const f = document.getElementById("layoutFrame");
+  if(f && f.contentWindow) f.contentWindow.postMessage({ type:"previewLayout", order:layoutOrder, hidden:layoutHidden }, "*");
+}
+window.addEventListener("message", function(ev){
+  if(ev.data && ev.data.type === "previewReady"){ _frameReady = true; if(_layoutLoaded) layoutPreviewPush(); }
+});
 function layMove(i,dir){
   const j = i+dir; if(j<0 || j>=layoutOrder.length) return;
   const tmp = layoutOrder[i]; layoutOrder[i] = layoutOrder[j]; layoutOrder[j] = tmp;
